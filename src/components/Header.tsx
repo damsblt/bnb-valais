@@ -13,7 +13,6 @@ type HeaderProps = {
 export default function Header({ locale, variant = "hero" }: HeaderProps) {
   const { nav } = getContent(locale);
   const homeHref = localePath(locale);
-  const roomsHref = localePath(locale, "/chambres");
   const reservationsHref = localePath(locale, "/reservations");
 
   const navLinks = (
@@ -27,16 +26,6 @@ export default function Header({ locale, variant = "hero" }: HeaderProps) {
         }
       >
         {nav.home}
-      </Link>
-      <Link
-        href={roomsHref}
-        className={
-          variant === "hero"
-            ? "text-base font-medium text-white drop-shadow-md transition hover:text-sky-200"
-            : "text-base font-medium text-neutral-700 transition hover:text-sky-500"
-        }
-      >
-        {nav.rooms}
       </Link>
       <Link
         href={reservationsHref}

@@ -1,10 +1,5 @@
 import type { Locale } from "./i18n";
 
-export type PricingTier = {
-  label: string;
-  prices: { guests: number; price: number }[];
-};
-
 export type SiteContent = {
   meta: {
     title: string;
@@ -12,7 +7,6 @@ export type SiteContent = {
   };
   nav: {
     home: string;
-    rooms: string;
     reservations: string;
   };
   hero: {
@@ -42,19 +36,9 @@ export type SiteContent = {
   };
   reservations: {
     title: string;
-    pricingTitle: string;
-    pricingIntro: string;
-    lowSeason: string;
-    highSeason: string;
-    notes: string[];
-    formTitle: string;
-    formNote: string;
-  };
-  rooms: {
-    title: string;
-    description: string;
+    subtitle: string;
     cta: string;
-    ctaNote: string;
+    widgetNote: string;
   };
   footer: {
     contact: string;
@@ -67,41 +51,6 @@ export type SiteContent = {
   };
 };
 
-const pricing = {
-  fr: {
-    lowSeason: [
-      { guests: 1, price: 100 },
-      { guests: 2, price: 140 },
-      { guests: 3, price: 190 },
-      { guests: 4, price: 245 },
-    ],
-    highSeason: [
-      { guests: 1, price: 110 },
-      { guests: 2, price: 154 },
-      { guests: 3, price: 209 },
-      { guests: 4, price: 269 },
-    ],
-  },
-  en: {
-    lowSeason: [
-      { guests: 1, price: 100 },
-      { guests: 2, price: 140 },
-      { guests: 3, price: 190 },
-      { guests: 4, price: 245 },
-    ],
-    highSeason: [
-      { guests: 1, price: 110 },
-      { guests: 2, price: 154 },
-      { guests: 3, price: 209 },
-      { guests: 4, price: 269 },
-    ],
-  },
-};
-
-export function getPricing(locale: Locale) {
-  return pricing[locale];
-}
-
 const content: Record<Locale, SiteContent> = {
   fr: {
     meta: {
@@ -111,7 +60,6 @@ const content: Record<Locale, SiteContent> = {
     },
     nav: {
       home: "Accueil",
-      rooms: "Chambres",
       reservations: "Réservations",
     },
     hero: {
@@ -129,7 +77,7 @@ const content: Record<Locale, SiteContent> = {
           "Orienté plein Sud, le Bed&Breakfast profite d'une vue complètement dégagée sur les Alpes.",
           "Sa terrasse est agréablement exposée au soleil, avec la possibilité également d'avoir un côté vert et ombragé en cas de grosse chaleur.",
         ],
-        cta: "Demande de réservation",
+        cta: "Réserver",
         ctaHref: "/reservations",
       },
       apartment: {
@@ -139,7 +87,7 @@ const content: Record<Locale, SiteContent> = {
           "Avec leurs grandes baies vitrées, les chambres donnent directement sur les terrasses.",
           "Vous profiterez ainsi d'une vue exceptionnelle sur les Alpes à votre réveil.",
         ],
-        cta: "Demande de réservation",
+        cta: "Réserver",
       },
       location: {
         title: "Situation géographique",
@@ -158,27 +106,12 @@ const content: Record<Locale, SiteContent> = {
       ],
     },
     reservations: {
-      title: "Tarifs et réservation",
-      pricingTitle: "Tarifs par personne",
-      pricingIntro:
-        "Location de l'appartement entier selon les tarifs par personne suivants :",
-      lowSeason: "Basse saison",
-      highSeason: "Haute saison",
-      notes: [
-        "Réservation possible dès 2 nuits.",
-        "Le prix du petit déjeuner se monte à 15 CHF par personne et par nuit.",
-      ],
-      formTitle: "Formulaire de réservation",
-      formNote:
-        "Complétez le formulaire ci-dessous pour envoyer votre demande de réservation.",
-    },
-    rooms: {
-      title: "Chambres",
-      description:
-        "L'appartement comprend 2 chambres avec grandes baies vitrées ouvrant directement sur les terrasses et une vue exceptionnelle sur les Alpes.",
-      cta: "Demande de réservation",
-      ctaNote:
-        "Les réservations se font via le formulaire Typeform sur la page Réservations.",
+      title: "Réservation",
+      subtitle:
+        "Consultez les disponibilités et réservez Maison La Sittelle directement sur Booking.com.",
+      cta: "Voir sur Booking.com",
+      widgetNote:
+        "Widget Booking.com — vérifiez les dates et les tarifs en direct, puis finalisez votre réservation sur Booking.com.",
     },
     footer: {
       contact: "Contact",
@@ -198,7 +131,6 @@ const content: Record<Locale, SiteContent> = {
     },
     nav: {
       home: "Home",
-      rooms: "Rooms",
       reservations: "Bookings",
     },
     hero: {
@@ -216,7 +148,7 @@ const content: Record<Locale, SiteContent> = {
           "Facing due south, the Bed&Breakfast enjoys a completely unobstructed view of the Alps.",
           "Its terrace is pleasantly exposed to the sun, with the option of a green, shady side for hot weather.",
         ],
-        cta: "Booking request",
+        cta: "Book now",
         ctaHref: "/en/reservations",
       },
       apartment: {
@@ -226,7 +158,7 @@ const content: Record<Locale, SiteContent> = {
           "With their large picture windows, the rooms open directly onto the terraces.",
           "You'll wake up to an exceptional view of the Alps.",
         ],
-        cta: "Booking request",
+        cta: "Book now",
       },
       location: {
         title: "Geographical location",
@@ -245,26 +177,12 @@ const content: Record<Locale, SiteContent> = {
       ],
     },
     reservations: {
-      title: "Rates and booking",
-      pricingTitle: "Rates per person",
-      pricingIntro:
-        "Rental of the entire apartment according to the following per-person rates:",
-      lowSeason: "Low season",
-      highSeason: "High season",
-      notes: [
-        "Bookings available from 2 nights.",
-        "Breakfast costs CHF 15 per person per night.",
-      ],
-      formTitle: "Booking form",
-      formNote: "Complete the form below to submit your booking request.",
-    },
-    rooms: {
-      title: "Rooms",
-      description:
-        "The apartment has 2 bedrooms with large picture windows opening directly onto the terraces and an exceptional view of the Alps.",
-      cta: "Booking request",
-      ctaNote:
-        "Bookings are made via the Typeform on the Reservations page.",
+      title: "Booking",
+      subtitle:
+        "Check availability and book Maison La Sittelle directly on Booking.com.",
+      cta: "View on Booking.com",
+      widgetNote:
+        "Booking.com widget — check live dates and rates, then complete your booking on Booking.com.",
     },
     footer: {
       contact: "Contact",
@@ -288,11 +206,5 @@ export const galleryImages = [
   "Terrasse-Nid_2-1024x768.jpeg",
   "Chambre-enfant-Nid_2-1024x768.jpeg",
   "Chambre-Adulte-Nid_3-1024x768.jpeg",
-  "Appartement-Nid_5-1024x768.jpeg",
-] as const;
-
-export const roomImages = [
-  "Chambre-Adulte-Nid_3-1024x768.jpeg",
-  "Chambre-enfant-Nid_2-1024x768.jpeg",
   "Appartement-Nid_5-1024x768.jpeg",
 ] as const;

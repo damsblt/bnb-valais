@@ -24,19 +24,18 @@ Ouvrir [http://localhost:3000](http://localhost:3000)
 | Route FR | Route EN | Contenu |
 |----------|----------|---------|
 | `/` | `/en` | Accueil |
-| `/reservations` | `/en/reservations` | Tarifs + formulaire Typeform |
-| `/chambres` | `/en/chambres` | Présentation des chambres + lien vers le formulaire |
+| `/reservations` | `/en/reservations` | Aperçu Booking.com + widget de réservation |
 
 ## Réservations
 
-Les demandes de réservation passent **uniquement** par le formulaire Typeform sur la page `/reservations` (comme sur le site actuel). Booking.com reste géré séparément via l’extranet Booking.
+Les réservations passent par **Booking.com** (Maison La Sittelle). La page `/reservations` affiche un aperçu de l'établissement et le widget officiel Booking.com.
 
 ## Contenu extrait
 
 - Textes FR/EN depuis l’API WordPress et le HTML public
 - 12 images téléchargées dans `public/images/`
 - Carte Google Maps (BnB La Sittelle)
-- Formulaire Typeform (`01JN38VBCPQKPJFGQK77ZR4JDG`)
+- Widget Booking.com (Maison La Sittelle, aid `311984`)
 
 ## À compléter (optionnel)
 
