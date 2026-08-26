@@ -1,0 +1,44 @@
+import Link from "next/link";
+import type { Locale } from "@/lib/i18n";
+import { getContent } from "@/lib/content";
+
+type FooterProps = {
+  locale: Locale;
+};
+
+export default function Footer({ locale }: FooterProps) {
+  const { footer } = getContent(locale);
+
+  return (
+    <footer className="mt-auto bg-sky-100/30">
+      <div className="mx-auto grid max-w-7xl gap-8 px-6 py-10 md:grid-cols-3 md:px-12">
+        <div>
+          <p className="mb-4 text-lg font-medium text-neutral-800">
+            {footer.contact}
+          </p>
+          <div className="flex flex-col gap-3">
+            <Link
+              href="mailto:info@bnb-valais.ch"
+              className="text-neutral-600 transition hover:text-sky-400"
+            >
+              info@bnb-valais.ch
+            </Link>
+            <Link
+              href="tel:+41795200885"
+              className="text-neutral-600 transition hover:text-sky-400"
+            >
+              +41 79 520 08 85
+            </Link>
+          </div>
+        </div>
+
+        <div className="md:text-center" />
+
+        <div className="text-sm text-neutral-600 md:text-right">
+          <p>{footer.copyright}</p>
+          <p className="mt-1">{footer.credits}</p>
+        </div>
+      </div>
+    </footer>
+  );
+}

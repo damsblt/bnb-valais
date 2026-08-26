@@ -1,36 +1,63 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# BnB Valais — Refonte Next.js
 
-## Getting Started
+Refonte du site [bnb-valais.ch](https://bnb-valais.ch/) en **Next.js 16 + React 19 + Tailwind CSS 4**.
 
-First, run the development server:
+## Recommandation technique
+
+**Next.js + Tailwind** (les deux) :
+
+- **Next.js** : rendu statique/SSR, SEO, optimisation images, routing FR/EN
+- **Tailwind CSS** : styles maintenables, responsive, fidèle au design Elementor sans dépendance WordPress
+
+## Démarrage
 
 ```bash
+cd web
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Ouvrir [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Pages
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Route FR | Route EN | Contenu |
+|----------|----------|---------|
+| `/` | `/en` | Accueil |
+| `/reservations` | `/en/reservations` | Tarifs + formulaire Typeform |
+| `/chambres` | `/en/chambres` | Présentation des chambres + lien vers le formulaire |
 
-## Learn More
+## Réservations
 
-To learn more about Next.js, take a look at the following resources:
+Les demandes de réservation passent **uniquement** par le formulaire Typeform sur la page `/reservations` (comme sur le site actuel). Booking.com reste géré séparément via l’extranet Booking.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Contenu extrait
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- Textes FR/EN depuis l’API WordPress et le HTML public
+- 12 images téléchargées dans `public/images/`
+- Carte Google Maps (BnB La Sittelle)
+- Formulaire Typeform (`01JN38VBCPQKPJFGQK77ZR4JDG`)
 
-## Deploy on Vercel
+## À compléter (optionnel)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. **Clé Google Maps** — migrer vers une variable d’environnement (`NEXT_PUBLIC_GOOGLE_MAPS_KEY`)
+2. **Analytics** — GTM / GA si souhaité (`GTM-MHTV6SCJ`, `G-ZC0CT5BB2Z`)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Déploiement (GitHub + Vercel)
+
+1. Pousser le code sur GitHub
+2. Importer le dépôt sur [vercel.com/new](https://vercel.com/new)
+3. Configurer le domaine `bnb-valais.ch` dans Vercel → Settings → Domains
+4. Chez **Infomaniak** (DNS du domaine, sans hébergement web) :
+   - **A** `@` → `76.76.21.21`
+   - **CNAME** `www` → `cname.vercel-dns.com`
+
+La propagation DNS prend en général 15 min à 24 h.
+
+
+```
+web/src/
+├── app/           # Routes Next.js (FR + /en)
+├── components/    # UI React
+└── lib/           # Contenu i18n + traductions
+```

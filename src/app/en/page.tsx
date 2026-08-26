@@ -3,10 +3,10 @@ import HomePage from "@/components/HomePage";
 import { getContent } from "@/lib/content";
 
 export const metadata: Metadata = {
-  title: getContent("fr").meta.title,
-  description: getContent("fr").meta.description,
+  title: getContent("en").meta.title,
+  description: getContent("en").meta.description,
 };
 
-export default function Page() {
-  return <HomePage locale="fr" />;
+export default function EnglishHomePage() {
+  return <HomePage locale="en" />;
 }
