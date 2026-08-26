@@ -111,7 +111,7 @@ const content: Record<Locale, SiteContent> = {
         "Consultez les disponibilités et réservez Maison La Sittelle directement sur Booking.com.",
       cta: "Voir sur Booking.com",
       widgetNote:
-        "Widget Booking.com — vérifiez les dates et les tarifs en direct, puis finalisez votre réservation sur Booking.com.",
+        "Cliquez pour accéder directement à la fiche Maison La Sittelle sur Booking.com et réserver.",
     },
     footer: {
       contact: "Contact",
@@ -182,7 +182,7 @@ const content: Record<Locale, SiteContent> = {
         "Check availability and book Maison La Sittelle directly on Booking.com.",
       cta: "View on Booking.com",
       widgetNote:
-        "Booking.com widget — check live dates and rates, then complete your booking on Booking.com.",
+        "Click to go directly to the Maison La Sittelle listing on Booking.com and book.",
     },
     footer: {
       contact: "Contact",

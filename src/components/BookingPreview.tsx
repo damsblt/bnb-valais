@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import type { Locale } from "@/lib/i18n";
-import { getBookingHotelUrl, getBookingWidgetUrl } from "@/lib/booking";
+import { getBookingHotelUrl } from "@/lib/booking";
 
 type BookingPreviewProps = {
   locale: Locale;
@@ -20,7 +20,6 @@ export default function BookingPreview({
   widgetNote,
 }: BookingPreviewProps) {
   const bookingUrl = getBookingHotelUrl(locale);
-  const widgetUrl = getBookingWidgetUrl(locale);
 
   return (
     <div className="mx-auto max-w-5xl px-6 py-12 md:px-12 md:py-16">
@@ -33,7 +32,12 @@ export default function BookingPreview({
         </p>
       </div>
 
-      <div className="mt-10 overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-sm">
+      <a
+        href={bookingUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="mt-10 block overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-sm transition hover:border-sky-300 hover:shadow-md"
+      >
         <div className="grid md:grid-cols-5">
           <div className="relative min-h-48 md:col-span-2 md:min-h-80">
             <Image
@@ -57,29 +61,16 @@ export default function BookingPreview({
                 ? "Appartement 2 chambres avec vue sur les Alpes — Valais, Suisse"
                 : "2-bedroom apartment with Alpine views — Valais, Switzerland"}
             </p>
-            <a
-              href={bookingUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex w-fit items-center justify-center rounded-full bg-[#003580] px-6 py-3 text-base font-medium text-white transition hover:bg-[#00224f]"
-            >
+            <span className="inline-flex w-fit items-center justify-center rounded-full bg-[#003580] px-6 py-3 text-base font-medium text-white">
               {cta}
-            </a>
+            </span>
           </div>
         </div>
 
         <div className="border-t border-neutral-200 bg-neutral-50 p-4">
           <p className="text-center text-sm text-neutral-600">{widgetNote}</p>
         </div>
-
-        <iframe
-          title="Maison La Sittelle — Booking.com"
-          src={widgetUrl}
-          className="h-[650px] w-full border-0"
-          loading="lazy"
-          referrerPolicy="no-referrer-when-downgrade"
-        />
-      </div>
+      </a>
     </div>
   );
 }
