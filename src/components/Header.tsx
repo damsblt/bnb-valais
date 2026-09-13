@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { Locale } from "@/lib/i18n";
 import { localePath } from "@/lib/i18n";
 import { getContent } from "@/lib/content";
+import { heroImage } from "@/lib/gallery";
 import LanguageSwitcher from "./LanguageSwitcher";
 
 type HeaderProps = {
@@ -69,7 +70,7 @@ export default function Header({ locale, variant = "hero" }: HeaderProps) {
     <header className="relative">
       <div
         className="relative min-h-screen bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: "url(/images/Vue-e1747855908721.png)" }}
+        style={{ backgroundImage: `url(${heroImage})` }}
       >
         <div className="absolute inset-0 bg-black/10" />
 

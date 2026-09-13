@@ -32,7 +32,19 @@ export type SiteContent = {
     };
   };
   gallery: {
-    alt: string[];
+    title: string;
+    showAll: string;
+    morePhotos: string;
+  };
+  admin: {
+    title: string;
+    subtitle: string;
+    checklistTitle: string;
+    checklist: string[];
+    linksTitle: string;
+    bookingLabel: string;
+    airbnbLabel: string;
+    tip: string;
   };
   reservations: {
     title: string;
@@ -96,14 +108,25 @@ const content: Record<Locale, SiteContent> = {
       },
     },
     gallery: {
-      alt: [
-        "Terrasse avec pelouse",
-        "Terrasse avec transats",
-        "Terrasse du BnB",
-        "Chambre enfant",
-        "Chambre adulte",
-        "Appartement",
+      title: "Galerie photos",
+      showAll: "Afficher toutes les photos",
+      morePhotos: "+{count} photos",
+    },
+    admin: {
+      title: "Gestion des réservations",
+      subtitle:
+        "Quand vous recevez une notification de réservation, bloquez les dates sur l'autre plateforme.",
+      checklistTitle: "Checklist — nouvelle réservation",
+      checklist: [
+        "Notification reçue (Booking.com ou Airbnb)",
+        "Ouvrir le calendrier de l'autre plateforme via les liens ci-dessous",
+        "Bloquer les dates correspondantes",
+        "Vérifier qu'il n'y a pas de chevauchement",
       ],
+      linksTitle: "Accès rapide aux calendriers",
+      bookingLabel: "Calendrier Booking.com",
+      airbnbLabel: "Calendrier Airbnb",
+      tip: "Astuce : réagir dans les 30 minutes réduit fortement le risque de double réservation. Cette page n'est pas indexée par les moteurs de recherche.",
     },
     reservations: {
       title: "Réservation",
@@ -167,14 +190,25 @@ const content: Record<Locale, SiteContent> = {
       },
     },
     gallery: {
-      alt: [
-        "Terrace with lawn",
-        "Terrace with loungers",
-        "BnB terrace",
-        "Children's room",
-        "Master bedroom",
-        "Apartment",
+      title: "Photo gallery",
+      showAll: "Show all photos",
+      morePhotos: "+{count} photos",
+    },
+    admin: {
+      title: "Reservation management",
+      subtitle:
+        "When you receive a booking notification, block the dates on the other platform.",
+      checklistTitle: "Checklist — new booking",
+      checklist: [
+        "Notification received (Booking.com or Airbnb)",
+        "Open the other platform's calendar using the links below",
+        "Block the corresponding dates",
+        "Check there is no overlap",
       ],
+      linksTitle: "Quick access to calendars",
+      bookingLabel: "Booking.com calendar",
+      airbnbLabel: "Airbnb calendar",
+      tip: "Tip: reacting within 30 minutes greatly reduces double-booking risk. This page is not indexed by search engines.",
     },
     reservations: {
       title: "Booking",
@@ -199,12 +233,3 @@ const content: Record<Locale, SiteContent> = {
 export function getContent(locale: Locale): SiteContent {
   return content[locale];
 }
-
-export const galleryImages = [
-  "Terrasse-Pelouse-Nid-Canan-Transat-1024x768.jpeg",
-  "Terrasse-Pelouse-Nid-Canan-Transat_3-1024x768.jpeg",
-  "Terrasse-Nid_2-1024x768.jpeg",
-  "Chambre-enfant-Nid_2-1024x768.jpeg",
-  "Chambre-Adulte-Nid_3-1024x768.jpeg",
-  "Appartement-Nid_5-1024x768.jpeg",
-] as const;

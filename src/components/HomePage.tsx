@@ -1,11 +1,12 @@
-import ImageGallery from "@/components/ImageGallery";
 import IntroSection from "@/components/IntroSection";
 import LocationSection from "@/components/LocationSection";
+import PhotoGallery from "@/components/PhotoGallery";
 import SiteLayout from "@/components/SiteLayout";
 import SplitSection from "@/components/SplitSection";
 import type { Locale } from "@/lib/i18n";
 import { localePath } from "@/lib/i18n";
 import { getContent } from "@/lib/content";
+import { splitImages } from "@/lib/gallery";
 
 type HomePageProps = {
   locale: Locale;
@@ -23,7 +24,7 @@ export default function HomePage({ locale }: HomePageProps) {
       <SplitSection
         title={sections.alps.title}
         paragraphs={sections.alps.paragraphs}
-        imageSrc="/images/DJI_0057-scaled-e1737734622186.jpg"
+        imageSrc={splitImages.alps}
         imageAlt={sections.alps.title}
         imagePosition="left"
         cta={{
@@ -35,7 +36,7 @@ export default function HomePage({ locale }: HomePageProps) {
       <SplitSection
         title={sections.apartment.title}
         paragraphs={sections.apartment.paragraphs}
-        imageSrc="/images/Chambre-Adulte-Nid_2-1024x768.jpeg"
+        imageSrc={splitImages.apartment}
         imageAlt={sections.apartment.title}
         imagePosition="right"
         cta={{
@@ -44,7 +45,12 @@ export default function HomePage({ locale }: HomePageProps) {
         }}
       />
 
-      <ImageGallery altLabels={[...gallery.alt]} />
+      <PhotoGallery
+        locale={locale}
+        title={gallery.title}
+        showAllLabel={gallery.showAll}
+        morePhotosTemplate={gallery.morePhotos}
+      />
 
       <LocationSection
         title={sections.location.title}
