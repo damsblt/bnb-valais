@@ -43,7 +43,7 @@ export default function BookingPreview({
           <div className="relative min-h-48 md:col-span-2 md:min-h-80">
             <Image
               src={bookingImage}
-              alt="Maison La Sittelle"
+              alt="Le Nid de la Sittelle"
               fill
               className="object-cover"
               sizes="(max-width: 768px) 100vw, 40vw"
@@ -55,7 +55,7 @@ export default function BookingPreview({
               Booking.com
             </p>
             <h2 className="text-2xl font-semibold text-neutral-900">
-              Maison La Sittelle
+              Le Nid de la Sittelle
             </h2>
             <p className="text-neutral-600">
               {locale === "fr"

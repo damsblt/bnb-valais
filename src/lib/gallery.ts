@@ -91,7 +91,7 @@ const allPhotos: GalleryPhoto[] = [
   },
   {
     src: "/images/new/DJI_0057.JPG",
-    alt: { fr: "Vue aérienne de Maison La Sittelle", en: "Aerial view of Maison La Sittelle" },
+    alt: { fr: "Vue aérienne du Nid de la Sittelle", en: "Aerial view of Le Nid de la Sittelle" },
   },
   {
     src: "/images/new/DJI_0055.JPG",

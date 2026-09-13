@@ -131,10 +131,10 @@ const content: Record<Locale, SiteContent> = {
     reservations: {
       title: "Réservation",
       subtitle:
-        "Consultez les disponibilités et réservez Maison La Sittelle directement sur Booking.com.",
+        "Consultez les disponibilités et réservez Le Nid de la Sittelle directement sur Booking.com.",
       cta: "Voir sur Booking.com",
       widgetNote:
-        "Cliquez pour accéder directement à la fiche Maison La Sittelle sur Booking.com et réserver.",
+        "Cliquez pour accéder directement à la fiche Le Nid de la Sittelle sur Booking.com et réserver.",
     },
     footer: {
       contact: "Contact",
@@ -213,10 +213,10 @@ const content: Record<Locale, SiteContent> = {
     reservations: {
       title: "Booking",
       subtitle:
-        "Check availability and book Maison La Sittelle directly on Booking.com.",
+        "Check availability and book Le Nid de la Sittelle directly on Booking.com.",
       cta: "View on Booking.com",
       widgetNote:
-        "Click to go directly to the Maison La Sittelle listing on Booking.com and book.",
+        "Click to go directly to the Le Nid de la Sittelle listing on Booking.com and book.",
     },
     footer: {
       contact: "Contact",

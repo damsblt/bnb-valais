@@ -28,14 +28,14 @@ Ouvrir [http://localhost:3000](http://localhost:3000)
 
 ## Réservations
 
-Les réservations passent par **Booking.com** (Maison La Sittelle). La page `/reservations` affiche un aperçu de l'établissement et le widget officiel Booking.com.
+Les réservations passent par **Booking.com** (Le Nid de la Sittelle). La page `/reservations` affiche un aperçu de l'établissement et le lien vers Booking.com.
 
 ## Contenu extrait
 
 - Textes FR/EN depuis l’API WordPress et le HTML public
 - 12 images téléchargées dans `public/images/`
-- Carte Google Maps (BnB La Sittelle)
-- Widget Booking.com (Maison La Sittelle, aid `311984`)
+- Carte Google Maps (Le Nid de la Sittelle)
+- Lien Booking.com (Le Nid de la Sittelle, aid `311984`)
 
 ## À compléter (optionnel)
 

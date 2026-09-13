@@ -21,7 +21,7 @@ export default function LocationSection({
 
         <div className="mt-10 overflow-hidden rounded-2xl shadow-lg shadow-neutral-900/10">
           <iframe
-            title="BnB La Sittelle — Google Maps"
+            title="Le Nid de la Sittelle — Google Maps"
             src="https://www.google.com/maps/embed/v1/place?key=AIzaSyCF3GqCPfbM6TwJPzs3eENWvWFZjl-Op34&q=bnb%20la%20sittelle&zoom=10"
             className="aspect-video w-full border-0"
             loading="lazy"
