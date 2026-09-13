@@ -5,6 +5,7 @@ import { localePath } from "@/lib/i18n";
 import { getContent } from "@/lib/content";
 import { heroImage } from "@/lib/gallery";
 import LanguageSwitcher from "./LanguageSwitcher";
+import ParallaxHero from "./ParallaxHero";
 
 type HeaderProps = {
   locale: Locale;
@@ -22,8 +23,8 @@ export default function Header({ locale, variant = "hero" }: HeaderProps) {
         href={homeHref}
         className={
           variant === "hero"
-            ? "text-base font-medium text-white drop-shadow-md transition hover:text-sky-200"
-            : "text-base font-medium text-neutral-700 transition hover:text-sky-500"
+            ? "rounded-full px-4 py-2 text-sm font-medium text-white/95 backdrop-blur-sm transition hover:bg-white/15"
+            : "text-sm font-medium text-neutral-700 transition hover:text-sky-600"
         }
       >
         {nav.home}
@@ -32,8 +33,8 @@ export default function Header({ locale, variant = "hero" }: HeaderProps) {
         href={reservationsHref}
         className={
           variant === "hero"
-            ? "text-base font-medium text-white drop-shadow-md transition hover:text-sky-200"
-            : "text-base font-medium text-neutral-700 transition hover:text-sky-500"
+            ? "rounded-full px-4 py-2 text-sm font-medium text-white/95 backdrop-blur-sm transition hover:bg-white/15"
+            : "text-sm font-medium text-neutral-700 transition hover:text-sky-600"
         }
       >
         {nav.reservations}
@@ -43,23 +44,23 @@ export default function Header({ locale, variant = "hero" }: HeaderProps) {
 
   if (variant === "compact") {
     return (
-      <header className="border-b border-neutral-200 bg-white">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 md:px-12">
+      <header className="sticky top-0 z-40 border-b border-neutral-200/80 bg-white/90 backdrop-blur-md">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 md:px-10">
           <Link href={homeHref}>
             <Image
               src="/images/logo-v2-r1zdvr4wx0fvk8au90hylll5skn9p52d7mwt04xwug.png"
               alt="BnB Valais"
               width={180}
               height={70}
-              className="h-auto w-36"
+              className="h-auto w-32 md:w-36"
             />
           </Link>
-          <div className="flex items-center gap-6">
-            <nav className="hidden items-center gap-6 md:flex">{navLinks}</nav>
+          <div className="flex items-center gap-4">
+            <nav className="hidden items-center gap-2 md:flex">{navLinks}</nav>
             <LanguageSwitcher locale={locale} variant="compact" />
           </div>
         </div>
-        <nav className="flex justify-center gap-6 border-t border-neutral-100 px-4 py-3 md:hidden">
+        <nav className="flex justify-center gap-4 border-t border-neutral-100 px-4 py-3 md:hidden">
           {navLinks}
         </nav>
       </header>
@@ -68,20 +69,15 @@ export default function Header({ locale, variant = "hero" }: HeaderProps) {
 
   return (
     <header className="relative">
-      <div
-        className="relative min-h-screen bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url(${heroImage})` }}
-      >
-        <div className="absolute inset-0 bg-black/10" />
-
-        <div className="relative z-10 mx-auto flex max-w-7xl items-start justify-between px-6 pt-8 md:px-12">
-          <Link href={homeHref} className="block">
+      <ParallaxHero imageSrc={heroImage} imageAlt="Maison La Sittelle — Valais">
+        <div className="mx-auto flex max-w-7xl items-start justify-between px-6 pt-8 md:px-10 md:pt-10">
+          <Link href={homeHref} className="block drop-shadow-lg">
             <Image
               src="/images/logo-v2-r1zdvr4wx0fvk8au90hylll5skn9p52d7mwt04xwug.png"
               alt="BnB Valais"
               width={316}
               height={120}
-              className="hidden h-auto w-48 md:block md:w-72 lg:w-80"
+              className="hidden h-auto w-44 md:block md:w-64 lg:w-72"
               priority
             />
             <Image
@@ -89,19 +85,19 @@ export default function Header({ locale, variant = "hero" }: HeaderProps) {
               alt="BnB Valais"
               width={259}
               height={100}
-              className="h-auto w-44 md:hidden"
+              className="h-auto w-40 md:hidden"
               priority
             />
           </Link>
 
-          <div className="flex items-center gap-6">
-            <nav className="hidden items-center gap-8 md:flex">{navLinks}</nav>
+          <div className="flex items-center gap-3">
+            <nav className="hidden items-center gap-1 md:flex">{navLinks}</nav>
             <LanguageSwitcher locale={locale} />
           </div>
         </div>
-      </div>
+      </ParallaxHero>
 
-      <nav className="flex justify-center gap-6 border-b border-neutral-200 bg-white px-4 py-4 md:hidden">
+      <nav className="flex justify-center gap-4 border-b border-neutral-200/80 bg-white/95 px-4 py-3 backdrop-blur md:hidden">
         {navLinks}
       </nav>
     </header>

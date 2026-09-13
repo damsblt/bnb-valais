@@ -10,8 +10,8 @@ export default function Footer({ locale }: FooterProps) {
   const { footer } = getContent(locale);
 
   return (
-    <footer className="mt-auto bg-sky-100/30">
-      <div className="mx-auto grid max-w-7xl gap-8 px-6 py-10 md:grid-cols-3 md:px-12">
+    <footer className="mt-auto border-t border-neutral-200/80 bg-neutral-50">
+      <div className="mx-auto grid max-w-7xl gap-8 px-6 py-12 md:grid-cols-3 md:px-10">
         <div>
           <p className="mb-4 text-lg font-medium text-neutral-800">
             {footer.contact}

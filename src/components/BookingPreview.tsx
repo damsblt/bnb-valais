@@ -3,7 +3,7 @@
 import Image from "next/image";
 import type { Locale } from "@/lib/i18n";
 import { getBookingHotelUrl } from "@/lib/booking";
-import { propertyPhotos } from "@/lib/gallery";
+import { bookingImage } from "@/lib/gallery";
 
 type BookingPreviewProps = {
   locale: Locale;
@@ -42,7 +42,7 @@ export default function BookingPreview({
         <div className="grid md:grid-cols-5">
           <div className="relative min-h-48 md:col-span-2 md:min-h-80">
             <Image
-              src={propertyPhotos[0].src}
+              src={bookingImage}
               alt="Maison La Sittelle"
               fill
               className="object-cover"

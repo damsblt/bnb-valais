@@ -61,14 +61,14 @@ export default function PhotoGallery({
 
   return (
     <>
-      <section className="px-4 py-12 md:px-8 md:py-16 lg:px-12">
+      <section className="px-4 py-10 md:px-8 md:py-16 lg:px-12">
         <div className="mx-auto max-w-7xl">
-          <h2 className="mb-6 text-2xl font-semibold text-neutral-900 md:text-3xl">
+          <h2 className="mb-8 text-3xl font-semibold tracking-tight text-neutral-900 md:text-4xl">
             {title}
           </h2>
 
           {/* Desktop mosaic — style Booking.com */}
-          <div className="hidden h-[28rem] grid-cols-4 grid-rows-2 gap-2 overflow-hidden rounded-xl md:grid lg:h-[32rem]">
+          <div className="hidden h-[28rem] grid-cols-4 grid-rows-2 gap-3 overflow-hidden rounded-3xl shadow-lg shadow-neutral-900/10 md:grid lg:h-[32rem]">
             {propertyPhotos.slice(0, mosaicCount).map((photo, index) => {
               const isHero = index === 0;
               const isMoreTile = index === mosaicCount - 1 && remaining > 0;
