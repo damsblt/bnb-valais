@@ -9,6 +9,7 @@ export const RESEND_TEMPLATE_VARIABLE_KEYS = [
   "LEAD",
   "DETAILS_HTML",
   "FOOTER_NOTE",
+  "PAYMENT_HTML",
   "ACCENT_COLOR",
 ] as const;
 
@@ -48,7 +49,12 @@ export function reservationEmailLayoutHtml(): string {
             </td>
           </tr>
           <tr>
-            <td style="padding:0 28px 32px;">
+            <td style="padding:0 28px 8px;">
+              {{{PAYMENT_HTML}}}
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:8px 28px 32px;">
               <p style="margin:0 0 20px;font-size:15px;line-height:1.6;color:#52525b;">{{{FOOTER_NOTE}}}</p>
               <p style="margin:0;font-size:15px;line-height:1.6;color:#18181b;">
                 Le Nid de la Sittelle<br />

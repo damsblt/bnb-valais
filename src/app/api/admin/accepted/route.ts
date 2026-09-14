@@ -1,6 +1,7 @@
 import {
   isAcceptedStorageConfigured,
   listAcceptedStays,
+  listReservationDecisions,
 } from "@/lib/accepted-stays-store";
 import { isAdminAuthenticated } from "@/lib/admin-session";
 
@@ -12,10 +13,14 @@ export async function GET() {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const stays = await listAcceptedStays();
+  const [stays, decisions] = await Promise.all([
+    listAcceptedStays(),
+    listReservationDecisions(),
+  ]);
 
   return Response.json({
     stays,
+    decisions,
     storageConfigured: isAcceptedStorageConfigured(),
   });
 }

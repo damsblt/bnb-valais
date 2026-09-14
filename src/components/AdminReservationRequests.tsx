@@ -10,7 +10,12 @@ type AdminReservationRequestsProps = {
   emailConfigured: boolean;
 };
 
-type HandledMap = Record<string, "accept" | "reject">;
+type HandledEntry = {
+  action: "accept" | "reject";
+  decidedAt: string;
+};
+
+type HandledMap = Record<string, HandledEntry>;
 
 export default function AdminReservationRequests({
   content,
@@ -50,25 +55,28 @@ export default function AdminReservationRequests({
     setLoading(false);
   }, []);
 
-  const loadAccepted = useCallback(async () => {
+  const loadAdminState = useCallback(async () => {
     const res = await fetch("/api/admin/accepted", { cache: "no-store" });
     if (!res.ok) return;
     const data = (await res.json()) as {
-      stays?: { responseId: string }[];
+      decisions?: { responseId: string; action: "accept" | "reject"; decidedAt: string }[];
     };
     const map: HandledMap = {};
-    for (const stay of data.stays ?? []) {
-      map[stay.responseId] = "accept";
+    for (const decision of data.decisions ?? []) {
+      map[decision.responseId] = {
+        action: decision.action,
+        decidedAt: decision.decidedAt,
+      };
     }
-    setHandled((prev) => ({ ...map, ...prev }));
+    setHandled(map);
   }, []);
 
   useEffect(() => {
     if (typeformConfigured) {
       void load();
-      void loadAccepted();
+      void loadAdminState();
     } else setLoading(false);
-  }, [load, loadAccepted, typeformConfigured]);
+  }, [load, loadAdminState, typeformConfigured]);
 
   async function respond(responseId: string, action: "accept" | "reject") {
     setBusyId(responseId);
@@ -85,6 +93,9 @@ export default function AdminReservationRequests({
       emailError?: string;
       calendarUpdated?: boolean;
       calendarError?: string;
+      calendarWarning?: string;
+      stateSaved?: boolean;
+      stateError?: string;
       error?: string;
     };
     setBusyId(null);
@@ -95,14 +106,27 @@ export default function AdminReservationRequests({
       return;
     }
 
-    setHandled((prev) => ({ ...prev, [responseId]: action }));
+    if (data.stateSaved) {
+      setHandled((prev) => ({
+        ...prev,
+        [responseId]: {
+          action,
+          decidedAt: new Date().toISOString(),
+        },
+      }));
+      void loadAdminState();
+    }
 
     const calendarNote =
       action === "accept" && data.calendarUpdated
         ? ` ${content.calendarMarkedOnAccept}`
-        : data.calendarError
-          ? ` ${data.calendarError}`
-          : "";
+        : data.calendarWarning
+          ? ` ${data.calendarWarning}`
+          : data.stateError
+            ? ` ${data.stateError}`
+            : data.calendarError
+              ? ` ${data.calendarError}`
+              : "";
 
     if (data.emailSent) {
       setNoticeKind("success");
@@ -150,7 +174,10 @@ export default function AdminReservationRequests({
         <h2 className="text-xl font-semibold text-neutral-900">{content.requestsTitle}</h2>
         <button
           type="button"
-          onClick={() => void load()}
+          onClick={() => {
+            void load();
+            void loadAdminState();
+          }}
           disabled={loading || !typeformConfigured}
           className="rounded-full border border-neutral-300 px-4 py-2 text-sm hover:bg-neutral-50 disabled:opacity-50"
         >
@@ -196,6 +223,9 @@ export default function AdminReservationRequests({
       <ul className="mt-6 space-y-4">
         {items.map((item) => {
           const status = handled[item.id];
+          const decidedLabel = status
+            ? formatDate(status.decidedAt)
+            : null;
           return (
             <li
               key={item.id}
@@ -223,12 +253,13 @@ export default function AdminReservationRequests({
                 {status ? (
                   <span
                     className={`rounded-full px-3 py-1 text-xs font-medium ${
-                      status === "accept"
+                      status.action === "accept"
                         ? "bg-emerald-100 text-emerald-800"
                         : "bg-rose-100 text-rose-800"
                     }`}
                   >
-                    {status === "accept" ? "Acceptée" : "Refusée"}
+                    {status.action === "accept" ? "Acceptée" : "Refusée"}
+                    {decidedLabel ? ` · ${decidedLabel}` : null}
                   </span>
                 ) : null}
               </div>
@@ -245,7 +276,9 @@ export default function AdminReservationRequests({
               <div className="mt-5 flex flex-wrap gap-3">
                 <button
                   type="button"
-                  disabled={busyId === item.id || !item.guestEmail}
+                  disabled={
+                    busyId === item.id || !item.guestEmail || Boolean(status)
+                  }
                   onClick={() => void respond(item.id, "accept")}
                   className="rounded-xl bg-emerald-700 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-800 disabled:opacity-50"
                 >
@@ -253,7 +286,9 @@ export default function AdminReservationRequests({
                 </button>
                 <button
                   type="button"
-                  disabled={busyId === item.id || !item.guestEmail}
+                  disabled={
+                    busyId === item.id || !item.guestEmail || Boolean(status)
+                  }
                   onClick={() => void respond(item.id, "reject")}
                   className="rounded-xl border border-rose-300 bg-rose-50 px-4 py-2 text-sm font-medium text-rose-900 hover:bg-rose-100 disabled:opacity-50"
                 >

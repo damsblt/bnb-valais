@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
- * Creates (or recreates) published Resend templates for accept/decline emails.
- * Usage: RESEND_API_KEY=re_… node scripts/sync-resend-templates.mjs
+ * Creates or updates published Resend templates for accept/decline emails.
+ * Usage: RESEND_API_KEY=re_… npm run resend:sync-templates
  */
 
 const API = "https://api.resend.com";
@@ -41,7 +41,12 @@ const layoutHtml = `<!DOCTYPE html>
             </td>
           </tr>
           <tr>
-            <td style="padding:0 28px 32px;">
+            <td style="padding:0 28px 8px;">
+              {{{PAYMENT_HTML}}}
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:8px 28px 32px;">
               <p style="margin:0 0 20px;font-size:15px;line-height:1.6;color:#52525b;">{{{FOOTER_NOTE}}}</p>
               <p style="margin:0;font-size:15px;line-height:1.6;color:#18181b;">
                 Le Nid de la Sittelle<br />
@@ -63,6 +68,7 @@ const variables = [
   "LEAD",
   "DETAILS_HTML",
   "FOOTER_NOTE",
+  "PAYMENT_HTML",
   "ACCENT_COLOR",
 ].map((key) => ({
   key,
@@ -103,40 +109,45 @@ async function findByAlias(alias) {
   return items.find((t) => t.alias === alias || t.name === alias);
 }
 
-async function createAndPublish(def) {
+async function upsertAndPublish(def) {
   const existing = await findByAlias(def.alias);
+  const body = {
+    name: def.name,
+    alias: def.alias,
+    subject: def.subject,
+    html: layoutHtml,
+    variables,
+  };
+
+  let id;
   if (existing?.id) {
-    console.log(`Template "${def.alias}" already exists (${existing.id}, ${existing.status}). Skipping create.`);
-    if (existing.status !== "published") {
-      await api(`/templates/${existing.id}/publish`, { method: "POST" });
-      console.log(`Published ${def.alias}`);
-    }
-    return existing.id;
+    id = existing.id;
+    await api(`/templates/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(body),
+    });
+    console.log(`Updated template ${def.alias} (${id})`);
+  } else {
+    const created = await api("/templates", {
+      method: "POST",
+      body: JSON.stringify(body),
+    });
+    id = created.id;
+    console.log(`Created template ${def.alias} → ${id}`);
   }
 
-  const created = await api("/templates", {
-    method: "POST",
-    body: JSON.stringify({
-      name: def.name,
-      alias: def.alias,
-      subject: def.subject,
-      html: layoutHtml,
-      variables,
-    }),
-  });
-  const id = created.id;
   await api(`/templates/${id}/publish`, { method: "POST" });
-  console.log(`Created and published ${def.alias} → ${id}`);
+  console.log(`Published ${def.alias}`);
   return id;
 }
 
 async function main() {
-  const acceptId = await createAndPublish({
+  const acceptId = await upsertAndPublish({
     name: "BnB Valais — confirmation demande",
     alias: ALIAS_ACCEPT,
     subject: "Confirmation de votre demande — Le Nid de la Sittelle",
   });
-  const rejectId = await createAndPublish({
+  const rejectId = await upsertAndPublish({
     name: "BnB Valais — refus demande",
     alias: ALIAS_REJECT,
     subject: "Votre demande de séjour — Le Nid de la Sittelle",

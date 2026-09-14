@@ -1,3 +1,7 @@
+import {
+  buildPaymentHtml,
+  buildPaymentPlainText,
+} from "@/lib/bank-payment";
 import type { ReservationRequest } from "@/lib/typeform";
 import {
   RESEND_TEMPLATE_ALIAS_ACCEPT,
@@ -54,11 +58,13 @@ export function buildReplyEmail(
   const detailsHtml = buildDetailsHtml(request);
 
   if (action === "accept") {
-    const headline = "Votre demande est confirmée";
+    const headline = "Disponibilité confirmée — finalisez votre réservation";
     const lead =
-      "Nous avons le plaisir de vous confirmer la disponibilité pour votre séjour au Nid de la Sittelle.";
+      "Nous avons le plaisir de vous confirmer la disponibilité pour votre séjour au Nid de la Sittelle. Pour valider définitivement votre réservation, merci d'effectuer le virement bancaire indiqué ci-dessous.";
     const footerNote =
-      "Prochaines étapes : nous vous enverrons les modalités de réservation (acompte ou confirmation définitive) dans un second message. Au plaisir de vous accueillir en Valais.";
+      "Dès réception du paiement, nous vous enverrons un message de confirmation définitive. Au plaisir de vous accueillir en Valais.";
+    const paymentHtml = buildPaymentHtml();
+    const paymentPlain = buildPaymentPlainText();
     const subject = "Confirmation de votre demande — Le Nid de la Sittelle";
     const text = `${greeting}
 
@@ -66,6 +72,8 @@ ${lead}
 
 Récapitulatif de votre demande :
 ${detailsPlain}
+
+${paymentPlain}
 
 ${footerNote}
 
@@ -78,6 +86,7 @@ https://www.bnb-valais.ch
       LEAD: escapeHtml(lead),
       DETAILS_HTML: detailsHtml,
       FOOTER_NOTE: escapeHtml(footerNote),
+      PAYMENT_HTML: paymentHtml,
       ACCENT_COLOR: "#047857",
     };
     return {
@@ -116,6 +125,7 @@ Le Nid de la Sittelle
     LEAD: escapeHtml(lead),
     DETAILS_HTML: detailsHtml,
     FOOTER_NOTE: escapeHtml(footerNote),
+    PAYMENT_HTML: "",
     ACCENT_COLOR: "#be123c",
   };
   return {

@@ -1,7 +1,6 @@
 import {
   isAcceptedStorageConfigured,
-  recordAcceptedStay,
-  removeAcceptedStay,
+  recordReservationOutcome,
 } from "@/lib/accepted-stays-store";
 import { isAdminAuthenticated } from "@/lib/admin-session";
 import {
@@ -59,29 +58,32 @@ export async function POST(request: Request) {
     action,
   );
 
-  let calendarUpdated = false;
-  let calendarError: string | undefined;
+  let stateSaved = false;
+  let stateError: string | undefined;
+  let calendarWarning: string | undefined;
 
   try {
-    if (action === "accept" && reservation.stayDates) {
-      await recordAcceptedStay({
-        responseId,
-        checkIn: reservation.stayDates.checkIn,
-        checkOut: reservation.stayDates.checkOut,
-        guestLabel:
-          reservation.guestName ?? reservation.guestEmail ?? undefined,
-      });
-      calendarUpdated = true;
-    } else if (action === "reject") {
-      await removeAcceptedStay(responseId);
-      calendarUpdated = true;
-    } else if (action === "accept" && !reservation.stayDates) {
-      calendarError =
-        "Pas de dates calendrier sur cette demande — le calendrier public n’a pas été mis à jour.";
+    await recordReservationOutcome({
+      responseId,
+      action,
+      stay:
+        action === "accept" && reservation.stayDates
+          ? {
+              checkIn: reservation.stayDates.checkIn,
+              checkOut: reservation.stayDates.checkOut,
+              guestLabel:
+                reservation.guestName ?? reservation.guestEmail ?? undefined,
+            }
+          : undefined,
+    });
+    stateSaved = true;
+    if (action === "accept" && !reservation.stayDates) {
+      calendarWarning =
+        "Décision enregistrée, mais pas de dates calendrier — le calendrier public n’a pas été mis à jour.";
     }
   } catch (err) {
-    calendarError =
-      err instanceof Error ? err.message : "Impossible d’enregistrer sur le calendrier.";
+    stateError =
+      err instanceof Error ? err.message : "Impossible d’enregistrer la décision.";
   }
 
   return Response.json({
@@ -90,8 +92,11 @@ export async function POST(request: Request) {
     mailto,
     emailSent: emailResult.sent,
     emailError: emailResult.error,
-    calendarUpdated,
-    calendarError,
+    stateSaved,
+    stateError,
+    calendarWarning,
+    calendarUpdated: stateSaved && action === "accept" && Boolean(reservation.stayDates),
+    calendarError: calendarWarning ?? stateError,
     calendarStorageConfigured: isAcceptedStorageConfigured(),
   });
 }

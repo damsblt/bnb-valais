@@ -3,6 +3,8 @@ import path from "node:path";
 import { get, put, type PutCommandOptions } from "@vercel/blob";
 import { enumerateNights } from "@/lib/typeform-prefill";
 
+type ReplyAction = "accept" | "reject";
+
 export type AcceptedStay = {
   responseId: string;
   checkIn: string;
@@ -11,12 +13,21 @@ export type AcceptedStay = {
   guestLabel?: string;
 };
 
-type AcceptedStayStore = {
-  stays: AcceptedStay[];
+export type ReservationDecision = {
+  responseId: string;
+  action: ReplyAction;
+  decidedAt: string;
 };
 
-const BLOB_PATHNAME = "calendar/accepted-stays.json";
-const DEV_FILE = path.join(process.cwd(), ".data/accepted-stays.json");
+type ReservationStateStore = {
+  stays: AcceptedStay[];
+  decisions: ReservationDecision[];
+};
+
+const STATE_BLOB_PATH = "admin/reservation-state.json";
+const LEGACY_STAYS_BLOB_PATH = "calendar/accepted-stays.json";
+const DEV_FILE = path.join(process.cwd(), ".data/reservation-state.json");
+const LEGACY_DEV_FILE = path.join(process.cwd(), ".data/accepted-stays.json");
 
 function blobCredentials(): {
   configured: boolean;
@@ -44,50 +55,86 @@ function blobPutOptions(): PutCommandOptions {
   };
 }
 
-async function readFromBlob(): Promise<AcceptedStayStore> {
+function emptyStore(): ReservationStateStore {
+  return { stays: [], decisions: [] };
+}
+
+function normalizeStore(raw: Partial<ReservationStateStore>): ReservationStateStore {
+  return {
+    stays: raw.stays ?? [],
+    decisions: raw.decisions ?? [],
+  };
+}
+
+async function readBlobJson(pathname: string): Promise<unknown | null> {
   try {
     const { token, storeId } = blobCredentials();
-    const result = await get(BLOB_PATHNAME, {
+    const result = await get(pathname, {
       access: "private",
       token,
       storeId,
       useCache: false,
     });
-    if (!result?.stream) return { stays: [] };
+    if (!result?.stream) return null;
     const text = await new Response(result.stream).text();
-    const json = JSON.parse(text) as AcceptedStayStore;
-    return { stays: json.stays ?? [] };
+    return JSON.parse(text) as unknown;
   } catch {
-    return { stays: [] };
+    return null;
   }
 }
 
-async function writeToBlob(store: AcceptedStayStore): Promise<void> {
-  await put(BLOB_PATHNAME, JSON.stringify(store), blobPutOptions());
+async function writeBlobJson(pathname: string, data: unknown): Promise<void> {
+  await put(pathname, JSON.stringify(data), blobPutOptions());
 }
 
-async function readFromDevFile(): Promise<AcceptedStayStore> {
+async function readFromBlob(): Promise<ReservationStateStore> {
+  const stateRaw = await readBlobJson(STATE_BLOB_PATH);
+  if (stateRaw) {
+    return normalizeStore(stateRaw as Partial<ReservationStateStore>);
+  }
+
+  const legacyRaw = await readBlobJson(LEGACY_STAYS_BLOB_PATH);
+  if (legacyRaw && typeof legacyRaw === "object" && legacyRaw !== null) {
+    const legacy = legacyRaw as { stays?: AcceptedStay[] };
+    if (legacy.stays?.length) {
+      return { stays: legacy.stays, decisions: [] };
+    }
+  }
+
+  return emptyStore();
+}
+
+async function writeToBlob(store: ReservationStateStore): Promise<void> {
+  await writeBlobJson(STATE_BLOB_PATH, store);
+}
+
+async function readFromDevFile(): Promise<ReservationStateStore> {
   try {
     const raw = await readFile(DEV_FILE, "utf8");
-    const json = JSON.parse(raw) as AcceptedStayStore;
-    return { stays: json.stays ?? [] };
+    return normalizeStore(JSON.parse(raw) as Partial<ReservationStateStore>);
   } catch {
-    return { stays: [] };
+    try {
+      const legacy = await readFile(LEGACY_DEV_FILE, "utf8");
+      const parsed = JSON.parse(legacy) as { stays?: AcceptedStay[] };
+      return { stays: parsed.stays ?? [], decisions: [] };
+    } catch {
+      return emptyStore();
+    }
   }
 }
 
-async function writeToDevFile(store: AcceptedStayStore): Promise<void> {
+async function writeToDevFile(store: ReservationStateStore): Promise<void> {
   await mkdir(path.dirname(DEV_FILE), { recursive: true });
   await writeFile(DEV_FILE, JSON.stringify(store, null, 2), "utf8");
 }
 
-async function readStore(): Promise<AcceptedStayStore> {
+async function readStore(): Promise<ReservationStateStore> {
   if (blobCredentials().configured) return readFromBlob();
   if (process.env.NODE_ENV === "development") return readFromDevFile();
-  return { stays: [] };
+  return emptyStore();
 }
 
-async function writeStore(store: AcceptedStayStore): Promise<void> {
+async function writeStore(store: ReservationStateStore): Promise<void> {
   if (blobCredentials().configured) {
     await writeToBlob(store);
     return;
@@ -106,6 +153,11 @@ export async function listAcceptedStays(): Promise<AcceptedStay[]> {
   return store.stays;
 }
 
+export async function listReservationDecisions(): Promise<ReservationDecision[]> {
+  const store = await readStore();
+  return store.decisions;
+}
+
 export async function listAcceptedDayKeys(): Promise<string[]> {
   const stays = await listAcceptedStays();
   const keys = new Set<string>();
@@ -117,35 +169,63 @@ export async function listAcceptedDayKeys(): Promise<string[]> {
   return [...keys].sort();
 }
 
-export async function listAcceptedResponseIds(): Promise<string[]> {
-  const stays = await listAcceptedStays();
-  return stays.map((s) => s.responseId);
+export async function recordReservationOutcome(input: {
+  responseId: string;
+  action: ReplyAction;
+  stay?: {
+    checkIn: string;
+    checkOut: string;
+    guestLabel?: string;
+  };
+}): Promise<void> {
+  const store = await readStore();
+  const decidedAt = new Date().toISOString();
+
+  const decisions = store.decisions.filter(
+    (d) => d.responseId !== input.responseId,
+  );
+  decisions.push({
+    responseId: input.responseId,
+    action: input.action,
+    decidedAt,
+  });
+
+  let stays = store.stays.filter((s) => s.responseId !== input.responseId);
+
+  if (input.action === "accept" && input.stay) {
+    stays.push({
+      responseId: input.responseId,
+      checkIn: input.stay.checkIn,
+      checkOut: input.stay.checkOut,
+      acceptedAt: decidedAt,
+      guestLabel: input.stay.guestLabel,
+    });
+  }
+
+  await writeStore({ stays, decisions });
 }
 
+/** @deprecated Use recordReservationOutcome */
 export async function recordAcceptedStay(input: {
   responseId: string;
   checkIn: string;
   checkOut: string;
   guestLabel?: string;
 }): Promise<void> {
-  const store = await readStore();
-  const next: AcceptedStay = {
+  await recordReservationOutcome({
     responseId: input.responseId,
-    checkIn: input.checkIn,
-    checkOut: input.checkOut,
-    acceptedAt: new Date().toISOString(),
-    guestLabel: input.guestLabel,
-  };
-  const stays = store.stays.filter((s) => s.responseId !== input.responseId);
-  stays.push(next);
-  await writeStore({ stays });
+    action: "accept",
+    stay: {
+      checkIn: input.checkIn,
+      checkOut: input.checkOut,
+      guestLabel: input.guestLabel,
+    },
+  });
 }
 
+/** @deprecated Use recordReservationOutcome */
 export async function removeAcceptedStay(responseId: string): Promise<void> {
-  const store = await readStore();
-  const stays = store.stays.filter((s) => s.responseId !== responseId);
-  if (stays.length === store.stays.length) return;
-  await writeStore({ stays });
+  await recordReservationOutcome({ responseId, action: "reject" });
 }
 
 export function isAcceptedStorageConfigured(): boolean {
