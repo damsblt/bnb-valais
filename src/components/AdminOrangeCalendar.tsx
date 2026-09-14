@@ -87,11 +87,10 @@ export default function AdminOrangeCalendar({
   }
 
   return (
-    <section className="mt-10 rounded-2xl border border-orange-200 bg-orange-50/50 p-5">
+    <section className="mt-8 rounded-2xl border border-orange-200 bg-orange-50/50 p-5">
       <h2 className="text-lg font-semibold text-orange-950">
         {content.orangeCalendarTitle}
       </h2>
-      <p className="mt-2 text-sm text-orange-900">{content.orangeCalendarHint}</p>
       {notice ? (
         <p className="mt-3 rounded-lg bg-emerald-100 px-3 py-2 text-sm text-emerald-900">
           {notice}

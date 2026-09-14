@@ -39,6 +39,10 @@ export type SiteContent = {
   admin: {
     title: string;
     subtitle: string;
+    navReservations: string;
+    navPromo: string;
+    reservationsPageTitle: string;
+    promoPageTitle: string;
     loginTitle: string;
     loginHint: string;
     loginButton: string;
@@ -126,7 +130,6 @@ export type SiteContent = {
     promoValidBadge: string;
     promoClearButton: string;
     promoInvalidHint: string;
-    promoOptionalHint: string;
   };
   footer: {
     contact: string;
@@ -212,11 +215,14 @@ const content: Record<Locale, SiteContent> = {
       morePhotos: "+{count} photos",
     },
     admin: {
-      title: "Gestion des réservations",
-      subtitle:
-        "Demandes directes (Typeform), réponses aux clients et synchronisation Booking / Airbnb.",
+      title: "Administration",
+      subtitle: "",
+      navReservations: "Réservations",
+      navPromo: "Codes promo",
+      reservationsPageTitle: "Réservations",
+      promoPageTitle: "Codes promo",
       loginTitle: "Accès administrateur",
-      loginHint: "Mot de passe défini dans les variables Vercel (ADMIN_PASSWORD).",
+      loginHint: "",
       loginButton: "Se connecter",
       logoutButton: "Déconnexion",
       requestsTitle: "Demandes de réservation (site)",
@@ -326,8 +332,6 @@ const content: Record<Locale, SiteContent> = {
       promoClearButton: "Retirer",
       promoInvalidHint:
         "Code invalide ou non valable pour ces dates. Corrigez ou laissez le champ vide.",
-      promoOptionalHint:
-        "Si vous avez un code, vérifiez-le ici avant d’ouvrir le formulaire. Les codes sont contrôlés sur le site (pas dans Typeform).",
     },
     footer: {
       contact: "Contact",
@@ -418,11 +422,14 @@ const content: Record<Locale, SiteContent> = {
       morePhotos: "+{count} photos",
     },
     admin: {
-      title: "Reservation management",
-      subtitle:
-        "Direct requests (Typeform), guest replies, and Booking / Airbnb sync.",
+      title: "Administration",
+      subtitle: "",
+      navReservations: "Bookings",
+      navPromo: "Promo codes",
+      reservationsPageTitle: "Bookings",
+      promoPageTitle: "Promo codes",
       loginTitle: "Admin access",
-      loginHint: "Password is set in Vercel environment variables (ADMIN_PASSWORD).",
+      loginHint: "",
       loginButton: "Sign in",
       logoutButton: "Sign out",
       requestsTitle: "Booking requests (website)",
@@ -532,8 +539,6 @@ const content: Record<Locale, SiteContent> = {
       promoClearButton: "Remove",
       promoInvalidHint:
         "Invalid code or not valid for these dates. Fix it or leave the field empty.",
-      promoOptionalHint:
-        "If you have a code, verify it here before opening the form. Codes are checked on the site (not inside Typeform).",
     },
     footer: {
       contact: "Contact",

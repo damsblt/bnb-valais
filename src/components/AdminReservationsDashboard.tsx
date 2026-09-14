@@ -1,65 +1,26 @@
 "use client";
 
-import AdminPromoCodes from "@/components/AdminPromoCodes";
 import AdminOrangeCalendar from "@/components/AdminOrangeCalendar";
 import AdminReservationRequests from "@/components/AdminReservationRequests";
 import AdminTypeformSync from "@/components/AdminTypeformSync";
 import { adminLinks } from "@/lib/admin";
 import type { SiteContent } from "@/lib/content";
 
-type AdminDashboardProps = {
+type AdminReservationsDashboardProps = {
   content: SiteContent["admin"];
   typeformConfigured: boolean;
   emailConfigured: boolean;
   calendarStorageConfigured: boolean;
-  onLogout: () => void;
 };
 
-export default function AdminDashboard({
+export default function AdminReservationsDashboard({
   content,
   typeformConfigured,
   emailConfigured,
   calendarStorageConfigured,
-  onLogout,
-}: AdminDashboardProps) {
+}: AdminReservationsDashboardProps) {
   return (
-    <div className="mx-auto max-w-3xl px-6 py-12 md:px-12 md:py-16">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-semibold text-neutral-900">{content.title}</h1>
-          <p className="mt-3 text-lg text-neutral-600">{content.subtitle}</p>
-        </div>
-        <button
-          type="button"
-          onClick={onLogout}
-          className="rounded-full border border-neutral-300 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50"
-        >
-          {content.logoutButton}
-        </button>
-      </div>
-
-      <p
-        className={`mt-6 rounded-xl border p-4 text-sm ${
-          emailConfigured
-            ? "border-emerald-200 bg-emerald-50 text-emerald-950"
-            : "border-amber-200 bg-amber-50 text-amber-950"
-        }`}
-      >
-        {emailConfigured ? content.emailAutoActive : content.emailAutoInactive}
-      </p>
-
-      <p
-        className={`mt-4 rounded-xl border p-4 text-sm ${
-          calendarStorageConfigured
-            ? "border-orange-200 bg-orange-50 text-orange-950"
-            : "border-amber-200 bg-amber-50 text-amber-950"
-        }`}
-      >
-        {calendarStorageConfigured
-          ? content.calendarStorageActive
-          : content.calendarStorageInactive}
-      </p>
-
+    <>
       <AdminReservationRequests
         content={content}
         typeformConfigured={typeformConfigured}
@@ -74,8 +35,6 @@ export default function AdminDashboard({
       ) : null}
 
       {typeformConfigured ? <AdminTypeformSync /> : null}
-
-      <AdminPromoCodes content={content} />
 
       <div className="mt-10 rounded-xl border border-amber-200 bg-amber-50 p-6">
         <h2 className="font-semibold text-amber-900">{content.checklistTitle}</h2>
@@ -109,17 +68,6 @@ export default function AdminDashboard({
           </a>
         </div>
       </div>
-
-      <p className="mt-8 rounded-lg bg-neutral-100 p-4 text-sm text-neutral-600">
-        {content.tip}
-        {!emailConfigured ? (
-          <>
-            {" "}
-            Sans <code className="text-xs">RESEND_API_KEY</code>, les boutons accepter/refuser
-            ouvrent votre messagerie avec un e-mail pré-rempli.
-          </>
-        ) : null}
-      </p>
-    </div>
+    </>
   );
 }

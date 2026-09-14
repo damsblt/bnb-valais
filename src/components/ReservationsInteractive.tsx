@@ -100,13 +100,8 @@ export default function ReservationsInteractive({
   );
 
   const promoDraft = promoInput.trim();
-  const promoBlocksForm =
-    Boolean(promoDraft) &&
-    (!appliedPromo ||
-      appliedPromo.code.toUpperCase() !== promoDraft.toUpperCase());
-
-  const canOpenForm =
-    isValidReservationRange(range) && !promoBlocksForm && !promoLoading;
+  const datesReady = isValidReservationRange(range);
+  const canOpenForm = datesReady;
 
   const applyPromo = useCallback(async () => {
     if (!range || !promoDraft) {
@@ -153,7 +148,7 @@ export default function ReservationsInteractive({
   }, []);
 
   const hidden = useMemo(() => {
-    if (!canOpenForm || !range) return {};
+    if (!datesReady || !range) return {};
     const base: Record<string, string> = {
       [fieldKeys.checkIn]: range.checkIn,
       [fieldKeys.checkOut]: range.checkOut,
@@ -164,7 +159,7 @@ export default function ReservationsInteractive({
     }
     return base;
   }, [
-    canOpenForm,
+    datesReady,
     range,
     fieldKeys.checkIn,
     fieldKeys.checkOut,
@@ -196,10 +191,10 @@ export default function ReservationsInteractive({
         <h2 className="text-xl font-semibold text-neutral-900 md:text-2xl">
           {reservations.formTitle}
         </h2>
-        <p className="mt-2 text-neutral-600">
-          {canOpenForm ? reservations.formPrefillNote : reservations.formNote}
-        </p>
-        {canOpenForm && range ? (
+        {!canOpenForm ? (
+          <p className="mt-2 text-neutral-600">{reservations.formNote}</p>
+        ) : null}
+        {datesReady && range ? (
           <div className="mt-4 space-y-4">
             <p className="rounded-xl bg-sky-50 px-4 py-3 text-sm font-medium text-sky-950">
               {formatRangeLabel(range, locale)}
@@ -208,9 +203,6 @@ export default function ReservationsInteractive({
             <div className="rounded-2xl border border-neutral-200 bg-white p-4">
               <p className="text-sm font-medium text-neutral-900">
                 {reservations.promoOptionalLabel}
-              </p>
-              <p className="mt-1 text-xs text-neutral-500">
-                {reservations.promoOptionalHint}
               </p>
               <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center">
                 <input
@@ -254,11 +246,6 @@ export default function ReservationsInteractive({
               ) : null}
               {promoError ? (
                 <p className="mt-2 text-sm text-red-600">{promoError}</p>
-              ) : null}
-              {promoBlocksForm && !promoError ? (
-                <p className="mt-2 text-sm text-amber-800">
-                  {reservations.promoApplyButton} pour continuer avec ce code.
-                </p>
               ) : null}
             </div>
           </div>

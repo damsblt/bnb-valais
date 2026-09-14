@@ -39,21 +39,12 @@ export default function AdminTypeformSync() {
 
   return (
     <section className="mt-10 rounded-xl border border-violet-200 bg-violet-50 p-6">
-      <h2 className="font-semibold text-violet-950">Formulaire Typeform (dates)</h2>
-      <p className="mt-2 text-sm text-violet-900">
-        Les dates sont choisies sur le calendrier du site. Cette action retire les questions
-        «&nbsp;Date d&apos;arrivée&nbsp;» et «&nbsp;Date de départ&nbsp;» du Typeform pour éviter
-        de les redemander.
-      </p>
+      <h2 className="font-semibold text-violet-950">Typeform — dates</h2>
       {status ? (
-        <p className="mt-3 text-sm text-violet-800">
-          État actuel :{" "}
-          {status.dateQuestions === 0 ? (
-            <strong>aucune question date dans Typeform</strong>
-          ) : (
-            <strong>{status.dateQuestions} question(s) date encore dans Typeform</strong>
-          )}
-          {status.hiddenConfigured ? " · hidden fields OK" : " · hidden fields à configurer"}
+        <p className="mt-2 text-sm text-violet-800">
+          {status.dateQuestions === 0
+            ? "Aucune question date dans le formulaire."
+            : `${status.dateQuestions} question(s) date dans le formulaire.`}
         </p>
       ) : null}
       <button

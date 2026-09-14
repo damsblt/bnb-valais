@@ -1,11 +1,14 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import AdminDashboard from "@/components/AdminDashboard";
+import AdminLayout, { type AdminSection } from "@/components/AdminLayout";
+import AdminPromoCodes from "@/components/AdminPromoCodes";
+import AdminReservationsDashboard from "@/components/AdminReservationsDashboard";
 import type { SiteContent } from "@/lib/content";
 
 type AdminShellProps = {
   content: SiteContent["admin"];
+  section: AdminSection;
 };
 
 type AdminMeta = {
@@ -16,7 +19,7 @@ type AdminMeta = {
   calendarStorageConfigured: boolean;
 };
 
-export default function AdminShell({ content }: AdminShellProps) {
+export default function AdminShell({ content, section }: AdminShellProps) {
   const [meta, setMeta] = useState<AdminMeta | null>(null);
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState<string | null>(null);
@@ -77,7 +80,6 @@ export default function AdminShell({ content }: AdminShellProps) {
     return (
       <div className="mx-auto max-w-md px-6 py-16 md:px-12">
         <h1 className="text-2xl font-semibold text-neutral-900">{content.loginTitle}</h1>
-        <p className="mt-2 text-sm text-neutral-600">{content.loginHint}</p>
         <form onSubmit={handleLogin} className="mt-8 space-y-4">
           <input
             type="password"
@@ -103,12 +105,17 @@ export default function AdminShell({ content }: AdminShellProps) {
   }
 
   return (
-    <AdminDashboard
-      content={content}
-      typeformConfigured={meta.typeformConfigured}
-      emailConfigured={meta.emailConfigured}
-      calendarStorageConfigured={meta.calendarStorageConfigured}
-      onLogout={handleLogout}
-    />
+    <AdminLayout content={content} section={section} onLogout={handleLogout}>
+      {section === "promo" ? (
+        <AdminPromoCodes content={content} />
+      ) : (
+        <AdminReservationsDashboard
+          content={content}
+          typeformConfigured={meta.typeformConfigured}
+          emailConfigured={meta.emailConfigured}
+          calendarStorageConfigured={meta.calendarStorageConfigured}
+        />
+      )}
+    </AdminLayout>
   );
 }

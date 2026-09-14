@@ -196,7 +196,7 @@ export default function AdminReservationRequests({
   }
 
   return (
-    <section className="mt-10">
+    <section>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-xl font-semibold text-neutral-900">{content.requestsTitle}</h2>
         <button
@@ -213,10 +213,7 @@ export default function AdminReservationRequests({
       </div>
 
       {!typeformConfigured ? (
-        <p className="mt-4 text-sm text-amber-800">
-          Ajoutez <code className="text-xs">TYPEFORM_ACCESS_TOKEN</code> sur Vercel pour
-          afficher les demandes ici.
-        </p>
+        <p className="mt-4 text-sm text-amber-800">Typeform non configuré.</p>
       ) : null}
 
       {loading ? <p className="mt-4 text-neutral-600">Chargement des demandes…</p> : null}

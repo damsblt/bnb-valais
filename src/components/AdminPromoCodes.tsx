@@ -123,14 +123,8 @@ export default function AdminPromoCodes({ content }: AdminPromoCodesProps) {
   };
 
   return (
-    <section className="mt-10 rounded-xl border border-neutral-200 bg-white p-6 shadow-sm">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h2 className="text-lg font-semibold text-neutral-900">
-            {content.promoTitle}
-          </h2>
-          <p className="mt-1 text-sm text-neutral-600">{content.promoHint}</p>
-        </div>
+    <section className="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm">
+      <div className="flex flex-wrap items-center justify-end gap-3">
         <button
           type="button"
           onClick={() => void load()}
