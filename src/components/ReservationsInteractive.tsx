@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import AvailabilityCalendar from "@/components/AvailabilityCalendar";
+import StayDatesSummary from "@/components/StayDatesSummary";
 import TypeformEmbed from "@/components/TypeformEmbed";
 import type { Locale } from "@/lib/i18n";
 import type { SiteContent } from "@/lib/content";
@@ -99,9 +100,12 @@ export default function ReservationsInteractive({
           {range ? reservations.formPrefillNote : reservations.formNote}
         </p>
         {range ? (
-          <p className="mt-3 rounded-xl bg-sky-50 px-4 py-3 text-sm font-medium text-sky-950">
-            {formatRangeLabel(range, locale)}
-          </p>
+          <div className="mt-4 space-y-4">
+            <p className="rounded-xl bg-sky-50 px-4 py-3 text-sm font-medium text-sky-950">
+              {formatRangeLabel(range, locale)}
+            </p>
+            <StayDatesSummary locale={locale} range={range} />
+          </div>
         ) : null}
         <div className="mt-6 overflow-hidden rounded-3xl border border-neutral-200 bg-white shadow-sm">
           <TypeformEmbed hidden={hidden} />

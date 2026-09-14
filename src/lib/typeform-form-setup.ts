@@ -1,5 +1,20 @@
 import { TYPEFORM_DEFAULT_API_FORM_ID } from "@/lib/typeform";
-import { getTypeformDateFieldKeys } from "@/lib/typeform-refs";
+import {
+  TYPEFORM_PARAM_ARRIVAL,
+  TYPEFORM_PARAM_DEPARTURE,
+} from "@/lib/typeform-refs";
+
+type FormField = {
+  type: string;
+  properties?: { fields?: FormField[] };
+  [key: string]: unknown;
+};
+
+type TypeformForm = {
+  hidden?: string[];
+  fields?: FormField[];
+  [key: string]: unknown;
+};
 
 async function typeformFetch(
   path: string,
@@ -20,38 +35,79 @@ async function typeformFetch(
   });
 }
 
-/** Déclare les refs date comme URL parameters / hidden fields sur le formulaire Typeform */
+function removeDateQuestions(fields: FormField[]): FormField[] {
+  return fields
+    .filter((field) => field.type !== "date")
+    .map((field) => {
+      if (field.type === "group" && field.properties?.fields?.length) {
+        return {
+          ...field,
+          properties: {
+            ...field.properties,
+            fields: removeDateQuestions(field.properties.fields),
+          },
+        };
+      }
+      return field;
+    });
+}
+
+function formHasDateQuestions(fields: FormField[] | undefined): boolean {
+  if (!fields) return false;
+  for (const field of fields) {
+    if (field.type === "date") return true;
+    if (field.type === "group" && field.properties?.fields) {
+      if (formHasDateQuestions(field.properties.fields)) return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Typeform ne permet pas de préremplir les champs « date ».
+ * On enregistre date_arrivee / date_depart en hidden et on retire les questions date du formulaire.
+ */
 export async function ensureTypeformPrefillOnForm(): Promise<{
   ok: boolean;
   detail: string;
 }> {
-  const { checkIn, checkOut } = getTypeformDateFieldKeys();
   const formId = TYPEFORM_DEFAULT_API_FORM_ID;
+  const hiddenParams = [TYPEFORM_PARAM_ARRIVAL, TYPEFORM_PARAM_DEPARTURE];
 
   const getRes = await typeformFetch(`/forms/${formId}`);
   if (!getRes.ok) {
     return { ok: false, detail: `lecture formulaire HTTP ${getRes.status}` };
   }
 
-  const form = (await getRes.json()) as { hidden?: string[]; fields?: unknown[] };
-  const current = form.hidden ?? [];
-  const merged = [...new Set([...current, checkIn, checkOut])];
+  const form = (await getRes.json()) as TypeformForm;
+  const currentHidden = form.hidden ?? [];
+  const hiddenOk = hiddenParams.every((p) => currentHidden.includes(p));
+  const hasDates = formHasDateQuestions(form.fields);
 
-  if (
-    merged.length === current.length &&
-    current.includes(checkIn) &&
-    current.includes(checkOut)
-  ) {
-    return { ok: true, detail: "hidden fields déjà configurés" };
+  if (hiddenOk && !hasDates) {
+    return { ok: true, detail: "formulaire déjà adapté (hidden + sans questions date)" };
+  }
+
+  const payload: TypeformForm = {
+    hidden: [...new Set([...currentHidden, ...hiddenParams])],
+  };
+
+  if (hasDates && form.fields) {
+    payload.fields = removeDateQuestions(form.fields);
   }
 
   const patchRes = await typeformFetch(`/forms/${formId}`, {
     method: "PATCH",
-    body: JSON.stringify({ hidden: merged }),
+    body: JSON.stringify(payload),
   });
 
   if (patchRes.ok) {
-    return { ok: true, detail: "hidden fields ajoutés sur Typeform" };
+    return {
+      ok: true,
+      detail: hasDates
+        ? "questions date retirées ; dates via calendrier + hidden fields"
+        : "hidden fields date_arrivee / date_depart ajoutés",
+    };
   }
 
   const errText = await patchRes.text();
@@ -59,7 +115,7 @@ export async function ensureTypeformPrefillOnForm(): Promise<{
     return {
       ok: false,
       detail:
-        "token sans permission forms:write — le site envoie quand même les dates à l'embed",
+        "token sans forms:write — dates affichées sur le site et envoyées en hidden si configuré manuellement dans Typeform",
     };
   }
 

@@ -180,7 +180,7 @@ const content: Record<Locale, SiteContent> = {
       formNote:
         "Indiquez vos dates et vos coordonnées : nous vous confirmons la disponibilité par retour.",
       formPrefillNote:
-        "Vos dates sélectionnées dans le calendrier sont reprises dans le formulaire ci-dessous.",
+        "Vos dates sont enregistrées ci-dessous. Complétez le reste du formulaire (coordonnées, nombre de personnes, message).",
       calendarSelectHint:
         "Cliquez une date d'arrivée puis une date de départ (jours libres uniquement).",
       selectedRangeLabel: "Séjour :",
@@ -291,7 +291,7 @@ const content: Record<Locale, SiteContent> = {
       formNote:
         "Enter your dates and contact details — we will confirm availability by reply.",
       formPrefillNote:
-        "The dates you selected in the calendar are passed into the form below.",
+        "Your dates are saved below. Complete the rest of the form (contact details, guests, message).",
       calendarSelectHint:
         "Click a check-in date, then a check-out date (available days only).",
       selectedRangeLabel: "Stay:",
