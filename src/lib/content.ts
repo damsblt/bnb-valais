@@ -78,6 +78,9 @@ export type SiteContent = {
     formTitle: string;
     formNote: string;
     formPrefillNote: string;
+    formLockedTitle: string;
+    formLockedHint: string;
+    formLockedAction: string;
     calendarSelectHint: string;
     selectedRangeLabel: string;
     clearRangeLabel: string;
@@ -199,9 +202,13 @@ const content: Record<Locale, SiteContent> = {
         "Les liens iCal Booking/Airbnb ne sont pas encore configurés sur le serveur — toutes les dates apparaissent libres.",
       formTitle: "Formulaire de réservation",
       formNote:
-        "Indiquez vos dates et vos coordonnées : nous vous confirmons la disponibilité par retour.",
+        "Choisissez d’abord vos dates sur le calendrier (minimum 2 nuits), puis complétez le formulaire.",
       formPrefillNote:
         "Vos dates sont enregistrées ci-dessous. Complétez le reste du formulaire (coordonnées, nombre de personnes, message).",
+      formLockedTitle: "Formulaire verrouillé",
+      formLockedHint:
+        "Sélectionnez une date d’arrivée et une date de départ sur le calendrier (séjour d’au moins 2 nuits) pour envoyer votre demande.",
+      formLockedAction: "Revenir au calendrier",
       calendarSelectHint:
         "Cliquez une date d'arrivée puis une date de départ (minimum 2 nuits, jours libres uniquement).",
       selectedRangeLabel: "Séjour :",
@@ -324,9 +331,13 @@ const content: Record<Locale, SiteContent> = {
         "Booking/Airbnb iCal links are not configured on the server yet — all dates show as available.",
       formTitle: "Booking form",
       formNote:
-        "Enter your dates and contact details — we will confirm availability by reply.",
+        "Pick your dates on the calendar first (minimum 2 nights), then complete the form.",
       formPrefillNote:
         "Your dates are saved below. Complete the rest of the form (contact details, guests, message).",
+      formLockedTitle: "Form locked",
+      formLockedHint:
+        "Select check-in and check-out on the calendar (at least 2 nights) before you can submit a request.",
+      formLockedAction: "Back to calendar",
       calendarSelectHint:
         "Click a check-in date, then a check-out date (minimum 2 nights, available days only).",
       selectedRangeLabel: "Stay:",

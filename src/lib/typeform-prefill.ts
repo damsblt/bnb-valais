@@ -42,6 +42,16 @@ export function meetsMinimumStay(
   return countNights(checkIn, checkOut) >= minNights;
 }
 
+export function isValidReservationRange(
+  range: DateRange | null,
+): range is DateRange {
+  return (
+    range !== null &&
+    range.checkIn < range.checkOut &&
+    meetsMinimumStay(range.checkIn, range.checkOut)
+  );
+}
+
 export function isRangeAvailable(
   checkIn: string,
   checkOut: string,

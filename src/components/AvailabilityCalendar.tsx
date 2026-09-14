@@ -65,9 +65,22 @@ export default function AvailabilityCalendar({
   const [data, setData] = useState<AvailabilityResponse | null>(null);
   const [monthOffset, setMonthOffset] = useState(0);
   const [pendingStart, setPendingStart] = useState<string | null>(null);
+  const [hoverDay, setHoverDay] = useState<string | null>(null);
   const [invalidFlash, setInvalidFlash] = useState<"overlap" | "minNights" | null>(
     null,
   );
+
+  const previewRange = useMemo((): DateRange | null => {
+    if (!pendingStart || selectedRange || !hoverDay || hoverDay === pendingStart) {
+      return null;
+    }
+    let checkIn = pendingStart;
+    let checkOut = hoverDay;
+    if (checkOut < checkIn) {
+      [checkIn, checkOut] = [checkOut, checkIn];
+    }
+    return { checkIn, checkOut };
+  }, [pendingStart, hoverDay, selectedRange]);
 
   useEffect(() => {
     fetch("/api/availability", { cache: "no-store" })
@@ -137,6 +150,7 @@ export default function AvailabilityCalendar({
 
     if (!pendingStart || selectedRange) {
       setPendingStart(key);
+      setHoverDay(null);
       onRangeChange(null);
       return;
     }
@@ -165,6 +179,7 @@ export default function AvailabilityCalendar({
 
     setInvalidFlash(null);
     setPendingStart(null);
+    setHoverDay(null);
     onRangeChange({ checkIn, checkOut });
     document.getElementById("reservation-form")?.scrollIntoView({ behavior: "smooth" });
   }
@@ -192,17 +207,35 @@ export default function AvailabilityCalendar({
     if (isPending) {
       return "bg-sky-500 text-white ring-2 ring-sky-700";
     }
+    if (previewRange) {
+      const inPreview = isDayInRange(key, previewRange);
+      if (inPreview === "middle") {
+        return "bg-sky-100 text-sky-900 cursor-pointer";
+      }
+      if (inPreview === "end" && key === hoverDay) {
+        return "bg-sky-400 text-white ring-2 ring-sky-500 cursor-pointer";
+      }
+      if (inPreview === "start" && key === hoverDay) {
+        return "bg-sky-400 text-white ring-2 ring-sky-500 cursor-pointer";
+      }
+    }
     return "bg-emerald-100 text-emerald-900 hover:bg-emerald-200 cursor-pointer";
   }
 
   return (
-    <div className="rounded-3xl border border-neutral-200 bg-white p-6 shadow-sm md:p-8">
+    <div
+      id="availability-calendar"
+      className="rounded-3xl border border-neutral-200 bg-white p-6 shadow-sm md:p-8"
+    >
       <div className="flex items-center justify-between gap-4">
         <h2 className="text-xl font-semibold text-neutral-900 md:text-2xl">{title}</h2>
         <div className="flex gap-2">
           <button
             type="button"
-            onClick={() => setMonthOffset((m) => m - 1)}
+            onClick={() => {
+              setMonthOffset((m) => m - 1);
+              setHoverDay(null);
+            }}
             className="rounded-full border border-neutral-300 px-3 py-1 text-sm hover:bg-neutral-50"
             aria-label={locale === "fr" ? "Mois précédent" : "Previous month"}
           >
@@ -210,7 +243,10 @@ export default function AvailabilityCalendar({
           </button>
           <button
             type="button"
-            onClick={() => setMonthOffset((m) => m + 1)}
+            onClick={() => {
+              setMonthOffset((m) => m + 1);
+              setHoverDay(null);
+            }}
             className="rounded-full border border-neutral-300 px-3 py-1 text-sm hover:bg-neutral-50"
             aria-label={locale === "fr" ? "Mois suivant" : "Next month"}
           >
@@ -233,6 +269,7 @@ export default function AvailabilityCalendar({
             className="rounded-full border border-sky-300 px-3 py-1 text-xs hover:bg-white"
             onClick={() => {
               setPendingStart(null);
+              setHoverDay(null);
               onRangeChange(null);
             }}
           >
@@ -254,13 +291,21 @@ export default function AvailabilityCalendar({
         ))}
       </div>
 
-      <div className="mt-2 grid grid-cols-7 gap-2">
+      <div
+        className="mt-2 grid grid-cols-7 gap-2"
+        onMouseLeave={() => setHoverDay(null)}
+      >
         {days.map((cell) =>
           cell.day ? (
             <button
               key={cell.key}
               type="button"
               disabled={cell.occupied || cell.accepted}
+              onMouseEnter={() => {
+                if (pendingStart && !selectedRange) {
+                  setHoverDay(cell.key);
+                }
+              }}
               onClick={() =>
                 handleDayClick(
                   cell.key,
