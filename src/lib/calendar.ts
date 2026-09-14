@@ -1,27 +1,56 @@
 const PROPERTY_TIMEZONE = "Europe/Zurich";
 
-function toDateKey(date: Date): string {
-  return date.toLocaleDateString("en-CA", { timeZone: PROPERTY_TIMEZONE });
-}
-
 function addDays(isoDate: string, days: number): string {
   const [y, m, d] = isoDate.split("-").map(Number);
   const next = new Date(Date.UTC(y, m - 1, d + days));
   return next.toISOString().slice(0, 10);
 }
 
-/** iCal end is exclusive for all-day / blocked periods */
-function eachOccupiedDay(start: Date, end: Date): string[] {
-  const days: string[] = [];
-  let cursor = toDateKey(start);
-  const endKey = toDateKey(end);
+/** iCal DATE or DATE-TIME → YYYY-MM-DD (calendar date in property timezone when time is present) */
+function parseIcalDateLine(line: string): string | null {
+  const value = line.split(":").pop()?.trim();
+  if (!value) return null;
 
-  while (cursor < endKey) {
-    days.push(cursor);
-    cursor = addDays(cursor, 1);
+  const dateOnly = value.match(/^(\d{4})(\d{2})(\d{2})$/);
+  if (dateOnly) {
+    return `${dateOnly[1]}-${dateOnly[2]}-${dateOnly[3]}`;
   }
 
-  return days;
+  const dateTime = value.match(/^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})Z?$/);
+  if (dateTime) {
+    const [, y, mo, d, h, mi, s] = dateTime;
+    const utc = new Date(Date.UTC(Number(y), Number(mo) - 1, Number(d), Number(h), Number(mi), Number(s)));
+    return utc.toLocaleDateString("en-CA", { timeZone: PROPERTY_TIMEZONE });
+  }
+
+  return null;
+}
+
+function unfoldIcal(text: string): string {
+  return text.replace(/\r\n/g, "\n").replace(/\n[ \t]/g, "");
+}
+
+export function parseOccupiedDaysFromIcal(text: string): string[] {
+  const unfolded = unfoldIcal(text);
+  const occupied = new Set<string>();
+
+  for (const block of unfolded.split("BEGIN:VEVENT").slice(1)) {
+    const startLine = block.match(/^DTSTART[^\n]*/m)?.[0];
+    const endLine = block.match(/^DTEND[^\n]*/m)?.[0];
+    if (!startLine || !endLine) continue;
+
+    const start = parseIcalDateLine(startLine);
+    const end = parseIcalDateLine(endLine);
+    if (!start || !end) continue;
+
+    let cursor = start;
+    while (cursor < end) {
+      occupied.add(cursor);
+      cursor = addDays(cursor, 1);
+    }
+  }
+
+  return [...occupied];
 }
 
 async function fetchIcalText(url: string): Promise<string> {
@@ -43,23 +72,7 @@ async function fetchIcalText(url: string): Promise<string> {
 
 async function fetchOccupiedFromUrl(url: string): Promise<string[]> {
   const text = await fetchIcalText(url);
-  const mod = await import("node-ical");
-  const ical = mod.default ?? mod;
-  const data = ical.parseICS(text);
-  const occupied = new Set<string>();
-
-  for (const item of Object.values(data)) {
-    if (!item || typeof item !== "object" || item.type !== "VEVENT") continue;
-    const start = item.start;
-    const end = item.end;
-    if (!start || !end) continue;
-
-    for (const day of eachOccupiedDay(new Date(start), new Date(end))) {
-      occupied.add(day);
-    }
-  }
-
-  return [...occupied];
+  return parseOccupiedDaysFromIcal(text);
 }
 
 export type FeedSyncResult = {
