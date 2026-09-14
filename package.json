@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "resend:sync-templates": "node scripts/sync-resend-templates.mjs",
+    "resend:sync-promo-nov2026": "curl -sS \"https://www.bnb-valais.ch/api/newsletter/sync-promo-template\"",
     "setup:resend": "node scripts/setup-resend-production.mjs",
     "setup:vercel-checklist": "bash scripts/print-vercel-env-checklist.sh",
     "vercel:newsletter-env": "node scripts/vercel-set-newsletter-env.mjs"

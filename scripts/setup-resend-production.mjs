@@ -126,6 +126,10 @@ async function main() {
     TOPIC_NAME,
     "» + {{{RESEND_UNSUBSCRIBE_URL}}}\n",
   );
+  console.log(
+    "Promo test nov. 2026: après deploy → npm run resend:sync-promo-nov2026",
+  );
+  console.log("  (alias bnb-valais-promo-nov2026-test, code NOV2026-10)\n");
 }
 
 main().catch((err) => {
