@@ -2,6 +2,12 @@
 
 import { useEffect, useMemo, useState } from "react";
 import type { Locale } from "@/lib/i18n";
+import {
+  formatRangeLabel,
+  isDayInRange,
+  isRangeAvailable,
+  type DateRange,
+} from "@/lib/typeform-prefill";
 
 type AvailabilityCalendarProps = {
   locale: Locale;
@@ -10,6 +16,12 @@ type AvailabilityCalendarProps = {
   legendBusy: string;
   latencyNote: string;
   notConfiguredNote: string;
+  selectHint: string;
+  selectedRangeLabel: string;
+  clearRangeLabel: string;
+  rangeInvalidHint: string;
+  selectedRange: DateRange | null;
+  onRangeChange: (range: DateRange | null) => void;
 };
 
 type AvailabilityResponse = {
@@ -37,9 +49,17 @@ export default function AvailabilityCalendar({
   legendBusy,
   latencyNote,
   notConfiguredNote,
+  selectHint,
+  selectedRangeLabel,
+  clearRangeLabel,
+  rangeInvalidHint,
+  selectedRange,
+  onRangeChange,
 }: AvailabilityCalendarProps) {
   const [data, setData] = useState<AvailabilityResponse | null>(null);
   const [monthOffset, setMonthOffset] = useState(0);
+  const [pendingStart, setPendingStart] = useState<string | null>(null);
+  const [invalidFlash, setInvalidFlash] = useState(false);
 
   useEffect(() => {
     fetch("/api/availability", { cache: "no-store" })
@@ -81,6 +101,56 @@ export default function AvailabilityCalendar({
     return cells;
   }, [monthDate, occupiedSet]);
 
+  function handleDayClick(key: string, occupied: boolean) {
+    if (occupied) return;
+
+    if (!pendingStart || selectedRange) {
+      setPendingStart(key);
+      onRangeChange(null);
+      return;
+    }
+
+    let checkIn = pendingStart;
+    let checkOut = key;
+    if (checkOut < checkIn) {
+      [checkIn, checkOut] = [checkOut, checkIn];
+    }
+
+    if (!isRangeAvailable(checkIn, checkOut, occupiedSet)) {
+      setInvalidFlash(true);
+      setPendingStart(key);
+      onRangeChange(null);
+      window.setTimeout(() => setInvalidFlash(false), 2500);
+      return;
+    }
+
+    setPendingStart(null);
+    onRangeChange({ checkIn, checkOut });
+    document.getElementById("reservation-form")?.scrollIntoView({ behavior: "smooth" });
+  }
+
+  function dayClasses(
+    key: string,
+    occupied: boolean,
+  ): string {
+    const inRange = isDayInRange(key, selectedRange);
+    const isPending = pendingStart === key;
+
+    if (occupied) {
+      return "bg-rose-200 text-rose-900 cursor-not-allowed";
+    }
+    if (inRange === "start" || inRange === "end") {
+      return "bg-sky-600 text-white ring-2 ring-sky-800";
+    }
+    if (inRange === "middle") {
+      return "bg-sky-200 text-sky-950";
+    }
+    if (isPending) {
+      return "bg-sky-500 text-white ring-2 ring-sky-700";
+    }
+    return "bg-emerald-100 text-emerald-900 hover:bg-emerald-200 cursor-pointer";
+  }
+
   return (
     <div className="rounded-3xl border border-neutral-200 bg-white p-6 shadow-sm md:p-8">
       <div className="flex items-center justify-between gap-4">
@@ -106,6 +176,30 @@ export default function AvailabilityCalendar({
       </div>
 
       <p className="mt-2 capitalize text-neutral-600">{monthLabel(monthDate, locale)}</p>
+      <p className="mt-3 text-sm text-neutral-600">{selectHint}</p>
+
+      {selectedRange ? (
+        <div className="mt-3 flex flex-wrap items-center gap-3 rounded-xl bg-sky-50 px-4 py-3 text-sm text-sky-950">
+          <span>
+            {selectedRangeLabel}{" "}
+            <strong>{formatRangeLabel(selectedRange, locale)}</strong>
+          </span>
+          <button
+            type="button"
+            className="rounded-full border border-sky-300 px-3 py-1 text-xs hover:bg-white"
+            onClick={() => {
+              setPendingStart(null);
+              onRangeChange(null);
+            }}
+          >
+            {clearRangeLabel}
+          </button>
+        </div>
+      ) : null}
+
+      {invalidFlash ? (
+        <p className="mt-2 text-sm text-amber-800">{rangeInvalidHint}</p>
+      ) : null}
 
       <div className="mt-4 grid grid-cols-7 gap-2 text-center text-xs font-medium text-neutral-500">
         {weekdayLabels[locale].map((label, index) => (
@@ -116,16 +210,15 @@ export default function AvailabilityCalendar({
       <div className="mt-2 grid grid-cols-7 gap-2">
         {days.map((cell) =>
           cell.day ? (
-            <div
+            <button
               key={cell.key}
-              className={`flex aspect-square items-center justify-center rounded-xl text-sm font-medium ${
-                cell.occupied
-                  ? "bg-rose-200 text-rose-900"
-                  : "bg-emerald-100 text-emerald-900"
-              }`}
+              type="button"
+              disabled={cell.occupied}
+              onClick={() => handleDayClick(cell.key, Boolean(cell.occupied))}
+              className={`flex aspect-square items-center justify-center rounded-xl text-sm font-medium transition ${dayClasses(cell.key, Boolean(cell.occupied))}`}
             >
               {cell.day}
-            </div>
+            </button>
           ) : (
             <div key={cell.key} />
           ),
@@ -140,6 +233,10 @@ export default function AvailabilityCalendar({
         <span className="inline-flex items-center gap-2">
           <span className="h-3 w-3 rounded-full bg-rose-400" />
           {legendBusy}
+        </span>
+        <span className="inline-flex items-center gap-2">
+          <span className="h-3 w-3 rounded-full bg-sky-500" />
+          {locale === "fr" ? "Votre séjour" : "Your stay"}
         </span>
       </div>
 

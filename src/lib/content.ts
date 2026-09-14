@@ -69,6 +69,11 @@ export type SiteContent = {
     notConfiguredNote: string;
     formTitle: string;
     formNote: string;
+    formPrefillNote: string;
+    calendarSelectHint: string;
+    selectedRangeLabel: string;
+    clearRangeLabel: string;
+    rangeInvalidHint: string;
   };
   footer: {
     contact: string;
@@ -174,6 +179,14 @@ const content: Record<Locale, SiteContent> = {
       formTitle: "Formulaire de réservation",
       formNote:
         "Indiquez vos dates et vos coordonnées : nous vous confirmons la disponibilité par retour.",
+      formPrefillNote:
+        "Vos dates sélectionnées dans le calendrier sont reprises dans le formulaire ci-dessous.",
+      calendarSelectHint:
+        "Cliquez une date d'arrivée puis une date de départ (jours libres uniquement).",
+      selectedRangeLabel: "Séjour :",
+      clearRangeLabel: "Effacer",
+      rangeInvalidHint:
+        "Cette plage chevauche des dates déjà réservées — choisissez d'autres jours.",
     },
     footer: {
       contact: "Contact",
@@ -277,6 +290,14 @@ const content: Record<Locale, SiteContent> = {
       formTitle: "Booking form",
       formNote:
         "Enter your dates and contact details — we will confirm availability by reply.",
+      formPrefillNote:
+        "The dates you selected in the calendar are passed into the form below.",
+      calendarSelectHint:
+        "Click a check-in date, then a check-out date (available days only).",
+      selectedRangeLabel: "Stay:",
+      clearRangeLabel: "Clear",
+      rangeInvalidHint:
+        "This range overlaps booked dates — please choose different days.",
     },
     footer: {
       contact: "Contact",
