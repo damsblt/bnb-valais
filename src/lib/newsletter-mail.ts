@@ -119,12 +119,16 @@ export async function addContactToResendNewsletter(
   }
 
   const segmentId = process.env.RESEND_NEWSLETTER_SEGMENT_ID?.trim();
+  const topicId = process.env.RESEND_NEWSLETTER_TOPIC_ID?.trim();
   const body: Record<string, unknown> = {
     email,
     unsubscribed: false,
   };
   if (segmentId) {
     body.segments = [{ id: segmentId }];
+  }
+  if (topicId) {
+    body.topics = [{ id: topicId, subscription: "opt_in" }];
   }
 
   const res = await fetch("https://api.resend.com/contacts", {
@@ -140,8 +144,65 @@ export async function addContactToResendNewsletter(
 
   const errText = await res.text();
   if (res.status === 409 || /already exists/i.test(errText)) {
-    return { ok: true };
+    return await patchExistingNewsletterContact(apiKey, email, segmentId, topicId);
   }
 
   return { ok: false, error: errText || `HTTP ${res.status}` };
+}
+
+async function patchExistingNewsletterContact(
+  apiKey: string,
+  email: string,
+  segmentId?: string,
+  topicId?: string,
+): Promise<{ ok: boolean; error?: string }> {
+  const encoded = encodeURIComponent(email);
+  const headers = {
+    Authorization: `Bearer ${apiKey}`,
+    "Content-Type": "application/json",
+  };
+
+  const patchRes = await fetch(`https://api.resend.com/contacts/${encoded}`, {
+    method: "PATCH",
+    headers,
+    body: JSON.stringify({ unsubscribed: false }),
+  });
+  if (!patchRes.ok) {
+    return {
+      ok: false,
+      error: (await patchRes.text()) || `HTTP ${patchRes.status}`,
+    };
+  }
+
+  if (segmentId) {
+    const segRes = await fetch(
+      `https://api.resend.com/contacts/${encoded}/segments/${segmentId}`,
+      { method: "POST", headers: { Authorization: `Bearer ${apiKey}` } },
+    );
+    if (!segRes.ok && segRes.status !== 409) {
+      return {
+        ok: false,
+        error: (await segRes.text()) || `HTTP ${segRes.status}`,
+      };
+    }
+  }
+
+  if (topicId) {
+    const topRes = await fetch(
+      `https://api.resend.com/contacts/${encoded}/topics`,
+      {
+        method: "PATCH",
+        headers,
+        body: JSON.stringify([{ id: topicId, subscription: "opt_in" }]),
+      },
+    );
+    if (!topRes.ok) {
+      return {
+        ok: false,
+        error: (await topRes.text()) || `HTTP ${topRes.status}`,
+      };
+    }
+  }
+
+  return { ok: true };
 }
