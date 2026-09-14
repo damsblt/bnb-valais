@@ -4,12 +4,20 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const { occupied, sources } = await getOccupiedDates();
+  const { occupied, sources, feeds } = await getOccupiedDates();
 
-  return Response.json({
-    occupied,
-    sources,
-    syncedAt: new Date().toISOString(),
-    configured: sources.length > 0,
-  });
+  return Response.json(
+    {
+      occupied,
+      sources,
+      feeds,
+      syncedAt: new Date().toISOString(),
+      configured: sources.length > 0,
+    },
+    {
+      headers: {
+        "Cache-Control": "no-store, max-age=0",
+      },
+    },
+  );
 }
