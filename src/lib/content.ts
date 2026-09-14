@@ -49,8 +49,13 @@ export type SiteContent = {
   reservations: {
     title: string;
     subtitle: string;
-    cta: string;
-    widgetNote: string;
+    calendarTitle: string;
+    legendFree: string;
+    legendBusy: string;
+    latencyNote: string;
+    notConfiguredNote: string;
+    formTitle: string;
+    formNote: string;
   };
   footer: {
     contact: string;
@@ -129,12 +134,19 @@ const content: Record<Locale, SiteContent> = {
       tip: "Astuce : réagir dans les 30 minutes réduit fortement le risque de double réservation. Cette page n'est pas indexée par les moteurs de recherche.",
     },
     reservations: {
-      title: "Réservation",
+      title: "Demande de réservation",
       subtitle:
-        "Consultez les disponibilités et réservez Le Nid de la Sittelle directement sur Booking.com.",
-      cta: "Voir sur Booking.com",
-      widgetNote:
-        "Cliquez pour accéder directement à la fiche Le Nid de la Sittelle sur Booking.com et réserver.",
+        "Consultez les disponibilités puis envoyez votre demande via le formulaire ci-dessous.",
+      calendarTitle: "Disponibilités",
+      legendFree: "Libre",
+      legendBusy: "Occupé (Booking / Airbnb)",
+      latencyNote:
+        "Calendrier synchronisé via iCal (Booking.com et Airbnb). Délai habituel : 2 à 6 heures.",
+      notConfiguredNote:
+        "Les liens iCal Booking/Airbnb ne sont pas encore configurés sur le serveur — toutes les dates apparaissent libres.",
+      formTitle: "Formulaire de réservation",
+      formNote:
+        "Indiquez vos dates et vos coordonnées : nous vous confirmons la disponibilité par retour.",
     },
     footer: {
       contact: "Contact",
@@ -211,12 +223,19 @@ const content: Record<Locale, SiteContent> = {
       tip: "Tip: reacting within 30 minutes greatly reduces double-booking risk. This page is not indexed by search engines.",
     },
     reservations: {
-      title: "Booking",
+      title: "Booking request",
       subtitle:
-        "Check availability and book Le Nid de la Sittelle directly on Booking.com.",
-      cta: "View on Booking.com",
-      widgetNote:
-        "Click to go directly to the Le Nid de la Sittelle listing on Booking.com and book.",
+        "Check availability, then send your request using the form below.",
+      calendarTitle: "Availability",
+      legendFree: "Available",
+      legendBusy: "Occupied (Booking / Airbnb)",
+      latencyNote:
+        "Calendar synced via iCal (Booking.com and Airbnb). Typical delay: 2 to 6 hours.",
+      notConfiguredNote:
+        "Booking/Airbnb iCal links are not configured on the server yet — all dates show as available.",
+      formTitle: "Booking form",
+      formNote:
+        "Enter your dates and contact details — we will confirm availability by reply.",
     },
     footer: {
       contact: "Contact",

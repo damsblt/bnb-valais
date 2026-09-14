@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
 import type { Locale } from "@/lib/i18n";
 import { propertyPhotos } from "@/lib/gallery";
+import { encodePhotoPath } from "@/lib/photos";
 
 type PhotoGalleryProps = {
   locale: Locale;
@@ -11,10 +12,6 @@ type PhotoGalleryProps = {
   showAllLabel: string;
   morePhotosTemplate: string;
 };
-
-function photoSrc(path: string) {
-  return path.split("/").map(encodeURIComponent).join("/").replace(/^%2F/, "/");
-}
 
 export default function PhotoGallery({
   locale,
@@ -84,7 +81,7 @@ export default function PhotoGallery({
                   aria-label={photo.alt[locale]}
                 >
                   <Image
-                    src={photoSrc(photo.src)}
+                    src={encodePhotoPath(photo.src)}
                     alt={photo.alt[locale]}
                     fill
                     className="object-cover transition duration-300 group-hover:scale-105"
@@ -109,7 +106,7 @@ export default function PhotoGallery({
               className="relative mb-2 block h-56 w-full overflow-hidden rounded-xl bg-neutral-100"
             >
               <Image
-                src={photoSrc(propertyPhotos[0].src)}
+                src={encodePhotoPath(propertyPhotos[0].src)}
                 alt={propertyPhotos[0].alt[locale]}
                 fill
                 className="object-cover"
@@ -126,7 +123,7 @@ export default function PhotoGallery({
                   className="relative h-28 overflow-hidden rounded-lg bg-neutral-100"
                 >
                   <Image
-                    src={photoSrc(photo.src)}
+                    src={encodePhotoPath(photo.src)}
                     alt={photo.alt[locale]}
                     fill
                     className="object-cover"
@@ -184,7 +181,7 @@ export default function PhotoGallery({
 
             <div className="relative h-full w-full max-h-[75vh] max-w-6xl">
               <Image
-                src={photoSrc(propertyPhotos[lightboxIndex].src)}
+                src={encodePhotoPath(propertyPhotos[lightboxIndex].src)}
                 alt={propertyPhotos[lightboxIndex].alt[locale]}
                 fill
                 className="object-contain"
@@ -218,7 +215,7 @@ export default function PhotoGallery({
                   }`}
                 >
                   <Image
-                    src={photoSrc(photo.src)}
+                    src={encodePhotoPath(photo.src)}
                     alt=""
                     fill
                     className="object-cover"

@@ -1,3 +1,4 @@
+import ApartmentGallerySection from "@/components/ApartmentGallerySection";
 import IntroSection from "@/components/IntroSection";
 import LocationSection from "@/components/LocationSection";
 import PhotoGallery from "@/components/PhotoGallery";
@@ -33,12 +34,9 @@ export default function HomePage({ locale }: HomePageProps) {
         }}
       />
 
-      <SplitSection
+      <ApartmentGallerySection
         title={sections.apartment.title}
         paragraphs={sections.apartment.paragraphs}
-        imageSrc={splitImages.apartment}
-        imageAlt={sections.apartment.title}
-        imagePosition="right"
         cta={{
           label: sections.apartment.cta,
           href: reservationsHref,

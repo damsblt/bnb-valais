@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { encodePhotoPath } from "@/lib/photos";
 
 type SplitSectionProps = {
   title: string;
@@ -13,13 +14,6 @@ type SplitSectionProps = {
     external?: boolean;
   };
 };
-
-function encodePhotoPath(path: string) {
-  return path
-    .split("/")
-    .map((part, index) => (index === 0 && part === "" ? "" : encodeURIComponent(part)))
-    .join("/");
-}
 
 export default function SplitSection({
   title,
