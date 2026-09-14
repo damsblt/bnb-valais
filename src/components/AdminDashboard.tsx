@@ -1,5 +1,6 @@
 "use client";
 
+import AdminOrangeCalendar from "@/components/AdminOrangeCalendar";
 import AdminReservationRequests from "@/components/AdminReservationRequests";
 import AdminTypeformSync from "@/components/AdminTypeformSync";
 import { adminLinks } from "@/lib/admin";
@@ -63,6 +64,13 @@ export default function AdminDashboard({
         typeformConfigured={typeformConfigured}
         emailConfigured={emailConfigured}
       />
+
+      {calendarStorageConfigured ? (
+        <AdminOrangeCalendar
+          content={content}
+          typeformConfigured={typeformConfigured}
+        />
+      ) : null}
 
       {typeformConfigured ? <AdminTypeformSync /> : null}
 

@@ -60,6 +60,10 @@ export type SiteContent = {
     calendarMarkedOnAccept: string;
     releaseDatesButton: string;
     releaseDatesSuccess: string;
+    orangeCalendarTitle: string;
+    orangeCalendarHint: string;
+    orangeCalendarOrphan: string;
+    orangeCalendarLoading: string;
     setupMissing: string;
     checklistTitle: string;
     checklist: string[];
@@ -179,6 +183,11 @@ const content: Record<Locale, SiteContent> = {
       releaseDatesButton: "Libérer les dates (revenir au vert)",
       releaseDatesSuccess:
         "Dates retirées du calendrier public — elles s’affichent à nouveau en vert.",
+      orangeCalendarTitle: "Dates orange sur le calendrier public",
+      orangeCalendarHint:
+        "Ces séjours viennent des acceptations admin (Blob). Supprimer une réponse dans Typeform ne les retire pas ici.",
+      orangeCalendarOrphan: "Typeform supprimé",
+      orangeCalendarLoading: "Chargement du calendrier orange…",
       setupMissing:
         "Configuration incomplète : ajoutez ADMIN_PASSWORD et TYPEFORM_ACCESS_TOKEN sur Vercel, puis redéployez.",
       checklistTitle: "Checklist — réservation Booking / Airbnb",
@@ -311,6 +320,11 @@ const content: Record<Locale, SiteContent> = {
       releaseDatesButton: "Release dates (back to green)",
       releaseDatesSuccess:
         "Dates removed from the public calendar — they show as available again.",
+      orangeCalendarTitle: "Orange dates on the public calendar",
+      orangeCalendarHint:
+        "These stays come from admin acceptances (Blob). Deleting a Typeform response does not remove them here.",
+      orangeCalendarOrphan: "Typeform deleted",
+      orangeCalendarLoading: "Loading orange calendar entries…",
       setupMissing:
         "Missing setup: add ADMIN_PASSWORD and TYPEFORM_ACCESS_TOKEN on Vercel, then redeploy.",
       checklistTitle: "Checklist — Booking / Airbnb reservation",

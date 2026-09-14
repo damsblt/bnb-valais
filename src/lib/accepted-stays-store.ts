@@ -215,6 +215,21 @@ export async function releaseCalendarDates(responseId: string): Promise<boolean>
   return true;
 }
 
+/** Libère une plage exacte (ex. après suppression de la réponse Typeform). */
+export async function releaseCalendarDatesByRange(
+  checkIn: string,
+  checkOut: string,
+): Promise<boolean> {
+  const store = await readStore();
+  const before = store.stays.length;
+  const stays = store.stays.filter(
+    (s) => !(s.checkIn === checkIn && s.checkOut === checkOut),
+  );
+  if (stays.length === before) return false;
+  await writeStore({ stays, decisions: store.decisions });
+  return true;
+}
+
 /** @deprecated Use recordReservationOutcome */
 export async function recordAcceptedStay(input: {
   responseId: string;
