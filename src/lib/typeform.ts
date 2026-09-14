@@ -18,7 +18,7 @@ type TypeformField = {
 };
 
 type TypeformAnswer = {
-  field: { id: string; type: string };
+  field: { id: string; type: string; ref?: string };
   type: string;
   text?: string;
   email?: string;
@@ -79,6 +79,132 @@ function flattenFields(fields: TypeformField[]): TypeformField[] {
     }
   }
   return out;
+}
+
+type FieldRegistry = {
+  flat: TypeformField[];
+  byKey: Map<string, TypeformField>;
+};
+
+function buildFieldRegistry(fields: TypeformField[]): FieldRegistry {
+  const flat = flattenFields(fields);
+  const byKey = new Map<string, TypeformField>();
+  for (const field of flat) {
+    byKey.set(field.id, field);
+    if (field.ref) byKey.set(field.ref, field);
+  }
+  return { flat, byKey };
+}
+
+function findAnswerForField(
+  field: TypeformField,
+  answers: TypeformAnswer[],
+): TypeformAnswer | undefined {
+  return answers.find(
+    (a) =>
+      a.field.id === field.id ||
+      (a.field.ref && a.field.ref === field.ref) ||
+      a.field.id === field.ref,
+  );
+}
+
+function isGenericLabel(title: string | undefined): boolean {
+  const t = title?.trim() ?? "";
+  return !t || /^champ$/i.test(t) || /^field$/i.test(t) || /^question$/i.test(t);
+}
+
+function defaultLabelForTextField(
+  field: TypeformField,
+  textFieldIndex: number,
+): string {
+  const hint = `${field.title ?? ""} ${field.ref ?? ""}`;
+  if (/prénom|prenom|first/i.test(hint)) return "Prénom";
+  if (/(^|\s)nom(\s|$)|last.?name|family/i.test(hint)) return "Nom";
+  if (textFieldIndex === 0) return "Prénom";
+  if (textFieldIndex === 1) return "Nom";
+  return field.title?.trim() || "Champ";
+}
+
+function resolveAnswerLabel(
+  field: TypeformField,
+  answer: TypeformAnswer,
+  textFieldIndex: number,
+): string {
+  const title = field.title?.trim();
+  if (title && !isGenericLabel(title)) return title;
+
+  const answerType = answer.type || field.type;
+  if (answerType === "email") return "Adresse email";
+  if (answerType === "phone_number" || field.type === "phone_number") {
+    return "Téléphone";
+  }
+  if (
+    answerType === "text" ||
+    answerType === "short_text" ||
+    field.type === "short_text" ||
+    field.type === "long_text"
+  ) {
+    return defaultLabelForTextField(field, textFieldIndex);
+  }
+
+  return title || "Champ";
+}
+
+function mapFormAnswers(
+  answers: TypeformAnswer[],
+  registry: FieldRegistry,
+): ReservationAnswer[] {
+  const used = new Set<TypeformAnswer>();
+  const result: ReservationAnswer[] = [];
+  let textFieldIndex = 0;
+
+  for (const field of registry.flat) {
+    if (field.type === "date") continue;
+
+    const answer = findAnswerForField(field, answers);
+    if (!answer || used.has(answer)) continue;
+
+    const value = answerToString(answer);
+    if (!value) continue;
+
+    used.add(answer);
+    const label = resolveAnswerLabel(field, answer, textFieldIndex);
+    if (
+      answer.type === "text" ||
+      answer.type === "short_text" ||
+      field.type === "short_text"
+    ) {
+      textFieldIndex += 1;
+    }
+
+    result.push({ label, value });
+  }
+
+  for (const answer of answers) {
+    if (used.has(answer)) continue;
+    const value = answerToString(answer);
+    if (!value) continue;
+
+    const meta =
+      registry.byKey.get(answer.field.id) ??
+      (answer.field.ref ? registry.byKey.get(answer.field.ref) : undefined);
+
+    if (meta?.type === "date" || answer.type === "date") continue;
+
+    const label = meta
+      ? resolveAnswerLabel(meta, answer, textFieldIndex)
+      : answer.type === "email"
+        ? "Adresse email"
+        : "Champ";
+
+    if (answer.type === "text" || answer.type === "short_text") {
+      textFieldIndex += 1;
+    }
+
+    result.push({ label, value });
+  }
+
+  return result;
 }
 
 function answerToString(answer: TypeformAnswer): string | null {
@@ -252,10 +378,7 @@ export async function fetchReservationRequests(): Promise<ReservationRequest[]> 
   const formJson = (await formRes.json()) as {
     fields?: TypeformField[];
   };
-  const fieldTitles = new Map<string, string>();
-  for (const field of flattenFields(formJson.fields ?? [])) {
-    fieldTitles.set(field.id, field.title);
-  }
+  const registry = buildFieldRegistry(formJson.fields ?? []);
 
   const responsesRes = await typeformFetch(
     `/forms/${formId}/responses?page_size=50&sort=submitted_at,desc`,
@@ -285,14 +408,7 @@ export async function fetchReservationRequests(): Promise<ReservationRequest[]> 
 
   return (responsesJson.items ?? []).map((item) => {
     const stayDates = parseStayDates(item.hidden);
-    const formAnswers: ReservationAnswer[] = (item.answers ?? [])
-      .map((answer) => {
-        const label = fieldTitles.get(answer.field.id) ?? "Champ";
-        const value = answerToString(answer);
-        if (!value) return null;
-        return { label, value };
-      })
-      .filter((a): a is ReservationAnswer => a !== null);
+    const formAnswers = mapFormAnswers(item.answers ?? [], registry);
 
     const answers = [...hiddenToAnswers(stayDates), ...formAnswers];
 
