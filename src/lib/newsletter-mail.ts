@@ -118,8 +118,16 @@ export async function addContactToResendNewsletter(
     return { ok: false, error: "RESEND_API_KEY not configured" };
   }
 
-  const segmentId = process.env.RESEND_NEWSLETTER_SEGMENT_ID?.trim();
-  const topicId = process.env.RESEND_NEWSLETTER_TOPIC_ID?.trim();
+  const { ensureNewsletterAudience } = await import(
+    "@/lib/resend-newsletter-audience"
+  );
+  const audience = await ensureNewsletterAudience();
+  if (!audience.ok) {
+    return { ok: false, error: audience.error };
+  }
+
+  const segmentId = audience.ids.segmentId;
+  const topicId = audience.ids.topicId;
   const body: Record<string, unknown> = {
     email,
     unsubscribed: false,

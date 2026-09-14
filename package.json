@@ -9,7 +9,8 @@
     "lint": "eslint",
     "resend:sync-templates": "node scripts/sync-resend-templates.mjs",
     "setup:resend": "node scripts/setup-resend-production.mjs",
-    "setup:vercel-checklist": "bash scripts/print-vercel-env-checklist.sh"
+    "setup:vercel-checklist": "bash scripts/print-vercel-env-checklist.sh",
+    "vercel:newsletter-env": "node scripts/vercel-set-newsletter-env.mjs"
   },
   "dependencies": {
     "@typeform/embed": "^6.0.0",
