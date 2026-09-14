@@ -6,6 +6,7 @@ export const TYPEFORM_DEFAULT_API_FORM_ID = "ZD3ppqKS";
 
 type TypeformField = {
   id: string;
+  ref: string;
   title: string;
   type: string;
   properties?: { fields?: TypeformField[] };
@@ -130,6 +131,73 @@ async function typeformFetch(path: string): Promise<Response> {
     },
     cache: "no-store",
   });
+}
+
+function dateFieldRefsFromForm(fields: TypeformField[]): {
+  checkIn?: string;
+  checkOut?: string;
+} {
+  const dates = flattenFields(fields).filter((f) => f.type === "date");
+  let checkIn: string | undefined;
+  let checkOut: string | undefined;
+
+  for (const field of dates) {
+    const ref = field.ref || field.id;
+    const title = field.title.toLowerCase();
+    if (/arriv|check.?in|d[eé]but|debut/.test(title)) checkIn = ref;
+    if (/d[eé]part|check.?out|fin/.test(title)) checkOut = ref;
+  }
+
+  if (!checkIn && dates[0]) checkIn = dates[0].ref || dates[0].id;
+  if (!checkOut && dates[1]) checkOut = dates[1].ref || dates[1].id;
+
+  return { checkIn, checkOut };
+}
+
+/** Clés passées à Typeform (refs de blocs ou paramètres URL) pour préremplir les dates */
+export async function resolvePrefillFieldKeys(): Promise<{
+  checkIn: string;
+  checkOut: string;
+  source: "env" | "api" | "default";
+}> {
+  const envCheckIn = process.env.TYPEFORM_PARAM_CHECKIN?.trim();
+  const envCheckOut = process.env.TYPEFORM_PARAM_CHECKOUT?.trim();
+  if (envCheckIn && envCheckOut) {
+    return { checkIn: envCheckIn, checkOut: envCheckOut, source: "env" };
+  }
+
+  const token = process.env.TYPEFORM_ACCESS_TOKEN?.trim();
+  if (token) {
+    const formId =
+      process.env.TYPEFORM_API_FORM_ID?.trim() ||
+      process.env.TYPEFORM_FORM_ID?.trim() ||
+      TYPEFORM_DEFAULT_API_FORM_ID;
+
+    if (!isLiveEmbedId(formId)) {
+      try {
+        const res = await typeformFetch(`/forms/${formId}`);
+        if (res.ok) {
+          const formJson = (await res.json()) as { fields?: TypeformField[] };
+          const refs = dateFieldRefsFromForm(formJson.fields ?? []);
+          if (refs.checkIn && refs.checkOut) {
+            return {
+              checkIn: refs.checkIn,
+              checkOut: refs.checkOut,
+              source: "api",
+            };
+          }
+        }
+      } catch {
+        // fall through to defaults
+      }
+    }
+  }
+
+  return {
+    checkIn: envCheckIn || "date_arrivee",
+    checkOut: envCheckOut || "date_depart",
+    source: "default",
+  };
 }
 
 export async function listAccessibleForms(): Promise<TypeformFormSummary[]> {
