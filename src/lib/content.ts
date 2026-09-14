@@ -98,6 +98,29 @@ export type SiteContent = {
     copyright: string;
     credits: string;
   };
+  newsletter: {
+    title: string;
+    description: string;
+    emailPlaceholder: string;
+    consentLabel: string;
+    submitButton: string;
+    submitting: string;
+    successInbox: string;
+    errorGeneric: string;
+  };
+  newsletterConfirm: {
+    successTitle: string;
+    successBody: string;
+    alreadyTitle: string;
+    alreadyBody: string;
+    expiredTitle: string;
+    expiredBody: string;
+    invalidTitle: string;
+    invalidBody: string;
+    errorTitle: string;
+    errorBody: string;
+    backHome: string;
+  };
   language: {
     label: string;
     switchTo: string;
@@ -237,6 +260,36 @@ const content: Record<Locale, SiteContent> = {
       copyright: "Copyright 2025",
       credits: "Site réalisé par db marketing",
     },
+    newsletter: {
+      title: "Actualités",
+      description:
+        "Recevez des nouvelles du Nid de la Sittelle (double confirmation par e-mail).",
+      emailPlaceholder: "Votre adresse e-mail",
+      consentLabel:
+        "J'accepte de recevoir des e-mails d'information de BnB Valais. Je peux me désinscrire à tout moment.",
+      submitButton: "S'inscrire",
+      submitting: "Envoi…",
+      successInbox:
+        "Consultez votre boîte mail et cliquez sur le lien de confirmation (valable 7 jours).",
+      errorGeneric: "Impossible d'envoyer l'e-mail pour le moment. Réessayez plus tard.",
+    },
+    newsletterConfirm: {
+      successTitle: "Inscription confirmée",
+      successBody:
+        "Merci ! Vous recevrez nos prochaines actualités. Vous pourrez vous désinscrire depuis chaque e-mail.",
+      alreadyTitle: "Déjà inscrit",
+      alreadyBody: "Cette adresse est déjà inscrite à nos actualités.",
+      expiredTitle: "Lien expiré",
+      expiredBody:
+        "Ce lien de confirmation a expiré. Inscrivez-vous à nouveau depuis le pied de page du site.",
+      invalidTitle: "Lien invalide",
+      invalidBody:
+        "Ce lien n'est pas valide ou a déjà été utilisé. Inscrivez-vous à nouveau si besoin.",
+      errorTitle: "Confirmation incomplète",
+      errorBody:
+        "Votre clic a été enregistré mais l'ajout à la liste a échoué. Contactez-nous ou réessayez.",
+      backHome: "Retour à l'accueil",
+    },
     language: {
       label: "Français",
       switchTo: "English",
@@ -373,6 +426,36 @@ const content: Record<Locale, SiteContent> = {
       contact: "Contact",
       copyright: "Copyright 2025",
       credits: "Website designed by db marketing",
+    },
+    newsletter: {
+      title: "Newsletter",
+      description:
+        "News from Le Nid de la Sittelle (double opt-in confirmation email).",
+      emailPlaceholder: "Your email address",
+      consentLabel:
+        "I agree to receive informational emails from BnB Valais. I can unsubscribe at any time.",
+      submitButton: "Subscribe",
+      submitting: "Sending…",
+      successInbox:
+        "Check your inbox and click the confirmation link (valid for 7 days).",
+      errorGeneric: "Could not send the email right now. Please try again later.",
+    },
+    newsletterConfirm: {
+      successTitle: "Subscription confirmed",
+      successBody:
+        "Thank you! You will receive our updates. You can unsubscribe from any email.",
+      alreadyTitle: "Already subscribed",
+      alreadyBody: "This address is already on our mailing list.",
+      expiredTitle: "Link expired",
+      expiredBody:
+        "This confirmation link has expired. Please subscribe again from the website footer.",
+      invalidTitle: "Invalid link",
+      invalidBody:
+        "This link is not valid or was already used. Subscribe again if needed.",
+      errorTitle: "Confirmation incomplete",
+      errorBody:
+        "Your click was recorded but adding you to the list failed. Contact us or try again.",
+      backHome: "Back to home",
     },
     language: {
       label: "English",

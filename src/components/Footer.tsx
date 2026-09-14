@@ -1,4 +1,5 @@
 import Link from "next/link";
+import NewsletterSignup from "@/components/NewsletterSignup";
 import type { Locale } from "@/lib/i18n";
 import { getContent } from "@/lib/content";
 
@@ -7,7 +8,7 @@ type FooterProps = {
 };
 
 export default function Footer({ locale }: FooterProps) {
-  const { footer } = getContent(locale);
+  const { footer, newsletter } = getContent(locale);
 
   return (
     <footer className="mt-auto border-t border-neutral-200/80 bg-neutral-50">
@@ -32,7 +33,7 @@ export default function Footer({ locale }: FooterProps) {
           </div>
         </div>
 
-        <div className="md:text-center" />
+        <NewsletterSignup locale={locale} copy={newsletter} />
 
         <div className="text-sm text-neutral-600 md:text-right">
           <p>{footer.copyright}</p>
