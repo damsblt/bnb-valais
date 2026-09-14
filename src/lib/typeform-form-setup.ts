@@ -7,6 +7,7 @@ import {
 type FormField = {
   type: string;
   title?: string;
+  ref?: string;
   properties?: { fields?: FormField[] };
   [key: string]: unknown;
 };
@@ -14,6 +15,7 @@ type FormField = {
 type TypeformForm = {
   hidden?: string[];
   fields?: FormField[];
+  logic?: unknown[];
   [key: string]: unknown;
 };
 
@@ -24,6 +26,18 @@ export type TypeformFormSyncResult = {
   dateQuestionsAfter: number;
   hiddenConfigured: boolean;
 };
+
+const READ_ONLY_FORM_KEYS = new Set([
+  "id",
+  "_links",
+  "created_at",
+  "last_updated_at",
+  "published_at",
+  "display_url",
+  "public_url",
+  "link_display",
+  "version",
+]);
 
 async function typeformFetch(
   path: string,
@@ -61,6 +75,32 @@ function removeDateQuestions(fields: FormField[]): FormField[] {
     });
 }
 
+function collectDateFieldRefs(fields: FormField[] | undefined): Set<string> {
+  const refs = new Set<string>();
+  if (!fields) return refs;
+  for (const field of fields) {
+    if (field.type === "date" && field.ref) refs.add(field.ref);
+    if (field.type === "group" && field.properties?.fields) {
+      for (const r of collectDateFieldRefs(field.properties.fields)) refs.add(r);
+    }
+  }
+  return refs;
+}
+
+function stripLogicForRemovedDates(
+  logic: unknown[] | undefined,
+  removedRefs: Set<string>,
+): unknown[] | undefined {
+  if (!logic?.length || removedRefs.size === 0) return logic;
+  return logic.filter((entry) => {
+    const text = JSON.stringify(entry);
+    for (const ref of removedRefs) {
+      if (text.includes(ref)) return false;
+    }
+    return true;
+  });
+}
+
 export function countDateQuestions(fields: FormField[] | undefined): number {
   if (!fields) return 0;
   let count = 0;
@@ -73,55 +113,26 @@ export function countDateQuestions(fields: FormField[] | undefined): number {
   return count;
 }
 
-function buildUpdatePayload(form: TypeformForm): Record<string, unknown> {
-  const writableKeys = [
-    "title",
-    "type",
-    "settings",
-    "theme",
-    "variables",
-    "hidden",
-    "fields",
-    "logic",
-    "welcome_screens",
-    "thankyou_screens",
-  ] as const;
-
-  const payload: Record<string, unknown> = {};
-  for (const key of writableKeys) {
-    if (form[key] !== undefined) {
-      payload[key] = form[key];
+function buildPutBody(form: TypeformForm): TypeformForm {
+  const body: TypeformForm = {};
+  for (const [key, value] of Object.entries(form)) {
+    if (!READ_ONLY_FORM_KEYS.has(key) && value !== undefined) {
+      body[key] = value;
     }
   }
 
-  payload.hidden = [
+  const removedRefs = collectDateFieldRefs(form.fields);
+  body.hidden = [
     ...new Set([
-      ...(form.hidden ?? []),
+      ...(Array.isArray(form.hidden) ? form.hidden : []),
       TYPEFORM_PARAM_ARRIVAL,
       TYPEFORM_PARAM_DEPARTURE,
     ]),
   ];
-  payload.fields = removeDateQuestions(form.fields ?? []);
+  body.fields = removeDateQuestions(form.fields ?? []);
+  body.logic = stripLogicForRemovedDates(form.logic, removedRefs);
 
-  return payload;
-}
-
-async function updateForm(
-  formId: string,
-  payload: Record<string, unknown>,
-): Promise<Response> {
-  const patch = await typeformFetch(`/forms/${formId}`, {
-    method: "PATCH",
-    body: JSON.stringify(payload),
-  });
-  if (patch.ok || patch.status !== 405) {
-    return patch;
-  }
-
-  return typeformFetch(`/forms/${formId}`, {
-    method: "PUT",
-    body: JSON.stringify(payload),
-  });
+  return body;
 }
 
 export async function getTypeformFormDateStatus(): Promise<{
@@ -143,10 +154,7 @@ export async function getTypeformFormDateStatus(): Promise<{
   };
 }
 
-/**
- * Typeform ne permet pas de préremplir les champs « date ».
- * On enregistre date_arrivee / date_depart en hidden et on retire les questions date du formulaire.
- */
+/** PUT complet : seule façon fiable de modifier fields + hidden (PATCH = JSON Patch limité). */
 export async function ensureTypeformPrefillOnForm(): Promise<TypeformFormSyncResult> {
   const formId = TYPEFORM_DEFAULT_API_FORM_ID;
   const hiddenParams = [TYPEFORM_PARAM_ARRIVAL, TYPEFORM_PARAM_DEPARTURE];
@@ -177,43 +185,45 @@ export async function ensureTypeformPrefillOnForm(): Promise<TypeformFormSyncRes
     };
   }
 
-  const payload = buildUpdatePayload(form);
-  const updateRes = await updateForm(formId, payload);
+  const putBody = buildPutBody(form);
+  const putRes = await typeformFetch(`/forms/${formId}`, {
+    method: "PUT",
+    body: JSON.stringify(putBody),
+  });
 
-  if (updateRes.ok) {
-    const verify = await typeformFetch(`/forms/${formId}`);
-    const updated = verify.ok ? ((await verify.json()) as TypeformForm) : form;
-    const after = countDateQuestions(updated.fields);
-
-    return {
-      ok: after === 0,
-      detail:
-        after === 0
-          ? "questions date retirées du Typeform ; dates via le calendrier du site"
-          : `mise à jour envoyée mais ${after} question(s) date encore présente(s) — réessayez ou supprimez-les dans Typeform`,
-      dateQuestionsBefore: before,
-      dateQuestionsAfter: after,
-      hiddenConfigured: true,
-    };
-  }
-
-  const errText = await updateRes.text();
-  if (updateRes.status === 403) {
+  if (!putRes.ok) {
+    const errText = await putRes.text();
+    if (putRes.status === 403) {
+      return {
+        ok: false,
+        detail:
+          "token sans forms:write — ajoutez « Write forms » au token Typeform sur Vercel",
+        dateQuestionsBefore: before,
+        dateQuestionsAfter: before,
+        hiddenConfigured: hiddenOk,
+      };
+    }
     return {
       ok: false,
-      detail:
-        "token sans forms:write — créez un token Typeform avec « Write forms », mettez-le sur Vercel, puis cliquez « Adapter le formulaire » dans /admin",
+      detail: errText || `PUT HTTP ${putRes.status}`,
       dateQuestionsBefore: before,
       dateQuestionsAfter: before,
       hiddenConfigured: hiddenOk,
     };
   }
 
+  const verify = await typeformFetch(`/forms/${formId}`);
+  const updated = verify.ok ? ((await verify.json()) as TypeformForm) : form;
+  const after = countDateQuestions(updated.fields);
+
   return {
-    ok: false,
-    detail: errText || `mise à jour HTTP ${updateRes.status}`,
+    ok: after === 0,
+    detail:
+      after === 0
+        ? "questions date retirées du Typeform ; dates via le calendrier du site"
+        : `PUT réussi mais ${after} question(s) date restante(s)`,
     dateQuestionsBefore: before,
-    dateQuestionsAfter: before,
-    hiddenConfigured: hiddenOk,
+    dateQuestionsAfter: after,
+    hiddenConfigured: true,
   };
 }
