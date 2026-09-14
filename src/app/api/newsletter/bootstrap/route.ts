@@ -11,7 +11,7 @@ export async function GET() {
   return Response.json({
     ok: true,
     created: result.created,
-    hasSegment: Boolean(result.ids.segmentId),
-    hasTopic: Boolean(result.ids.topicId),
+    segmentId: result.ids.segmentId,
+    topicId: result.ids.topicId,
   });
 }
