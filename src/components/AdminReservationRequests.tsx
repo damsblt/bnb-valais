@@ -50,10 +50,25 @@ export default function AdminReservationRequests({
     setLoading(false);
   }, []);
 
+  const loadAccepted = useCallback(async () => {
+    const res = await fetch("/api/admin/accepted", { cache: "no-store" });
+    if (!res.ok) return;
+    const data = (await res.json()) as {
+      stays?: { responseId: string }[];
+    };
+    const map: HandledMap = {};
+    for (const stay of data.stays ?? []) {
+      map[stay.responseId] = "accept";
+    }
+    setHandled((prev) => ({ ...map, ...prev }));
+  }, []);
+
   useEffect(() => {
-    if (typeformConfigured) void load();
-    else setLoading(false);
-  }, [load, typeformConfigured]);
+    if (typeformConfigured) {
+      void load();
+      void loadAccepted();
+    } else setLoading(false);
+  }, [load, loadAccepted, typeformConfigured]);
 
   async function respond(responseId: string, action: "accept" | "reject") {
     setBusyId(responseId);
@@ -68,6 +83,8 @@ export default function AdminReservationRequests({
       mailto?: string;
       emailSent?: boolean;
       emailError?: string;
+      calendarUpdated?: boolean;
+      calendarError?: string;
       error?: string;
     };
     setBusyId(null);
@@ -80,24 +97,32 @@ export default function AdminReservationRequests({
 
     setHandled((prev) => ({ ...prev, [responseId]: action }));
 
+    const calendarNote =
+      action === "accept" && data.calendarUpdated
+        ? ` ${content.calendarMarkedOnAccept}`
+        : data.calendarError
+          ? ` ${data.calendarError}`
+          : "";
+
     if (data.emailSent) {
       setNoticeKind("success");
-      setNotice(content.emailSent);
+      setNotice(`${content.emailSent}${calendarNote}`);
     } else if (data.mailto) {
       setMailFallbackHref(data.mailto);
       if (emailConfigured) {
         setNoticeKind("warning");
         const detail = formatResendError(data.emailError);
         setNotice(
-          detail
-            ? `${content.emailAutoFailed} (${detail})`
-            : content.emailAutoFailed,
+          `${detail ? `${content.emailAutoFailed} (${detail})` : content.emailAutoFailed}${calendarNote}`,
         );
       } else {
         setNoticeKind("warning");
-        setNotice(content.openMailClient);
+        setNotice(`${content.openMailClient}${calendarNote}`);
         window.location.href = data.mailto;
       }
+    } else if (calendarNote.trim()) {
+      setNoticeKind(data.calendarError ? "warning" : "success");
+      setNotice(calendarNote.trim());
     }
   }
 

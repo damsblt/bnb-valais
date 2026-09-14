@@ -13,6 +13,7 @@ type AdminMeta = {
   passwordConfigured: boolean;
   typeformConfigured: boolean;
   emailConfigured: boolean;
+  calendarStorageConfigured: boolean;
 };
 
 export default function AdminShell({ content }: AdminShellProps) {
@@ -106,6 +107,7 @@ export default function AdminShell({ content }: AdminShellProps) {
       content={content}
       typeformConfigured={meta.typeformConfigured}
       emailConfigured={meta.emailConfigured}
+      calendarStorageConfigured={meta.calendarStorageConfigured}
       onLogout={handleLogout}
     />
   );

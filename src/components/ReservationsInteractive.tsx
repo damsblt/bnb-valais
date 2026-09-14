@@ -9,6 +9,7 @@ import type { Locale } from "@/lib/i18n";
 import type { SiteContent } from "@/lib/content";
 import {
   formatRangeLabel,
+  meetsMinimumStay,
   type DateRange,
 } from "@/lib/typeform-prefill";
 import { getTypeformDateFieldKeys } from "@/lib/typeform-refs";
@@ -38,7 +39,12 @@ export default function ReservationsInteractive({
   useEffect(() => {
     const checkIn = searchParams.get(URL_PARAM_CHECKIN);
     const checkOut = searchParams.get(URL_PARAM_CHECKOUT);
-    if (checkIn && checkOut && checkIn < checkOut) {
+    if (
+      checkIn &&
+      checkOut &&
+      checkIn < checkOut &&
+      meetsMinimumStay(checkIn, checkOut)
+    ) {
       setRange({ checkIn, checkOut });
     }
   }, [searchParams]);
@@ -82,12 +88,14 @@ export default function ReservationsInteractive({
         title={reservations.calendarTitle}
         legendFree={reservations.legendFree}
         legendBusy={reservations.legendBusy}
+        legendAccepted={reservations.legendAccepted}
         latencyNote={reservations.latencyNote}
         notConfiguredNote={reservations.notConfiguredNote}
         selectHint={reservations.calendarSelectHint}
         selectedRangeLabel={reservations.selectedRangeLabel}
         clearRangeLabel={reservations.clearRangeLabel}
         rangeInvalidHint={reservations.rangeInvalidHint}
+        rangeMinNightsHint={reservations.rangeMinNightsHint}
         selectedRange={range}
         onRangeChange={handleRangeChange}
       />

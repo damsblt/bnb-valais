@@ -6,6 +6,7 @@ import {
   formatRangeLabel,
   isDayInRange,
   isRangeAvailable,
+  meetsMinimumStay,
   type DateRange,
 } from "@/lib/typeform-prefill";
 
@@ -14,18 +15,21 @@ type AvailabilityCalendarProps = {
   title: string;
   legendFree: string;
   legendBusy: string;
+  legendAccepted: string;
   latencyNote: string;
   notConfiguredNote: string;
   selectHint: string;
   selectedRangeLabel: string;
   clearRangeLabel: string;
   rangeInvalidHint: string;
+  rangeMinNightsHint: string;
   selectedRange: DateRange | null;
   onRangeChange: (range: DateRange | null) => void;
 };
 
 type AvailabilityResponse = {
   occupied: string[];
+  accepted?: string[];
   syncedAt: string;
   configured: boolean;
 };
@@ -47,26 +51,35 @@ export default function AvailabilityCalendar({
   title,
   legendFree,
   legendBusy,
+  legendAccepted,
   latencyNote,
   notConfiguredNote,
   selectHint,
   selectedRangeLabel,
   clearRangeLabel,
   rangeInvalidHint,
+  rangeMinNightsHint,
   selectedRange,
   onRangeChange,
 }: AvailabilityCalendarProps) {
   const [data, setData] = useState<AvailabilityResponse | null>(null);
   const [monthOffset, setMonthOffset] = useState(0);
   const [pendingStart, setPendingStart] = useState<string | null>(null);
-  const [invalidFlash, setInvalidFlash] = useState(false);
+  const [invalidFlash, setInvalidFlash] = useState<"overlap" | "minNights" | null>(
+    null,
+  );
 
   useEffect(() => {
     fetch("/api/availability", { cache: "no-store" })
       .then((res) => res.json())
       .then(setData)
       .catch(() =>
-        setData({ occupied: [], syncedAt: new Date().toISOString(), configured: false }),
+        setData({
+          occupied: [],
+          accepted: [],
+          syncedAt: new Date().toISOString(),
+          configured: false,
+        }),
       );
   }, []);
 
@@ -74,6 +87,17 @@ export default function AvailabilityCalendar({
     () => new Set(data?.occupied ?? []),
     [data?.occupied],
   );
+
+  const acceptedSet = useMemo(
+    () => new Set(data?.accepted ?? []),
+    [data?.accepted],
+  );
+
+  const blockedSet = useMemo(() => {
+    const merged = new Set(occupiedSet);
+    for (const day of acceptedSet) merged.add(day);
+    return merged;
+  }, [occupiedSet, acceptedSet]);
 
   const monthDate = useMemo(() => {
     const d = new Date();
@@ -89,20 +113,27 @@ export default function AvailabilityCalendar({
     const lastDay = new Date(year, month + 1, 0);
 
     const startPad = (firstDay.getDay() + 6) % 7;
-    const cells: { key: string; day?: number; occupied?: boolean }[] = [];
+    const cells: {
+      key: string;
+      day?: number;
+      occupied?: boolean;
+      accepted?: boolean;
+    }[] = [];
 
     for (let i = 0; i < startPad; i++) cells.push({ key: `pad-${i}` });
 
     for (let day = 1; day <= lastDay.getDate(); day++) {
       const key = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-      cells.push({ key, day, occupied: occupiedSet.has(key) });
+      const occupied = occupiedSet.has(key);
+      const accepted = !occupied && acceptedSet.has(key);
+      cells.push({ key, day, occupied, accepted });
     }
 
     return cells;
-  }, [monthDate, occupiedSet]);
+  }, [monthDate, occupiedSet, acceptedSet]);
 
-  function handleDayClick(key: string, occupied: boolean) {
-    if (occupied) return;
+  function handleDayClick(key: string, blocked: boolean) {
+    if (blocked) return;
 
     if (!pendingStart || selectedRange) {
       setPendingStart(key);
@@ -116,14 +147,23 @@ export default function AvailabilityCalendar({
       [checkIn, checkOut] = [checkOut, checkIn];
     }
 
-    if (!isRangeAvailable(checkIn, checkOut, occupiedSet)) {
-      setInvalidFlash(true);
+    if (!meetsMinimumStay(checkIn, checkOut)) {
+      setInvalidFlash("minNights");
       setPendingStart(key);
       onRangeChange(null);
-      window.setTimeout(() => setInvalidFlash(false), 2500);
+      window.setTimeout(() => setInvalidFlash(null), 3500);
       return;
     }
 
+    if (!isRangeAvailable(checkIn, checkOut, blockedSet)) {
+      setInvalidFlash("overlap");
+      setPendingStart(key);
+      onRangeChange(null);
+      window.setTimeout(() => setInvalidFlash(null), 2500);
+      return;
+    }
+
+    setInvalidFlash(null);
     setPendingStart(null);
     onRangeChange({ checkIn, checkOut });
     document.getElementById("reservation-form")?.scrollIntoView({ behavior: "smooth" });
@@ -132,12 +172,16 @@ export default function AvailabilityCalendar({
   function dayClasses(
     key: string,
     occupied: boolean,
+    accepted: boolean,
   ): string {
     const inRange = isDayInRange(key, selectedRange);
     const isPending = pendingStart === key;
 
     if (occupied) {
       return "bg-rose-200 text-rose-900 cursor-not-allowed";
+    }
+    if (accepted) {
+      return "bg-orange-200 text-orange-950 cursor-not-allowed ring-1 ring-orange-300";
     }
     if (inRange === "start" || inRange === "end") {
       return "bg-sky-600 text-white ring-2 ring-sky-800";
@@ -197,8 +241,11 @@ export default function AvailabilityCalendar({
         </div>
       ) : null}
 
-      {invalidFlash ? (
+      {invalidFlash === "overlap" ? (
         <p className="mt-2 text-sm text-amber-800">{rangeInvalidHint}</p>
+      ) : null}
+      {invalidFlash === "minNights" ? (
+        <p className="mt-2 text-sm text-amber-800">{rangeMinNightsHint}</p>
       ) : null}
 
       <div className="mt-4 grid grid-cols-7 gap-2 text-center text-xs font-medium text-neutral-500">
@@ -213,9 +260,14 @@ export default function AvailabilityCalendar({
             <button
               key={cell.key}
               type="button"
-              disabled={cell.occupied}
-              onClick={() => handleDayClick(cell.key, Boolean(cell.occupied))}
-              className={`flex aspect-square items-center justify-center rounded-xl text-sm font-medium transition ${dayClasses(cell.key, Boolean(cell.occupied))}`}
+              disabled={cell.occupied || cell.accepted}
+              onClick={() =>
+                handleDayClick(
+                  cell.key,
+                  Boolean(cell.occupied || cell.accepted),
+                )
+              }
+              className={`flex aspect-square items-center justify-center rounded-xl text-sm font-medium transition ${dayClasses(cell.key, Boolean(cell.occupied), Boolean(cell.accepted))}`}
             >
               {cell.day}
             </button>
@@ -233,6 +285,10 @@ export default function AvailabilityCalendar({
         <span className="inline-flex items-center gap-2">
           <span className="h-3 w-3 rounded-full bg-rose-400" />
           {legendBusy}
+        </span>
+        <span className="inline-flex items-center gap-2">
+          <span className="h-3 w-3 rounded-full bg-orange-400" />
+          {legendAccepted}
         </span>
         <span className="inline-flex items-center gap-2">
           <span className="h-3 w-3 rounded-full bg-sky-500" />

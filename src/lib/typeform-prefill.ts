@@ -3,6 +3,9 @@ export type DateRange = {
   checkOut: string;
 };
 
+/** Séjour minimum sur le site (nuits). */
+export const MIN_STAY_NIGHTS = 2;
+
 import { getTypeformDateFieldKeys } from "@/lib/typeform-refs";
 
 export function getPrefillParamNames(): { checkIn: string; checkOut: string } {
@@ -13,6 +16,30 @@ export function addDays(isoDate: string, days: number): string {
   const [y, m, d] = isoDate.split("-").map(Number);
   const next = new Date(Date.UTC(y, m - 1, d + days));
   return next.toISOString().slice(0, 10);
+}
+
+/** Nuitées entre arrivée (inclus) et départ (exclus), format YYYY-MM-DD. */
+export function enumerateNights(checkIn: string, checkOut: string): string[] {
+  if (checkIn >= checkOut) return [];
+  const nights: string[] = [];
+  let cursor = checkIn;
+  while (cursor < checkOut) {
+    nights.push(cursor);
+    cursor = addDays(cursor, 1);
+  }
+  return nights;
+}
+
+export function countNights(checkIn: string, checkOut: string): number {
+  return enumerateNights(checkIn, checkOut).length;
+}
+
+export function meetsMinimumStay(
+  checkIn: string,
+  checkOut: string,
+  minNights: number = MIN_STAY_NIGHTS,
+): boolean {
+  return countNights(checkIn, checkOut) >= minNights;
 }
 
 export function isRangeAvailable(

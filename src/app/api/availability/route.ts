@@ -1,14 +1,23 @@
+import {
+  isAcceptedStorageConfigured,
+  listAcceptedDayKeys,
+} from "@/lib/accepted-stays-store";
 import { getOccupiedDates } from "@/lib/calendar";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const { occupied, sources, feeds } = await getOccupiedDates();
+  const [{ occupied, sources, feeds }, accepted] = await Promise.all([
+    getOccupiedDates(),
+    listAcceptedDayKeys(),
+  ]);
 
   return Response.json(
     {
       occupied,
+      accepted,
+      acceptedStorageConfigured: isAcceptedStorageConfigured(),
       sources,
       feeds,
       syncedAt: new Date().toISOString(),

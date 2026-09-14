@@ -9,6 +9,7 @@ type AdminDashboardProps = {
   content: SiteContent["admin"];
   typeformConfigured: boolean;
   emailConfigured: boolean;
+  calendarStorageConfigured: boolean;
   onLogout: () => void;
 };
 
@@ -16,6 +17,7 @@ export default function AdminDashboard({
   content,
   typeformConfigured,
   emailConfigured,
+  calendarStorageConfigured,
   onLogout,
 }: AdminDashboardProps) {
   return (
@@ -42,6 +44,18 @@ export default function AdminDashboard({
         }`}
       >
         {emailConfigured ? content.emailAutoActive : content.emailAutoInactive}
+      </p>
+
+      <p
+        className={`mt-4 rounded-xl border p-4 text-sm ${
+          calendarStorageConfigured
+            ? "border-orange-200 bg-orange-50 text-orange-950"
+            : "border-amber-200 bg-amber-50 text-amber-950"
+        }`}
+      >
+        {calendarStorageConfigured
+          ? content.calendarStorageActive
+          : content.calendarStorageInactive}
       </p>
 
       <AdminReservationRequests

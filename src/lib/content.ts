@@ -55,6 +55,9 @@ export type SiteContent = {
     emailAutoInactive: string;
     emailAutoFailed: string;
     openMailFallback: string;
+    calendarStorageActive: string;
+    calendarStorageInactive: string;
+    calendarMarkedOnAccept: string;
     setupMissing: string;
     checklistTitle: string;
     checklist: string[];
@@ -69,6 +72,7 @@ export type SiteContent = {
     calendarTitle: string;
     legendFree: string;
     legendBusy: string;
+    legendAccepted: string;
     latencyNote: string;
     notConfiguredNote: string;
     formTitle: string;
@@ -78,6 +82,7 @@ export type SiteContent = {
     selectedRangeLabel: string;
     clearRangeLabel: string;
     rangeInvalidHint: string;
+    rangeMinNightsHint: string;
   };
   footer: {
     contact: string;
@@ -161,6 +166,11 @@ const content: Record<Locale, SiteContent> = {
       emailAutoFailed:
         "Resend n’a pas pu envoyer l’e-mail. Corrigez la config ou utilisez le bouton ci-dessous.",
       openMailFallback: "Ouvrir dans ma messagerie",
+      calendarStorageActive:
+        "Calendrier site : les séjours acceptés s’affichent en orange sur /reservations.",
+      calendarStorageInactive:
+        "Calendrier orange : liez le Blob « bnb-valais-blob » au projet Vercel (Storage → Connect → Production), puis redéployez.",
+      calendarMarkedOnAccept: "Dates marquées en orange sur le calendrier public.",
       setupMissing:
         "Configuration incomplète : ajoutez ADMIN_PASSWORD et TYPEFORM_ACCESS_TOKEN sur Vercel, puis redéployez.",
       checklistTitle: "Checklist — réservation Booking / Airbnb",
@@ -182,6 +192,7 @@ const content: Record<Locale, SiteContent> = {
       calendarTitle: "Disponibilités",
       legendFree: "Libre",
       legendBusy: "Occupé (Booking / Airbnb)",
+      legendAccepted: "Réservation directe confirmée",
       latencyNote:
         "Calendrier synchronisé via iCal (Booking.com et Airbnb). Délai habituel : 2 à 6 heures.",
       notConfiguredNote:
@@ -192,11 +203,13 @@ const content: Record<Locale, SiteContent> = {
       formPrefillNote:
         "Vos dates sont enregistrées ci-dessous. Complétez le reste du formulaire (coordonnées, nombre de personnes, message).",
       calendarSelectHint:
-        "Cliquez une date d'arrivée puis une date de départ (jours libres uniquement).",
+        "Cliquez une date d'arrivée puis une date de départ (minimum 2 nuits, jours libres uniquement).",
       selectedRangeLabel: "Séjour :",
       clearRangeLabel: "Effacer",
       rangeInvalidHint:
         "Cette plage chevauche des dates déjà réservées — choisissez d'autres jours.",
+      rangeMinNightsHint:
+        "Séjour minimum de 2 nuits — choisissez une date de départ au moins deux jours après l'arrivée.",
     },
     footer: {
       contact: "Contact",
@@ -278,6 +291,11 @@ const content: Record<Locale, SiteContent> = {
       emailAutoFailed:
         "Resend could not send the email. Fix the configuration or use the button below.",
       openMailFallback: "Open in my mail app",
+      calendarStorageActive:
+        "Site calendar: accepted stays show in orange on /reservations.",
+      calendarStorageInactive:
+        "Orange calendar: connect Blob store « bnb-valais-blob » to the Vercel project (Storage → Connect → Production), then redeploy.",
+      calendarMarkedOnAccept: "Dates marked orange on the public calendar.",
       setupMissing:
         "Missing setup: add ADMIN_PASSWORD and TYPEFORM_ACCESS_TOKEN on Vercel, then redeploy.",
       checklistTitle: "Checklist — Booking / Airbnb reservation",
@@ -299,6 +317,7 @@ const content: Record<Locale, SiteContent> = {
       calendarTitle: "Availability",
       legendFree: "Available",
       legendBusy: "Occupied (Booking / Airbnb)",
+      legendAccepted: "Confirmed direct booking",
       latencyNote:
         "Calendar synced via iCal (Booking.com and Airbnb). Typical delay: 2 to 6 hours.",
       notConfiguredNote:
@@ -309,11 +328,13 @@ const content: Record<Locale, SiteContent> = {
       formPrefillNote:
         "Your dates are saved below. Complete the rest of the form (contact details, guests, message).",
       calendarSelectHint:
-        "Click a check-in date, then a check-out date (available days only).",
+        "Click a check-in date, then a check-out date (minimum 2 nights, available days only).",
       selectedRangeLabel: "Stay:",
       clearRangeLabel: "Clear",
       rangeInvalidHint:
         "This range overlaps booked dates — please choose different days.",
+      rangeMinNightsHint:
+        "Minimum stay is 2 nights — pick a check-out at least two days after check-in.",
     },
     footer: {
       contact: "Contact",

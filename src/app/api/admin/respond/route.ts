@@ -1,3 +1,8 @@
+import {
+  isAcceptedStorageConfigured,
+  recordAcceptedStay,
+  removeAcceptedStay,
+} from "@/lib/accepted-stays-store";
 import { isAdminAuthenticated } from "@/lib/admin-session";
 import {
   buildMailtoUrl,
@@ -54,11 +59,39 @@ export async function POST(request: Request) {
     action,
   );
 
+  let calendarUpdated = false;
+  let calendarError: string | undefined;
+
+  try {
+    if (action === "accept" && reservation.stayDates) {
+      await recordAcceptedStay({
+        responseId,
+        checkIn: reservation.stayDates.checkIn,
+        checkOut: reservation.stayDates.checkOut,
+        guestLabel:
+          reservation.guestName ?? reservation.guestEmail ?? undefined,
+      });
+      calendarUpdated = true;
+    } else if (action === "reject") {
+      await removeAcceptedStay(responseId);
+      calendarUpdated = true;
+    } else if (action === "accept" && !reservation.stayDates) {
+      calendarError =
+        "Pas de dates calendrier sur cette demande — le calendrier public n’a pas été mis à jour.";
+    }
+  } catch (err) {
+    calendarError =
+      err instanceof Error ? err.message : "Impossible d’enregistrer sur le calendrier.";
+  }
+
   return Response.json({
     action,
     responseId,
     mailto,
     emailSent: emailResult.sent,
     emailError: emailResult.error,
+    calendarUpdated,
+    calendarError,
+    calendarStorageConfigured: isAcceptedStorageConfigured(),
   });
 }

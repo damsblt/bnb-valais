@@ -1,3 +1,4 @@
+import { isAcceptedStorageConfigured } from "@/lib/accepted-stays-store";
 import {
   isAdminAuthenticated,
   isAdminPasswordConfigured,
@@ -9,5 +10,6 @@ export async function GET() {
     passwordConfigured: isAdminPasswordConfigured(),
     typeformConfigured: Boolean(process.env.TYPEFORM_ACCESS_TOKEN?.trim()),
     emailConfigured: Boolean(process.env.RESEND_API_KEY?.trim()),
+    calendarStorageConfigured: isAcceptedStorageConfigured(),
   });
 }
