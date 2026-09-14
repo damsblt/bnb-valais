@@ -215,6 +215,16 @@ export async function fetchReservationRequests(): Promise<ReservationRequest[]> 
     `/forms/${formId}/responses?page_size=50&sort=submitted_at,desc`,
   );
   if (!responsesRes.ok) {
+    if (responsesRes.status === 403) {
+      throw new Error(
+        "Typeform responses HTTP 403 — votre token n'a pas la permission « responses:read » (lire les réponses). Sur Typeform : Account → Personal tokens → générez un nouveau token en cochant la lecture des réponses, puis mettez-le dans TYPEFORM_ACCESS_TOKEN sur Vercel et redéployez.",
+      );
+    }
+    if (responsesRes.status === 401) {
+      throw new Error(
+        "Typeform responses HTTP 401 — token invalide ou expiré. Mettez à jour TYPEFORM_ACCESS_TOKEN sur Vercel.",
+      );
+    }
     throw new Error(`Typeform responses HTTP ${responsesRes.status}`);
   }
 
