@@ -2,8 +2,7 @@ import Script from "next/script";
 import AvailabilityCalendar from "@/components/AvailabilityCalendar";
 import type { Locale } from "@/lib/i18n";
 import { getContent } from "@/lib/content";
-
-const TYPEFORM_ID = "01JN38VBCPQKPJFGQK77ZR4JDG";
+import { TYPEFORM_LIVE_EMBED_ID } from "@/lib/typeform";
 
 type ReservationsContentProps = {
   locale: Locale;
@@ -39,7 +38,7 @@ export default function ReservationsContent({ locale }: ReservationsContentProps
           </h2>
           <p className="mt-2 text-neutral-600">{reservations.formNote}</p>
           <div className="mt-6 min-h-[500px] overflow-hidden rounded-3xl border border-neutral-200 bg-white shadow-sm">
-            <div data-tf-live={TYPEFORM_ID} />
+            <div data-tf-live={TYPEFORM_LIVE_EMBED_ID} />
             <Script src="//embed.typeform.com/next/embed.js" strategy="lazyOnload" />
           </div>
         </div>

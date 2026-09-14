@@ -31,9 +31,14 @@ export default function AdminReservationRequests({
     const data = (await res.json()) as {
       items?: ReservationRequest[];
       error?: string;
+      forms?: { id: string; title: string }[];
     };
     if (!res.ok) {
-      setError(data.error ?? "Impossible de charger Typeform.");
+      let msg = data.error ?? "Impossible de charger Typeform.";
+      if (data.forms?.length) {
+        msg += ` IDs API possibles : ${data.forms.map((f) => `${f.title} (${f.id})`).join(" · ")}`;
+      }
+      setError(msg);
       setItems([]);
     } else {
       setItems(data.items ?? []);
