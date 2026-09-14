@@ -1,4 +1,8 @@
-import { promoNov2026TemplateDefinition } from "@/lib/resend-promo-nov2026-template";
+import {
+  promoNov2026TemplateDefinition,
+  RESEND_PROMO_NOV2026_ALIAS,
+  RESEND_PROMO_NOV2026_SUBJECT,
+} from "@/lib/resend-promo-nov2026-template";
 
 const RESEND_API = "https://api.resend.com";
 
@@ -85,4 +89,38 @@ export async function syncPromoNov2026TestTemplate(apiKey: string) {
       "Resend → Broadcasts → segment newsletter + topic « Actualités BnB Valais » → template alias " +
       def.alias,
   };
+}
+
+function newsletterFromAddress(): string {
+  return (
+    process.env.NEWSLETTER_FROM_EMAIL?.trim() ||
+    process.env.RESERVATION_FROM_EMAIL?.trim() ||
+    "Le Nid de la Sittelle <newsletter@bnb-valais.ch>"
+  );
+}
+
+export async function sendPromoNov2026TestEmail(
+  apiKey: string,
+  to: string,
+): Promise<{ id: string; to: string }> {
+  const def = promoNov2026TemplateDefinition();
+  const variables = Object.fromEntries(
+    def.variables.map((v) => [v.key, v.fallback_value]),
+  );
+
+  const result = (await resendApi(apiKey, "/emails", {
+    method: "POST",
+    body: JSON.stringify({
+      from: newsletterFromAddress(),
+      to: [to],
+      subject: RESEND_PROMO_NOV2026_SUBJECT,
+      reply_to: process.env.HOST_CONTACT_EMAIL?.trim() || undefined,
+      template: {
+        id: RESEND_PROMO_NOV2026_ALIAS,
+        variables,
+      },
+    }),
+  })) as { id: string };
+
+  return { id: result.id, to };
 }
