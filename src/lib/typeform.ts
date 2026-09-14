@@ -1,6 +1,9 @@
 /** ID « Live embed » (data-tf-live) — affichage sur /reservations */
 export const TYPEFORM_LIVE_EMBED_ID = "01JN38VBCPQKPJFGQK77ZR4JDG";
 
+/** ID API du formulaire « Formulaire de réservation » (admin.typeform.com/form/…) */
+export const TYPEFORM_DEFAULT_API_FORM_ID = "ZD3ppqKS";
+
 type TypeformField = {
   id: string;
   title: string;
@@ -159,11 +162,22 @@ async function resolveApiFormId(): Promise<string> {
     return forms[0].id;
   }
 
+  const reservationForm = forms.find((f) =>
+    /formulaire de r[eé]servation/i.test(f.title),
+  );
+  if (reservationForm) {
+    return reservationForm.id;
+  }
+
   const titled = forms.filter((f) =>
-    /sittelle|valais|reserv|booking|nid/i.test(f.title),
+    /sittelle|valais|r[eé]serv|booking|nid/i.test(f.title),
   );
   if (titled.length === 1) {
     return titled[0].id;
+  }
+
+  if (forms.some((f) => f.id === TYPEFORM_DEFAULT_API_FORM_ID)) {
+    return TYPEFORM_DEFAULT_API_FORM_ID;
   }
 
   const hint = forms.map((f) => `« ${f.title} » → ${f.id}`).join(" · ");
