@@ -137,7 +137,16 @@ export default function AdminReservationRequests({
                   <p className="font-medium text-neutral-900">
                     {item.guestName ?? item.guestEmail ?? "Demande sans nom"}
                   </p>
-                  <p className="text-sm text-neutral-600">{item.summaryLine}</p>
+                  {item.stayDates ? (
+                    <p className="mt-2 rounded-xl bg-sky-50 px-3 py-2 text-sm font-semibold text-sky-950">
+                      Séjour : {item.summaryLine}
+                    </p>
+                  ) : (
+                    <p className="mt-2 text-sm text-amber-800">
+                      Dates du calendrier non enregistrées sur cette demande (test
+                      ancien ou sans sélection sur le site).
+                    </p>
+                  )}
                   <p className="mt-1 text-xs text-neutral-500">
                     Reçue le {formatDate(item.submittedAt)}
                   </p>

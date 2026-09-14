@@ -1,3 +1,8 @@
+import {
+  TYPEFORM_PARAM_ARRIVAL,
+  TYPEFORM_PARAM_DEPARTURE,
+} from "@/lib/typeform-refs";
+
 /** ID « Live embed » (data-tf-live) — affichage sur /reservations */
 export const TYPEFORM_LIVE_EMBED_ID = "01JN38VBCPQKPJFGQK77ZR4JDG";
 
@@ -30,10 +35,16 @@ export type ReservationAnswer = {
   value: string;
 };
 
+export type StayDates = {
+  checkIn: string;
+  checkOut: string;
+};
+
 export type ReservationRequest = {
   id: string;
   submittedAt: string;
   answers: ReservationAnswer[];
+  stayDates: StayDates | null;
   guestEmail: string | null;
   guestName: string | null;
   summaryLine: string;
@@ -106,7 +117,41 @@ function pickGuestName(answers: ReservationAnswer[]): string | null {
   return firstText?.value ?? null;
 }
 
-function buildSummary(answers: ReservationAnswer[]): string {
+function parseStayDates(
+  hidden: Record<string, string> | undefined,
+): StayDates | null {
+  if (!hidden) return null;
+  const checkIn =
+    hidden[TYPEFORM_PARAM_ARRIVAL] ?? hidden.date_arrivee ?? hidden.check_in;
+  const checkOut =
+    hidden[TYPEFORM_PARAM_DEPARTURE] ?? hidden.date_depart ?? hidden.check_out;
+  if (checkIn && checkOut) return { checkIn, checkOut };
+  return null;
+}
+
+function formatDisplayDate(iso: string): string {
+  return new Date(`${iso}T12:00:00`).toLocaleDateString("fr-CH", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+}
+
+function hiddenToAnswers(stay: StayDates | null): ReservationAnswer[] {
+  if (!stay) return [];
+  return [
+    { label: "Date d'arrivée", value: formatDisplayDate(stay.checkIn) },
+    { label: "Date de départ", value: formatDisplayDate(stay.checkOut) },
+  ];
+}
+
+function buildSummary(
+  answers: ReservationAnswer[],
+  stay: StayDates | null,
+): string {
+  if (stay) {
+    return `${formatDisplayDate(stay.checkIn)} → ${formatDisplayDate(stay.checkOut)}`;
+  }
   const dates = answers
     .filter((a) => /date|arriv|départ|depart|séjour|sejour/i.test(a.label))
     .map((a) => `${a.label}: ${a.value}`);
@@ -233,12 +278,14 @@ export async function fetchReservationRequests(): Promise<ReservationRequest[]> 
     items?: {
       response_id: string;
       submitted_at: string;
+      hidden?: Record<string, string>;
       answers?: TypeformAnswer[];
     }[];
   };
 
   return (responsesJson.items ?? []).map((item) => {
-    const answers: ReservationAnswer[] = (item.answers ?? [])
+    const stayDates = parseStayDates(item.hidden);
+    const formAnswers: ReservationAnswer[] = (item.answers ?? [])
       .map((answer) => {
         const label = fieldTitles.get(answer.field.id) ?? "Champ";
         const value = answerToString(answer);
@@ -247,20 +294,23 @@ export async function fetchReservationRequests(): Promise<ReservationRequest[]> 
       })
       .filter((a): a is ReservationAnswer => a !== null);
 
+    const answers = [...hiddenToAnswers(stayDates), ...formAnswers];
+
     const guestEmail =
-      answers.find((a) => /email|e-mail|mail/i.test(a.label))?.value ??
+      formAnswers.find((a) => /email|e-mail|mail/i.test(a.label))?.value ??
       (item.answers ?? []).find((a) => a.type === "email")?.email ??
       null;
 
-    const guestName = pickGuestName(answers);
+    const guestName = pickGuestName(formAnswers);
 
     return {
       id: item.response_id,
       submittedAt: item.submitted_at,
       answers,
+      stayDates,
       guestEmail,
       guestName,
-      summaryLine: buildSummary(answers),
+      summaryLine: buildSummary(answers, stayDates),
     };
   });
 }
