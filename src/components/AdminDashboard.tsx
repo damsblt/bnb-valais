@@ -1,25 +1,43 @@
-import { adminLinks } from "@/lib/admin";
+"use client";
 
-type AdminContent = {
-  title: string;
-  subtitle: string;
-  checklistTitle: string;
-  checklist: string[];
-  linksTitle: string;
-  bookingLabel: string;
-  airbnbLabel: string;
-  tip: string;
-};
+import AdminReservationRequests from "@/components/AdminReservationRequests";
+import { adminLinks } from "@/lib/admin";
+import type { SiteContent } from "@/lib/content";
 
 type AdminDashboardProps = {
-  content: AdminContent;
+  content: SiteContent["admin"];
+  typeformConfigured: boolean;
+  emailConfigured: boolean;
+  onLogout: () => void;
 };
 
-export default function AdminDashboard({ content }: AdminDashboardProps) {
+export default function AdminDashboard({
+  content,
+  typeformConfigured,
+  emailConfigured,
+  onLogout,
+}: AdminDashboardProps) {
   return (
     <div className="mx-auto max-w-3xl px-6 py-12 md:px-12 md:py-16">
-      <h1 className="text-3xl font-semibold text-neutral-900">{content.title}</h1>
-      <p className="mt-3 text-lg text-neutral-600">{content.subtitle}</p>
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-semibold text-neutral-900">{content.title}</h1>
+          <p className="mt-3 text-lg text-neutral-600">{content.subtitle}</p>
+        </div>
+        <button
+          type="button"
+          onClick={onLogout}
+          className="rounded-full border border-neutral-300 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50"
+        >
+          {content.logoutButton}
+        </button>
+      </div>
+
+      <AdminReservationRequests
+        content={content}
+        typeformConfigured={typeformConfigured}
+        emailConfigured={emailConfigured}
+      />
 
       <div className="mt-10 rounded-xl border border-amber-200 bg-amber-50 p-6">
         <h2 className="font-semibold text-amber-900">{content.checklistTitle}</h2>
@@ -56,6 +74,13 @@ export default function AdminDashboard({ content }: AdminDashboardProps) {
 
       <p className="mt-8 rounded-lg bg-neutral-100 p-4 text-sm text-neutral-600">
         {content.tip}
+        {!emailConfigured ? (
+          <>
+            {" "}
+            Sans <code className="text-xs">RESEND_API_KEY</code>, les boutons accepter/refuser
+            ouvrent votre messagerie avec un e-mail pré-rempli.
+          </>
+        ) : null}
       </p>
     </div>
   );

@@ -39,6 +39,19 @@ export type SiteContent = {
   admin: {
     title: string;
     subtitle: string;
+    loginTitle: string;
+    loginHint: string;
+    loginButton: string;
+    logoutButton: string;
+    requestsTitle: string;
+    requestsEmpty: string;
+    requestsRefresh: string;
+    acceptButton: string;
+    rejectButton: string;
+    noEmailError: string;
+    emailSent: string;
+    openMailClient: string;
+    setupMissing: string;
     checklistTitle: string;
     checklist: string[];
     linksTitle: string;
@@ -120,8 +133,22 @@ const content: Record<Locale, SiteContent> = {
     admin: {
       title: "Gestion des réservations",
       subtitle:
-        "Quand vous recevez une notification de réservation, bloquez les dates sur l'autre plateforme.",
-      checklistTitle: "Checklist — nouvelle réservation",
+        "Demandes directes (Typeform), réponses aux clients et synchronisation Booking / Airbnb.",
+      loginTitle: "Accès administrateur",
+      loginHint: "Mot de passe défini dans les variables Vercel (ADMIN_PASSWORD).",
+      loginButton: "Se connecter",
+      logoutButton: "Déconnexion",
+      requestsTitle: "Demandes de réservation (site)",
+      requestsEmpty: "Aucune demande pour le moment.",
+      requestsRefresh: "Actualiser",
+      acceptButton: "Accepter et envoyer",
+      rejectButton: "Refuser et envoyer",
+      noEmailError: "Pas d'e-mail sur cette demande — répondez depuis Typeform.",
+      emailSent: "E-mail envoyé au client.",
+      openMailClient: "Ouvrir dans votre messagerie",
+      setupMissing:
+        "Configuration incomplète : ajoutez ADMIN_PASSWORD et TYPEFORM_ACCESS_TOKEN sur Vercel, puis redéployez.",
+      checklistTitle: "Checklist — réservation Booking / Airbnb",
       checklist: [
         "Notification reçue (Booking.com ou Airbnb)",
         "Ouvrir le calendrier de l'autre plateforme via les liens ci-dessous",
@@ -209,8 +236,22 @@ const content: Record<Locale, SiteContent> = {
     admin: {
       title: "Reservation management",
       subtitle:
-        "When you receive a booking notification, block the dates on the other platform.",
-      checklistTitle: "Checklist — new booking",
+        "Direct requests (Typeform), guest replies, and Booking / Airbnb sync.",
+      loginTitle: "Admin access",
+      loginHint: "Password is set in Vercel environment variables (ADMIN_PASSWORD).",
+      loginButton: "Sign in",
+      logoutButton: "Sign out",
+      requestsTitle: "Booking requests (website)",
+      requestsEmpty: "No requests yet.",
+      requestsRefresh: "Refresh",
+      acceptButton: "Accept and send",
+      rejectButton: "Decline and send",
+      noEmailError: "No email on this request — reply from Typeform.",
+      emailSent: "Email sent to the guest.",
+      openMailClient: "Open in your mail app",
+      setupMissing:
+        "Missing setup: add ADMIN_PASSWORD and TYPEFORM_ACCESS_TOKEN on Vercel, then redeploy.",
+      checklistTitle: "Checklist — Booking / Airbnb reservation",
       checklist: [
         "Notification received (Booking.com or Airbnb)",
         "Open the other platform's calendar using the links below",

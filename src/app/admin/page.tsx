@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import AdminDashboard from "@/components/AdminDashboard";
+import AdminShell from "@/components/AdminShell";
 import SiteLayout from "@/components/SiteLayout";
 import { getContent } from "@/lib/content";
 
@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 export default function AdminPage() {
   return (
     <SiteLayout locale="fr" variant="compact">
-      <AdminDashboard content={getContent("fr").admin} />
+      <AdminShell content={getContent("fr").admin} />
     </SiteLayout>
   );
 }
