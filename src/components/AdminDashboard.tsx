@@ -1,5 +1,6 @@
 "use client";
 
+import AdminPromoCodes from "@/components/AdminPromoCodes";
 import AdminOrangeCalendar from "@/components/AdminOrangeCalendar";
 import AdminReservationRequests from "@/components/AdminReservationRequests";
 import AdminTypeformSync from "@/components/AdminTypeformSync";
@@ -73,6 +74,8 @@ export default function AdminDashboard({
       ) : null}
 
       {typeformConfigured ? <AdminTypeformSync /> : null}
+
+      <AdminPromoCodes content={content} />
 
       <div className="mt-10 rounded-xl border border-amber-200 bg-amber-50 p-6">
         <h2 className="font-semibold text-amber-900">{content.checklistTitle}</h2>

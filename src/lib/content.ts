@@ -71,6 +71,33 @@ export type SiteContent = {
     bookingLabel: string;
     airbnbLabel: string;
     tip: string;
+    promoTitle: string;
+    promoHint: string;
+    promoRefresh: string;
+    promoLoading: string;
+    promoEmpty: string;
+    promoSaveSuccess: string;
+    promoSaveError: string;
+    promoLoadError: string;
+    promoUnauthorized: string;
+    promoStorageInactive: string;
+    promoInactiveBadge: string;
+    promoActivate: string;
+    promoDeactivate: string;
+    promoDelete: string;
+    promoDeleteConfirm: string;
+    promoAddTitle: string;
+    promoAddButton: string;
+    promoSaving: string;
+    promoFormIncomplete: string;
+    promoDuplicate: string;
+    promoUsesLabel: string;
+    promoFieldCode: string;
+    promoFieldLabel: string;
+    promoFieldPercent: string;
+    promoFieldMaxUses: string;
+    promoFieldStayFrom: string;
+    promoFieldStayTo: string;
   };
   reservations: {
     title: string;
@@ -232,6 +259,35 @@ const content: Record<Locale, SiteContent> = {
       bookingLabel: "Calendrier Booking.com",
       airbnbLabel: "Calendrier Airbnb",
       tip: "Astuce : réagir dans les 30 minutes réduit fortement le risque de double réservation. Cette page n'est pas indexée par les moteurs de recherche.",
+      promoTitle: "Codes promo (réservations directes)",
+      promoHint:
+        "Stockés dans Vercel Blob (promo/codes.json). Les visiteurs vérifient le code sur /reservations avant le Typeform.",
+      promoRefresh: "Actualiser",
+      promoLoading: "Chargement des codes…",
+      promoEmpty: "Aucun code — ajoutez-en un ci-dessous.",
+      promoSaveSuccess: "Codes promo enregistrés.",
+      promoSaveError: "Enregistrement impossible — vérifiez les champs.",
+      promoLoadError: "Impossible de charger les codes promo.",
+      promoUnauthorized: "Session expirée — reconnectez-vous.",
+      promoStorageInactive:
+        "Blob non configuré : les changements ne seront pas persistés en production.",
+      promoInactiveBadge: "inactif",
+      promoActivate: "Activer",
+      promoDeactivate: "Désactiver",
+      promoDelete: "Supprimer",
+      promoDeleteConfirm: "Supprimer ce code promo ?",
+      promoAddTitle: "Ajouter un code",
+      promoAddButton: "Ajouter et enregistrer",
+      promoSaving: "Enregistrement…",
+      promoFormIncomplete: "Code et libellé sont obligatoires.",
+      promoDuplicate: "Ce code existe déjà.",
+      promoUsesLabel: "utilisations",
+      promoFieldCode: "Code",
+      promoFieldLabel: "Libellé (affiché au client)",
+      promoFieldPercent: "Réduction (%)",
+      promoFieldMaxUses: "Limite d’utilisations (optionnel)",
+      promoFieldStayFrom: "Première nuitée éligible",
+      promoFieldStayTo: "Dernière nuitée éligible",
     },
     reservations: {
       title: "Demande de réservation",
@@ -409,6 +465,35 @@ const content: Record<Locale, SiteContent> = {
       bookingLabel: "Booking.com calendar",
       airbnbLabel: "Airbnb calendar",
       tip: "Tip: reacting within 30 minutes greatly reduces double-booking risk. This page is not indexed by search engines.",
+      promoTitle: "Promo codes (direct bookings)",
+      promoHint:
+        "Stored in Vercel Blob (promo/codes.json). Guests verify codes on /reservations before Typeform.",
+      promoRefresh: "Refresh",
+      promoLoading: "Loading codes…",
+      promoEmpty: "No codes yet — add one below.",
+      promoSaveSuccess: "Promo codes saved.",
+      promoSaveError: "Could not save — check the fields.",
+      promoLoadError: "Could not load promo codes.",
+      promoUnauthorized: "Session expired — sign in again.",
+      promoStorageInactive:
+        "Blob not configured: changes will not persist in production.",
+      promoInactiveBadge: "inactive",
+      promoActivate: "Activate",
+      promoDeactivate: "Deactivate",
+      promoDelete: "Delete",
+      promoDeleteConfirm: "Delete this promo code?",
+      promoAddTitle: "Add a code",
+      promoAddButton: "Add and save",
+      promoSaving: "Saving…",
+      promoFormIncomplete: "Code and label are required.",
+      promoDuplicate: "This code already exists.",
+      promoUsesLabel: "uses",
+      promoFieldCode: "Code",
+      promoFieldLabel: "Label (shown to guest)",
+      promoFieldPercent: "Discount (%)",
+      promoFieldMaxUses: "Usage limit (optional)",
+      promoFieldStayFrom: "First eligible night",
+      promoFieldStayTo: "Last eligible night",
     },
     reservations: {
       title: "Booking request",
