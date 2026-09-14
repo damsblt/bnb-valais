@@ -1,6 +1,22 @@
 /** Paramètres URL / hidden fields Typeform (lisibles) */
 export const TYPEFORM_PARAM_ARRIVAL = "date_arrivee";
 export const TYPEFORM_PARAM_DEPARTURE = "date_depart";
+export const TYPEFORM_PARAM_PROMO_CODE = "code_promo";
+export const TYPEFORM_PARAM_PROMO_PERCENT = "reduction_pct";
+
+export function getTypeformPromoFieldKeys(): {
+  code: string;
+  percent: string;
+} {
+  return {
+    code:
+      process.env.TYPEFORM_PARAM_PROMO_CODE?.trim() ||
+      TYPEFORM_PARAM_PROMO_CODE,
+    percent:
+      process.env.TYPEFORM_PARAM_PROMO_PERCENT?.trim() ||
+      TYPEFORM_PARAM_PROMO_PERCENT,
+  };
+}
 
 /** Anciennes refs de blocs (conservées pour référence) */
 export const TYPEFORM_DATE_ARRIVAL_REF = "27a029a6-7114-41da-91b8-af9a6b227e9c";

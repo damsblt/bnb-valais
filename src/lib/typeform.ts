@@ -271,6 +271,27 @@ function hiddenToAnswers(stay: StayDates | null): ReservationAnswer[] {
   ];
 }
 
+function hiddenPromoToAnswers(
+  hidden: Record<string, string> | undefined,
+): ReservationAnswer[] {
+  if (!hidden) return [];
+  const code =
+    hidden.code_promo ??
+    hidden.promo_code ??
+    hidden[process.env.TYPEFORM_PARAM_PROMO_CODE?.trim() || "code_promo"];
+  const pct =
+    hidden.reduction_pct ??
+    hidden[process.env.TYPEFORM_PARAM_PROMO_PERCENT?.trim() || "reduction_pct"];
+  const out: ReservationAnswer[] = [];
+  if (code?.trim()) {
+    out.push({ label: "Code promo", value: code.trim() });
+  }
+  if (pct?.trim()) {
+    out.push({ label: "Réduction", value: `${pct.trim()} %` });
+  }
+  return out;
+}
+
 function buildSummary(
   answers: ReservationAnswer[],
   stay: StayDates | null,
@@ -410,7 +431,11 @@ export async function fetchReservationRequests(): Promise<ReservationRequest[]> 
     const stayDates = parseStayDates(item.hidden);
     const formAnswers = mapFormAnswers(item.answers ?? [], registry);
 
-    const answers = [...hiddenToAnswers(stayDates), ...formAnswers];
+    const answers = [
+      ...hiddenToAnswers(stayDates),
+      ...hiddenPromoToAnswers(item.hidden),
+      ...formAnswers,
+    ];
 
     const guestEmail =
       formAnswers.find((a) => /email|e-mail|mail/i.test(a.label))?.value ??

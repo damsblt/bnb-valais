@@ -92,6 +92,14 @@ export type SiteContent = {
     clearRangeLabel: string;
     rangeInvalidHint: string;
     rangeMinNightsHint: string;
+    promoOptionalLabel: string;
+    promoPlaceholder: string;
+    promoApplyButton: string;
+    promoApplying: string;
+    promoValidBadge: string;
+    promoClearButton: string;
+    promoInvalidHint: string;
+    promoOptionalHint: string;
   };
   footer: {
     contact: string;
@@ -254,6 +262,16 @@ const content: Record<Locale, SiteContent> = {
         "Cette plage chevauche des dates déjà réservées — choisissez d'autres jours.",
       rangeMinNightsHint:
         "Séjour minimum de 2 nuits — choisissez une date de départ au moins deux jours après l'arrivée.",
+      promoOptionalLabel: "Code promo (facultatif)",
+      promoPlaceholder: "Ex. NOV2026-10",
+      promoApplyButton: "Vérifier le code",
+      promoApplying: "Vérification…",
+      promoValidBadge: "Code accepté",
+      promoClearButton: "Retirer",
+      promoInvalidHint:
+        "Code invalide ou non valable pour ces dates. Corrigez ou laissez le champ vide.",
+      promoOptionalHint:
+        "Si vous avez un code, vérifiez-le ici avant d’ouvrir le formulaire. Les codes sont contrôlés sur le site (pas dans Typeform).",
     },
     footer: {
       contact: "Contact",
@@ -421,6 +439,16 @@ const content: Record<Locale, SiteContent> = {
         "This range overlaps booked dates — please choose different days.",
       rangeMinNightsHint:
         "Minimum stay is 2 nights — pick a check-out at least two days after check-in.",
+      promoOptionalLabel: "Promo code (optional)",
+      promoPlaceholder: "E.g. NOV2026-10",
+      promoApplyButton: "Verify code",
+      promoApplying: "Checking…",
+      promoValidBadge: "Code accepted",
+      promoClearButton: "Remove",
+      promoInvalidHint:
+        "Invalid code or not valid for these dates. Fix it or leave the field empty.",
+      promoOptionalHint:
+        "If you have a code, verify it here before opening the form. Codes are checked on the site (not inside Typeform).",
     },
     footer: {
       contact: "Contact",
