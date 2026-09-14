@@ -32,6 +32,9 @@ export default function AdminReservationRequests({
     "success",
   );
   const [mailFallbackHref, setMailFallbackHref] = useState<string | null>(null);
+  const [orangeOnCalendar, setOrangeOnCalendar] = useState<Set<string>>(
+    () => new Set(),
+  );
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -60,6 +63,7 @@ export default function AdminReservationRequests({
     if (!res.ok) return;
     const data = (await res.json()) as {
       decisions?: { responseId: string; action: "accept" | "reject"; decidedAt: string }[];
+      stays?: { responseId: string }[];
     };
     const map: HandledMap = {};
     for (const decision of data.decisions ?? []) {
@@ -69,6 +73,9 @@ export default function AdminReservationRequests({
       };
     }
     setHandled(map);
+    setOrangeOnCalendar(
+      new Set((data.stays ?? []).map((stay) => stay.responseId)),
+    );
   }, []);
 
   useEffect(() => {
@@ -77,6 +84,26 @@ export default function AdminReservationRequests({
       void loadAdminState();
     } else setLoading(false);
   }, [load, loadAdminState, typeformConfigured]);
+
+  async function releaseDates(responseId: string) {
+    setBusyId(responseId);
+    setNotice(null);
+    const res = await fetch("/api/admin/release-dates", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ responseId }),
+    });
+    const data = (await res.json()) as { error?: string };
+    setBusyId(null);
+    if (!res.ok) {
+      setNoticeKind("error");
+      setNotice(data.error ?? "Impossible de libérer les dates.");
+      return;
+    }
+    setNoticeKind("success");
+    setNotice(content.releaseDatesSuccess);
+    void loadAdminState();
+  }
 
   async function respond(responseId: string, action: "accept" | "reject") {
     setBusyId(responseId);
@@ -294,6 +321,17 @@ export default function AdminReservationRequests({
                 >
                   {content.rejectButton}
                 </button>
+                {status?.action === "accept" &&
+                orangeOnCalendar.has(item.id) ? (
+                  <button
+                    type="button"
+                    disabled={busyId === item.id}
+                    onClick={() => void releaseDates(item.id)}
+                    className="rounded-xl border border-orange-300 bg-orange-50 px-4 py-2 text-sm font-medium text-orange-950 hover:bg-orange-100 disabled:opacity-50"
+                  >
+                    {content.releaseDatesButton}
+                  </button>
+                ) : null}
               </div>
               {!item.guestEmail ? (
                 <p className="mt-2 text-xs text-amber-700">{content.noEmailError}</p>

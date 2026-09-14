@@ -58,6 +58,8 @@ export type SiteContent = {
     calendarStorageActive: string;
     calendarStorageInactive: string;
     calendarMarkedOnAccept: string;
+    releaseDatesButton: string;
+    releaseDatesSuccess: string;
     setupMissing: string;
     checklistTitle: string;
     checklist: string[];
@@ -174,6 +176,9 @@ const content: Record<Locale, SiteContent> = {
       calendarStorageInactive:
         "Calendrier orange : liez le Blob « bnb-valais-blob » au projet Vercel (Storage → Connect → Production), puis redéployez.",
       calendarMarkedOnAccept: "Dates marquées en orange sur le calendrier public.",
+      releaseDatesButton: "Libérer les dates (revenir au vert)",
+      releaseDatesSuccess:
+        "Dates retirées du calendrier public — elles s’affichent à nouveau en vert.",
       setupMissing:
         "Configuration incomplète : ajoutez ADMIN_PASSWORD et TYPEFORM_ACCESS_TOKEN sur Vercel, puis redéployez.",
       checklistTitle: "Checklist — réservation Booking / Airbnb",
@@ -303,6 +308,9 @@ const content: Record<Locale, SiteContent> = {
       calendarStorageInactive:
         "Orange calendar: connect Blob store « bnb-valais-blob » to the Vercel project (Storage → Connect → Production), then redeploy.",
       calendarMarkedOnAccept: "Dates marked orange on the public calendar.",
+      releaseDatesButton: "Release dates (back to green)",
+      releaseDatesSuccess:
+        "Dates removed from the public calendar — they show as available again.",
       setupMissing:
         "Missing setup: add ADMIN_PASSWORD and TYPEFORM_ACCESS_TOKEN on Vercel, then redeploy.",
       checklistTitle: "Checklist — Booking / Airbnb reservation",

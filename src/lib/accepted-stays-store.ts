@@ -205,6 +205,16 @@ export async function recordReservationOutcome(input: {
   await writeStore({ stays, decisions });
 }
 
+/** Retire l’orange du calendrier public sans effacer la décision « acceptée ». */
+export async function releaseCalendarDates(responseId: string): Promise<boolean> {
+  const store = await readStore();
+  const before = store.stays.length;
+  const stays = store.stays.filter((s) => s.responseId !== responseId);
+  if (stays.length === before) return false;
+  await writeStore({ stays, decisions: store.decisions });
+  return true;
+}
+
 /** @deprecated Use recordReservationOutcome */
 export async function recordAcceptedStay(input: {
   responseId: string;
