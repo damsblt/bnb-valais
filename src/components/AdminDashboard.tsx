@@ -1,6 +1,7 @@
 "use client";
 
 import AdminReservationRequests from "@/components/AdminReservationRequests";
+import AdminTypeformSync from "@/components/AdminTypeformSync";
 import { adminLinks } from "@/lib/admin";
 import type { SiteContent } from "@/lib/content";
 
@@ -38,6 +39,8 @@ export default function AdminDashboard({
         typeformConfigured={typeformConfigured}
         emailConfigured={emailConfigured}
       />
+
+      {typeformConfigured ? <AdminTypeformSync /> : null}
 
       <div className="mt-10 rounded-xl border border-amber-200 bg-amber-50 p-6">
         <h2 className="font-semibold text-amber-900">{content.checklistTitle}</h2>

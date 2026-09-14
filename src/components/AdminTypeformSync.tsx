@@ -1,0 +1,72 @@
+"use client";
+
+import { useCallback, useEffect, useState } from "react";
+
+type SyncState = {
+  dateQuestions: number;
+  hiddenConfigured: boolean;
+} | null;
+
+export default function AdminTypeformSync() {
+  const [status, setStatus] = useState<SyncState>(null);
+  const [message, setMessage] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+
+  const loadStatus = useCallback(async () => {
+    const res = await fetch("/api/admin/typeform/status", { cache: "no-store" });
+    if (res.ok) {
+      setStatus((await res.json()) as SyncState);
+    }
+  }, []);
+
+  useEffect(() => {
+    void loadStatus();
+  }, [loadStatus]);
+
+  async function runSync() {
+    setBusy(true);
+    setMessage(null);
+    const res = await fetch("/api/admin/typeform/sync-form", { method: "POST" });
+    const data = (await res.json()) as {
+      ok?: boolean;
+      detail?: string;
+      dateQuestionsAfter?: number;
+    };
+    setMessage(data.detail ?? (res.ok ? "OK" : "Erreur"));
+    setBusy(false);
+    await loadStatus();
+  }
+
+  return (
+    <section className="mt-10 rounded-xl border border-violet-200 bg-violet-50 p-6">
+      <h2 className="font-semibold text-violet-950">Formulaire Typeform (dates)</h2>
+      <p className="mt-2 text-sm text-violet-900">
+        Les dates sont choisies sur le calendrier du site. Cette action retire les questions
+        «&nbsp;Date d&apos;arrivée&nbsp;» et «&nbsp;Date de départ&nbsp;» du Typeform pour éviter
+        de les redemander.
+      </p>
+      {status ? (
+        <p className="mt-3 text-sm text-violet-800">
+          État actuel :{" "}
+          {status.dateQuestions === 0 ? (
+            <strong>aucune question date dans Typeform</strong>
+          ) : (
+            <strong>{status.dateQuestions} question(s) date encore dans Typeform</strong>
+          )}
+          {status.hiddenConfigured ? " · hidden fields OK" : " · hidden fields à configurer"}
+        </p>
+      ) : null}
+      <button
+        type="button"
+        disabled={busy}
+        onClick={() => void runSync()}
+        className="mt-4 rounded-xl bg-violet-800 px-5 py-2.5 text-sm font-medium text-white hover:bg-violet-900 disabled:opacity-50"
+      >
+        {busy ? "Adaptation…" : "Adapter le formulaire Typeform"}
+      </button>
+      {message ? (
+        <p className="mt-3 text-sm text-violet-950">{message}</p>
+      ) : null}
+    </section>
+  );
+}

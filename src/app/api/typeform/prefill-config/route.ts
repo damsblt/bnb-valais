@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 
 export async function GET() {
   const keys = getTypeformDateFieldKeys();
-  let setup: { ok: boolean; detail: string } | null = null;
+  let setup: Awaited<ReturnType<typeof ensureTypeformPrefillOnForm>> | null = null;
 
   try {
     setup = await ensureTypeformPrefillOnForm();
@@ -14,6 +14,9 @@ export async function GET() {
     setup = {
       ok: false,
       detail: err instanceof Error ? err.message : "setup failed",
+      dateQuestionsBefore: 0,
+      dateQuestionsAfter: 0,
+      hiddenConfigured: false,
     };
   }
 
@@ -21,7 +24,6 @@ export async function GET() {
     {
       checkIn: keys.checkIn,
       checkOut: keys.checkOut,
-      source: "configured",
       setup,
     },
     { headers: { "Cache-Control": "no-store, max-age=0" } },
