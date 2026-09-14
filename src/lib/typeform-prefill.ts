@@ -3,17 +3,10 @@ export type DateRange = {
   checkOut: string;
 };
 
+import { getTypeformDateFieldKeys } from "@/lib/typeform-refs";
+
 export function getPrefillParamNames(): { checkIn: string; checkOut: string } {
-  return {
-    checkIn:
-      process.env.TYPEFORM_PARAM_CHECKIN?.trim() ||
-      process.env.NEXT_PUBLIC_TYPEFORM_PARAM_CHECKIN?.trim() ||
-      "date_arrivee",
-    checkOut:
-      process.env.TYPEFORM_PARAM_CHECKOUT?.trim() ||
-      process.env.NEXT_PUBLIC_TYPEFORM_PARAM_CHECKOUT?.trim() ||
-      "date_depart",
-  };
+  return getTypeformDateFieldKeys();
 }
 
 export function addDays(isoDate: string, days: number): string {

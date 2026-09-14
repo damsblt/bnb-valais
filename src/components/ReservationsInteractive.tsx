@@ -6,7 +6,14 @@ import AvailabilityCalendar from "@/components/AvailabilityCalendar";
 import TypeformEmbed from "@/components/TypeformEmbed";
 import type { Locale } from "@/lib/i18n";
 import type { SiteContent } from "@/lib/content";
-import type { DateRange } from "@/lib/typeform-prefill";
+import {
+  formatRangeLabel,
+  type DateRange,
+} from "@/lib/typeform-prefill";
+import { getTypeformDateFieldKeys } from "@/lib/typeform-refs";
+
+const URL_PARAM_CHECKIN = "check_in";
+const URL_PARAM_CHECKOUT = "check_out";
 
 type ReservationsInteractiveProps = {
   locale: Locale;
@@ -20,43 +27,35 @@ export default function ReservationsInteractive({
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const [paramKeys, setParamKeys] = useState<{ checkIn: string; checkOut: string }>({
-    checkIn: "date_arrivee",
-    checkOut: "date_depart",
-  });
+  const fieldKeys = useMemo(() => getTypeformDateFieldKeys(), []);
   const [range, setRange] = useState<DateRange | null>(null);
 
   useEffect(() => {
-    fetch("/api/typeform/prefill-config", { cache: "no-store" })
-      .then((r) => r.json())
-      .then((data: { checkIn: string; checkOut: string }) => {
-        if (data.checkIn && data.checkOut) setParamKeys(data);
-      })
-      .catch(() => undefined);
+    fetch("/api/typeform/prefill-config", { cache: "no-store" }).catch(() => undefined);
   }, []);
 
   useEffect(() => {
-    const checkIn = searchParams.get(paramKeys.checkIn);
-    const checkOut = searchParams.get(paramKeys.checkOut);
+    const checkIn = searchParams.get(URL_PARAM_CHECKIN);
+    const checkOut = searchParams.get(URL_PARAM_CHECKOUT);
     if (checkIn && checkOut && checkIn < checkOut) {
       setRange({ checkIn, checkOut });
     }
-  }, [searchParams, paramKeys.checkIn, paramKeys.checkOut]);
+  }, [searchParams]);
 
   const syncUrl = useCallback(
     (next: DateRange | null) => {
       const params = new URLSearchParams(searchParams.toString());
       if (next) {
-        params.set(paramKeys.checkIn, next.checkIn);
-        params.set(paramKeys.checkOut, next.checkOut);
+        params.set(URL_PARAM_CHECKIN, next.checkIn);
+        params.set(URL_PARAM_CHECKOUT, next.checkOut);
       } else {
-        params.delete(paramKeys.checkIn);
-        params.delete(paramKeys.checkOut);
+        params.delete(URL_PARAM_CHECKIN);
+        params.delete(URL_PARAM_CHECKOUT);
       }
       const qs = params.toString();
       router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
     },
-    [router, pathname, searchParams, paramKeys.checkIn, paramKeys.checkOut],
+    [router, pathname, searchParams],
   );
 
   const handleRangeChange = useCallback(
@@ -70,10 +69,10 @@ export default function ReservationsInteractive({
   const hidden = useMemo(() => {
     if (!range) return {};
     return {
-      [paramKeys.checkIn]: range.checkIn,
-      [paramKeys.checkOut]: range.checkOut,
+      [fieldKeys.checkIn]: range.checkIn,
+      [fieldKeys.checkOut]: range.checkOut,
     };
-  }, [range, paramKeys.checkIn, paramKeys.checkOut]);
+  }, [range, fieldKeys.checkIn, fieldKeys.checkOut]);
 
   return (
     <div className="mt-10 space-y-10">
@@ -99,11 +98,13 @@ export default function ReservationsInteractive({
         <p className="mt-2 text-neutral-600">
           {range ? reservations.formPrefillNote : reservations.formNote}
         </p>
+        {range ? (
+          <p className="mt-3 rounded-xl bg-sky-50 px-4 py-3 text-sm font-medium text-sky-950">
+            {formatRangeLabel(range, locale)}
+          </p>
+        ) : null}
         <div className="mt-6 overflow-hidden rounded-3xl border border-neutral-200 bg-white shadow-sm">
-          <TypeformEmbed
-            hidden={hidden}
-            paramKeys={[paramKeys.checkIn, paramKeys.checkOut]}
-          />
+          <TypeformEmbed hidden={hidden} />
         </div>
       </div>
     </div>
