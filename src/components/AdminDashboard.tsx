@@ -34,6 +34,16 @@ export default function AdminDashboard({
         </button>
       </div>
 
+      <p
+        className={`mt-6 rounded-xl border p-4 text-sm ${
+          emailConfigured
+            ? "border-emerald-200 bg-emerald-50 text-emerald-950"
+            : "border-amber-200 bg-amber-50 text-amber-950"
+        }`}
+      >
+        {emailConfigured ? content.emailAutoActive : content.emailAutoInactive}
+      </p>
+
       <AdminReservationRequests
         content={content}
         typeformConfigured={typeformConfigured}

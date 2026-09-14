@@ -23,6 +23,10 @@ export default function AdminReservationRequests({
   const [busyId, setBusyId] = useState<string | null>(null);
   const [handled, setHandled] = useState<HandledMap>({});
   const [notice, setNotice] = useState<string | null>(null);
+  const [noticeKind, setNoticeKind] = useState<"success" | "warning" | "error">(
+    "success",
+  );
+  const [mailFallbackHref, setMailFallbackHref] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -54,6 +58,7 @@ export default function AdminReservationRequests({
   async function respond(responseId: string, action: "accept" | "reject") {
     setBusyId(responseId);
     setNotice(null);
+    setMailFallbackHref(null);
     const res = await fetch("/api/admin/respond", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -68,6 +73,7 @@ export default function AdminReservationRequests({
     setBusyId(null);
 
     if (!res.ok) {
+      setNoticeKind("error");
       setNotice(data.error ?? content.noEmailError);
       return;
     }
@@ -75,15 +81,35 @@ export default function AdminReservationRequests({
     setHandled((prev) => ({ ...prev, [responseId]: action }));
 
     if (data.emailSent) {
+      setNoticeKind("success");
       setNotice(content.emailSent);
     } else if (data.mailto) {
-      window.location.href = data.mailto;
-      setNotice(
-        emailConfigured
-          ? `Envoi auto impossible (${data.emailError ?? "erreur"}). ${content.openMailClient}.`
-          : content.openMailClient,
-      );
+      setMailFallbackHref(data.mailto);
+      if (emailConfigured) {
+        setNoticeKind("warning");
+        const detail = formatResendError(data.emailError);
+        setNotice(
+          detail
+            ? `${content.emailAutoFailed} (${detail})`
+            : content.emailAutoFailed,
+        );
+      } else {
+        setNoticeKind("warning");
+        setNotice(content.openMailClient);
+        window.location.href = data.mailto;
+      }
     }
+  }
+
+  function formatResendError(raw?: string): string | null {
+    if (!raw?.trim()) return null;
+    try {
+      const parsed = JSON.parse(raw) as { message?: string };
+      if (parsed.message) return parsed.message;
+    } catch {
+      /* plain text */
+    }
+    return raw.length > 200 ? `${raw.slice(0, 200)}…` : raw;
   }
 
   function formatDate(iso: string) {
@@ -117,7 +143,25 @@ export default function AdminReservationRequests({
       {loading ? <p className="mt-4 text-neutral-600">Chargement des demandes…</p> : null}
       {error ? <p className="mt-4 text-sm text-rose-600">{error}</p> : null}
       {notice ? (
-        <p className="mt-4 rounded-lg bg-emerald-50 p-3 text-sm text-emerald-900">{notice}</p>
+        <div
+          className={`mt-4 rounded-lg p-3 text-sm ${
+            noticeKind === "success"
+              ? "bg-emerald-50 text-emerald-900"
+              : noticeKind === "warning"
+                ? "bg-amber-50 text-amber-950"
+                : "bg-rose-50 text-rose-900"
+          }`}
+        >
+          <p>{notice}</p>
+          {mailFallbackHref ? (
+            <a
+              href={mailFallbackHref}
+              className="mt-2 inline-block font-medium underline"
+            >
+              {content.openMailFallback}
+            </a>
+          ) : null}
+        </div>
       ) : null}
 
       {!loading && !error && typeformConfigured && items.length === 0 ? (

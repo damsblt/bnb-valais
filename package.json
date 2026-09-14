@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "resend:sync-templates": "node scripts/sync-resend-templates.mjs"
   },
   "dependencies": {
     "@typeform/embed": "^6.0.0",

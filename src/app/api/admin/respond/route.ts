@@ -50,8 +50,8 @@ export async function POST(request: Request) {
 
   const emailResult = await sendReplyEmail(
     reservation.guestEmail,
-    subject,
-    text,
+    reservation,
+    action,
   );
 
   return Response.json({

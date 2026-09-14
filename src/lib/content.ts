@@ -51,6 +51,10 @@ export type SiteContent = {
     noEmailError: string;
     emailSent: string;
     openMailClient: string;
+    emailAutoActive: string;
+    emailAutoInactive: string;
+    emailAutoFailed: string;
+    openMailFallback: string;
     setupMissing: string;
     checklistTitle: string;
     checklist: string[];
@@ -149,8 +153,14 @@ const content: Record<Locale, SiteContent> = {
       acceptButton: "Accepter et envoyer",
       rejectButton: "Refuser et envoyer",
       noEmailError: "Pas d'e-mail sur cette demande — répondez depuis Typeform.",
-      emailSent: "E-mail envoyé au client.",
-      openMailClient: "Ouvrir dans votre messagerie",
+      emailSent: "E-mail envoyé au client via Resend.",
+      openMailClient: "Votre messagerie s’ouvre avec le message pré-rempli — cliquez Envoyer.",
+      emailAutoActive: "Envoi automatique (Resend) : actif sur ce serveur.",
+      emailAutoInactive:
+        "Envoi automatique désactivé : ajoutez RESEND_API_KEY sur Vercel (coche Production), domaine vérifié sur resend.com, puis redéployez.",
+      emailAutoFailed:
+        "Resend n’a pas pu envoyer l’e-mail. Corrigez la config ou utilisez le bouton ci-dessous.",
+      openMailFallback: "Ouvrir dans ma messagerie",
       setupMissing:
         "Configuration incomplète : ajoutez ADMIN_PASSWORD et TYPEFORM_ACCESS_TOKEN sur Vercel, puis redéployez.",
       checklistTitle: "Checklist — réservation Booking / Airbnb",
@@ -260,8 +270,14 @@ const content: Record<Locale, SiteContent> = {
       acceptButton: "Accept and send",
       rejectButton: "Decline and send",
       noEmailError: "No email on this request — reply from Typeform.",
-      emailSent: "Email sent to the guest.",
-      openMailClient: "Open in your mail app",
+      emailSent: "Email sent to the guest via Resend.",
+      openMailClient: "Your mail app opens with a pre-filled message — click Send.",
+      emailAutoActive: "Automatic sending (Resend): enabled on this server.",
+      emailAutoInactive:
+        "Automatic sending is off: add RESEND_API_KEY on Vercel (Production checked), verify your domain on resend.com, then redeploy.",
+      emailAutoFailed:
+        "Resend could not send the email. Fix the configuration or use the button below.",
+      openMailFallback: "Open in my mail app",
       setupMissing:
         "Missing setup: add ADMIN_PASSWORD and TYPEFORM_ACCESS_TOKEN on Vercel, then redeploy.",
       checklistTitle: "Checklist — Booking / Airbnb reservation",
