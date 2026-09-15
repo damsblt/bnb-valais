@@ -52,7 +52,7 @@ export default function ParallaxHero({
           alt={imageAlt}
           fill
           priority
-          className="object-cover"
+          className="object-cover object-left"
           sizes="100vw"
         />
       </div>
