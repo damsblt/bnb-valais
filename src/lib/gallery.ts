@@ -6,7 +6,7 @@ export type GalleryPhoto = {
   };
 };
 
-export const heroImage = "/images/new/DJI_0055.JPG";
+export const heroImage = "/images/new/IMG_9119.JPG";
 
 export const splitImages = {
   alps: "/images/new/DJI_0057.JPG",
