@@ -15,9 +15,9 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: "BnB Valais — Location appartement vacances Valais | Hébergement vue Alpes",
+    title: "BnB Valais — Location appartement vacances Sion Anzère | Hébergement semaine Valais",
     description:
-      "Location appartement vacances en Valais avec vue panoramique sur les Alpes. 2 chambres, terrasse ensoleillée, proche Sion et Anzère. Apparthotel idéal pour séjour semaine.",
+      "Location appartement vacances en Valais à 15 min de Sion et Anzère. Hébergement 2 chambres vue Alpes, location semaine ou week-end. Gîte idéal ski et randonnée.",
     url: BASE_URL,
     locale: "fr_CH",
     type: "website",

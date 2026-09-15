@@ -218,9 +218,9 @@ export type SiteContent = {
 const content: Record<Locale, SiteContent> = {
   fr: {
     meta: {
-      title: "BnB Valais — Location appartement vacances Valais | Hébergement vue Alpes",
+      title: "BnB Valais — Location appartement vacances Sion Anzère | Hébergement semaine Valais",
       description:
-        "Location appartement vacances en Valais, Suisse. Hébergement 2 chambres avec vue panoramique sur les Alpes, proche Sion et Anzère. Apparthotel idéal pour séjour semaine ou week-end. Réservation directe sans commission.",
+        "Location appartement vacances en Valais entre Sion et Anzère (15 min). Hébergement 2 chambres vue Alpes, location semaine ou week-end. Gîte idéal ski, randonnée. Apparthotel avec terrasse plein Sud. Réservation directe sans commission.",
     },
     nav: {
       home: "Accueil",
@@ -481,9 +481,9 @@ const content: Record<Locale, SiteContent> = {
   },
   en: {
     meta: {
-      title: "BnB Valais — Holiday apartment rental Valais | Alps view accommodation",
+      title: "BnB Valais — Holiday apartment Sion Anzère | Weekly rental Valais Switzerland",
       description:
-        "Holiday apartment rental in Valais, Switzerland. 2-bedroom accommodation with panoramic Alps view, near Sion and Anzère. Ideal aparthotel for weekly or weekend stays. Direct booking without commission.",
+        "Holiday apartment rental in Valais between Sion and Anzère (15 min). 2-bedroom accommodation with Alps view, weekly or weekend rental. Ideal for skiing, hiking. Self-catering apartment with south-facing terrace. Direct booking without commission.",
     },
     nav: {
       home: "Home",

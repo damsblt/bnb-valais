@@ -5,9 +5,9 @@ import SiteLayout from "@/components/SiteLayout";
 const BASE_URL = "https://www.bnb-valais.ch";
 
 export const metadata: Metadata = {
-  title: "Book apartment Valais — Availability and rates | BnB Valais",
+  title: "Book accommodation Sion Anzère — Weekly rental Valais | BnB Valais",
   description:
-    "Book your stay at BnB Valais. Check availability and rates for our holiday apartment with Alps view. Direct booking without commission, minimum 2 nights.",
+    "Book your accommodation between Sion and Anzère. Weekly or weekend apartment rental in Valais. Check availability and rates. Alps view, ideal for skiing and hiking. Direct booking without commission.",
   alternates: {
     canonical: `${BASE_URL}/en/reservations`,
     languages: {
@@ -16,9 +16,9 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: "Book apartment Valais — Availability | BnB Valais",
+    title: "Book accommodation Sion Anzère — Weekly rental Valais Switzerland",
     description:
-      "Check availability and book directly your stay in Valais. 2-bedroom apartment with Alps view, near Sion and Anzère.",
+      "Book your holiday rental between Sion and Anzère. 2-bedroom apartment with Alps view, weekly or weekend rental. Ideal for skiing and hiking.",
     url: `${BASE_URL}/en/reservations`,
     locale: "en_GB",
     type: "website",

@@ -15,9 +15,9 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: "BnB Valais — Holiday apartment rental Valais | Alps view accommodation",
+    title: "BnB Valais — Holiday apartment Sion Anzère | Weekly rental Valais Switzerland",
     description:
-      "Holiday apartment rental in Valais with panoramic Alps view. 2 bedrooms, sunny terrace, near Sion and Anzère. Ideal aparthotel for weekly stays.",
+      "Holiday apartment rental in Valais, 15 min from Sion and Anzère. 2-bedroom accommodation with Alps view, weekly or weekend rental. Ideal for skiing and hiking.",
     url: `${BASE_URL}/en`,
     locale: "en_GB",
     type: "website",

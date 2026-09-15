@@ -5,9 +5,9 @@ import SiteLayout from "@/components/SiteLayout";
 const BASE_URL = "https://www.bnb-valais.ch";
 
 export const metadata: Metadata = {
-  title: "Réservation appartement Valais — Disponibilités et tarifs | BnB Valais",
+  title: "Réservation hébergement Sion Anzère — Location semaine Valais | BnB Valais",
   description:
-    "Réservez votre séjour au BnB Valais. Consultez les disponibilités et tarifs de notre appartement de vacances avec vue sur les Alpes. Réservation directe sans commission, minimum 2 nuits.",
+    "Réservez votre hébergement entre Sion et Anzère. Location appartement semaine ou week-end en Valais. Consultez disponibilités et tarifs. Vue Alpes, idéal ski et randonnée. Réservation directe sans commission.",
   alternates: {
     canonical: `${BASE_URL}/reservations`,
     languages: {
@@ -16,9 +16,9 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: "Réservation appartement Valais — Disponibilités | BnB Valais",
+    title: "Réservation hébergement Sion Anzère — Location semaine Valais",
     description:
-      "Consultez les disponibilités et réservez directement votre séjour en Valais. Appartement 2 chambres vue Alpes, proche Sion et Anzère.",
+      "Réservez votre location de vacances entre Sion et Anzère. Appartement 2 chambres vue Alpes, location semaine ou week-end. Hébergement idéal ski et randonnée.",
     url: `${BASE_URL}/reservations`,
     locale: "fr_CH",
     type: "website",
