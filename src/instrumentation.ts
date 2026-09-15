@@ -12,4 +12,19 @@ export async function register() {
     "@/lib/resend-newsletter-audience"
   );
   void ensureNewsletterAudience().catch(() => {});
+
+  if (process.env.TYPEFORM_ACCESS_TOKEN?.trim()) {
+    const { ensureTypeformPrefillOnForm } = await import(
+      "@/lib/typeform-form-setup"
+    );
+    void ensureTypeformPrefillOnForm()
+      .then((result) => {
+        if (!result.ok) {
+          console.warn("[typeform-sync]", result.detail);
+        }
+      })
+      .catch((err) => {
+        console.warn("[typeform-sync]", err instanceof Error ? err.message : err);
+      });
+  }
 }

@@ -145,6 +145,9 @@ async function main() {
 }
 
 main().catch((err) => {
-  console.error(err.message || err);
-  process.exit(1);
+  console.error(
+    "Typeform sync failed (build continues — use Admin → Synchroniser Typeform or npm run typeform:sync):",
+    err.message || err,
+  );
+  process.exit(0);
 });
