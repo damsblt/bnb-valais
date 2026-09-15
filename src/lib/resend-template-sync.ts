@@ -3,6 +3,7 @@ import {
   RESEND_PROMO_NOV2026_ALIAS,
   RESEND_PROMO_NOV2026_SUBJECT,
 } from "@/lib/resend-promo-nov2026-template";
+import { reservationReplyTemplateDefinitions } from "@/lib/resend-template-html";
 
 const RESEND_API = "https://api.resend.com";
 
@@ -77,6 +78,15 @@ export async function upsertAndPublishResendTemplate(
   await resendApi(apiKey, `/templates/${id}/publish`, { method: "POST" });
 
   return { id, alias: def.alias, published: true };
+}
+
+export async function syncReservationReplyTemplates(apiKey: string) {
+  const defs = reservationReplyTemplateDefinitions();
+  const published = [];
+  for (const def of defs) {
+    published.push(await upsertAndPublishResendTemplate(apiKey, def));
+  }
+  return { published, aliases: defs.map((d) => d.alias) };
 }
 
 export async function syncPromoNov2026TestTemplate(apiKey: string) {

@@ -1,3 +1,4 @@
+import { normalizeGuestAnswerLabels } from "@/lib/guest-answer-labels";
 import { parseGuestCount } from "@/lib/night-pricing";
 import {
   getTypeformGuestCountFieldKey,
@@ -76,8 +77,11 @@ function isLiveEmbedId(id: string): boolean {
 function flattenFields(fields: TypeformField[]): TypeformField[] {
   const out: TypeformField[] = [];
   for (const field of fields) {
-    if (field.type === "group" && field.properties?.fields?.length) {
-      out.push(...flattenFields(field.properties.fields));
+    const nested =
+      (field.type === "group" || field.type === "contact_info") &&
+      field.properties?.fields?.length;
+    if (nested) {
+      out.push(...flattenFields(field.properties!.fields!));
     } else {
       out.push(field);
     }
@@ -114,7 +118,28 @@ function findAnswerForField(
 
 function isGenericLabel(title: string | undefined): boolean {
   const t = title?.trim() ?? "";
-  return !t || /^champ$/i.test(t) || /^field$/i.test(t) || /^question$/i.test(t);
+  return (
+    !t ||
+    /^champ$/i.test(t) ||
+    /^field$/i.test(t) ||
+    /^question$/i.test(t) ||
+    /^réponse$/i.test(t) ||
+    /^reponse$/i.test(t)
+  );
+}
+
+function labelFromContactHint(hint: string): string | null {
+  if (/first_name|first name|prénom|prenom|\bfirst\b/i.test(hint)) {
+    return "Prénom";
+  }
+  if (
+    /last_name|last name|nom de famille|nom.?famille|family.?name|\blast\b/i.test(
+      hint,
+    )
+  ) {
+    return "Nom de famille";
+  }
+  return null;
 }
 
 function defaultLabelForTextField(
@@ -122,11 +147,36 @@ function defaultLabelForTextField(
   textFieldIndex: number,
 ): string {
   const hint = `${field.title ?? ""} ${field.ref ?? ""}`;
+  const fromContact = labelFromContactHint(hint);
+  if (fromContact) return fromContact;
   if (/prénom|prenom|first/i.test(hint)) return "Prénom";
-  if (/(^|\s)nom(\s|$)|last.?name|family/i.test(hint)) return "Nom";
+  if (/(^|\s)nom(\s|$)|last.?name|family/i.test(hint)) return "Nom de famille";
   if (textFieldIndex === 0) return "Prénom";
-  if (textFieldIndex === 1) return "Nom";
+  if (textFieldIndex === 1) return "Nom de famille";
   return field.title?.trim() || "Champ";
+}
+
+function isTextLikeAnswer(field: TypeformField, answer: TypeformAnswer): boolean {
+  const answerType = answer.type || field.type;
+  const subType = answer.field.type ?? "";
+  if (labelFromContactHint(`${field.ref ?? ""} ${answer.field.ref ?? ""} ${subType}`)) {
+    return true;
+  }
+  return (
+    answerType === "text" ||
+    answerType === "short_text" ||
+    field.type === "short_text" ||
+    field.type === "long_text" ||
+    subType === "first_name" ||
+    subType === "last_name"
+  );
+}
+
+function shouldAdvanceTextFieldIndex(
+  field: TypeformField,
+  answer: TypeformAnswer,
+): boolean {
+  return isTextLikeAnswer(field, answer);
 }
 
 function resolveAnswerLabel(
@@ -134,8 +184,15 @@ function resolveAnswerLabel(
   answer: TypeformAnswer,
   textFieldIndex: number,
 ): string {
+  const contactHint = `${field.ref ?? ""} ${answer.field.ref ?? ""} ${answer.field.type ?? ""} ${field.title ?? ""}`;
+  const fromContact = labelFromContactHint(contactHint);
+  if (fromContact) return fromContact;
+
   const title = field.title?.trim();
-  if (title && !isGenericLabel(title)) return title;
+  if (title && !isGenericLabel(title)) {
+    if (/^nom$/i.test(title)) return "Nom de famille";
+    return title;
+  }
 
   const answerType = answer.type || field.type;
   if (answerType === "email") return "Adresse email";
@@ -173,11 +230,7 @@ function mapFormAnswers(
 
     used.add(answer);
     const label = resolveAnswerLabel(field, answer, textFieldIndex);
-    if (
-      answer.type === "text" ||
-      answer.type === "short_text" ||
-      field.type === "short_text"
-    ) {
+    if (shouldAdvanceTextFieldIndex(field, answer)) {
       textFieldIndex += 1;
     }
 
@@ -199,16 +252,30 @@ function mapFormAnswers(
       ? resolveAnswerLabel(meta, answer, textFieldIndex)
       : answer.type === "email"
         ? "Adresse email"
-        : "Champ";
+        : resolveAnswerLabel(
+            {
+              id: answer.field.id,
+              ref: answer.field.ref ?? "",
+              title: "",
+              type: answer.field.type || answer.type,
+            },
+            answer,
+            textFieldIndex,
+          );
 
-    if (answer.type === "text" || answer.type === "short_text") {
+    if (meta && shouldAdvanceTextFieldIndex(meta, answer)) {
+      textFieldIndex += 1;
+    } else if (
+      !meta &&
+      (answer.type === "text" || answer.type === "short_text")
+    ) {
       textFieldIndex += 1;
     }
 
     result.push({ label, value });
   }
 
-  return result;
+  return normalizeGuestAnswerLabels(result);
 }
 
 function answerToString(answer: TypeformAnswer): string | null {

@@ -2,6 +2,7 @@
 
 import AdminOrangeCalendar from "@/components/AdminOrangeCalendar";
 import AdminReservationRequests from "@/components/AdminReservationRequests";
+import AdminResendTemplateSync from "@/components/AdminResendTemplateSync";
 import AdminTypeformSync from "@/components/AdminTypeformSync";
 import { adminLinks } from "@/lib/admin";
 import type { SiteContent } from "@/lib/content";
@@ -35,6 +36,7 @@ export default function AdminReservationsDashboard({
       ) : null}
 
       {typeformConfigured ? <AdminTypeformSync /> : null}
+      {emailConfigured ? <AdminResendTemplateSync /> : null}
 
       <div className="mt-10 rounded-xl border border-amber-200 bg-amber-50 p-6">
         <h2 className="font-semibold text-amber-900">{content.checklistTitle}</h2>

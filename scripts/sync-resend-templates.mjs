@@ -36,6 +36,7 @@ const layoutHtml = `<!DOCTYPE html>
             <td style="padding:0 28px 28px;">
               <div style="background:#fafafa;border:1px solid #e4e4e7;border-radius:12px;padding:20px;">
                 <p style="margin:0 0 12px;font-size:13px;font-weight:600;color:#52525b;text-transform:uppercase;letter-spacing:0.06em;">Récapitulatif</p>
+                {{{GUEST_IDENTITY_HTML}}}
                 {{{DETAILS_HTML}}}
               </div>
             </td>
@@ -62,10 +63,13 @@ const layoutHtml = `<!DOCTYPE html>
 </body>
 </html>`;
 
+const guestIdentityPreview = `<p style="margin:0 0 10px;font-size:15px;line-height:1.5;color:#3f3f46;"><strong style="color:#18181b;">Prénom</strong><br />Damien</p><p style="margin:0 0 10px;font-size:15px;line-height:1.5;color:#3f3f46;"><strong style="color:#18181b;">Nom de famille</strong><br />Balet</p>`;
+
 const variables = [
   "GREETING",
   "HEADLINE",
   "LEAD",
+  "GUEST_IDENTITY_HTML",
   "DETAILS_HTML",
   "FOOTER_NOTE",
   "PAYMENT_HTML",
@@ -73,7 +77,12 @@ const variables = [
 ].map((key) => ({
   key,
   type: "string",
-  fallback_value: key === "ACCENT_COLOR" ? "#0284c7" : "—",
+  fallback_value:
+    key === "ACCENT_COLOR"
+      ? "#0284c7"
+      : key === "GUEST_IDENTITY_HTML"
+        ? guestIdentityPreview
+        : "—",
 }));
 
 async function api(path, options = {}) {

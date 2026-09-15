@@ -7,11 +7,14 @@ export const RESEND_TEMPLATE_VARIABLE_KEYS = [
   "GREETING",
   "HEADLINE",
   "LEAD",
+  "GUEST_IDENTITY_HTML",
   "DETAILS_HTML",
   "FOOTER_NOTE",
   "PAYMENT_HTML",
   "ACCENT_COLOR",
 ] as const;
+
+const GUEST_IDENTITY_PREVIEW = `<p style="margin:0 0 10px;font-size:15px;line-height:1.5;color:#3f3f46;"><strong style="color:#18181b;">Prénom</strong><br />Damien</p><p style="margin:0 0 10px;font-size:15px;line-height:1.5;color:#3f3f46;"><strong style="color:#18181b;">Nom de famille</strong><br />Balet</p>`;
 
 export type ResendTemplateVariableKey =
   (typeof RESEND_TEMPLATE_VARIABLE_KEYS)[number];
@@ -44,6 +47,7 @@ export function reservationEmailLayoutHtml(): string {
             <td style="padding:0 28px 28px;">
               <div style="background:#fafafa;border:1px solid #e4e4e7;border-radius:12px;padding:20px;">
                 <p style="margin:0 0 12px;font-size:13px;font-weight:600;color:#52525b;text-transform:uppercase;letter-spacing:0.06em;">Récapitulatif</p>
+                {{{GUEST_IDENTITY_HTML}}}
                 {{{DETAILS_HTML}}}
               </div>
             </td>
@@ -79,6 +83,38 @@ export function templateVariableDefinitions(): {
   return RESEND_TEMPLATE_VARIABLE_KEYS.map((key) => ({
     key,
     type: "string" as const,
-    fallback_value: key === "ACCENT_COLOR" ? "#0284c7" : "—",
+    fallback_value:
+      key === "ACCENT_COLOR"
+        ? "#0284c7"
+        : key === "GUEST_IDENTITY_HTML"
+          ? GUEST_IDENTITY_PREVIEW
+          : "—",
   }));
+}
+
+export function reservationReplyTemplateDefinitions(): {
+  name: string;
+  alias: string;
+  subject: string;
+  html: string;
+  variables: ReturnType<typeof templateVariableDefinitions>;
+}[] {
+  const html = reservationEmailLayoutHtml();
+  const variables = templateVariableDefinitions();
+  return [
+    {
+      name: "BnB Valais — confirmation demande",
+      alias: RESEND_TEMPLATE_ALIAS_ACCEPT,
+      subject: "Confirmation de votre demande — Le Nid de la Sittelle",
+      html,
+      variables,
+    },
+    {
+      name: "BnB Valais — refus demande",
+      alias: RESEND_TEMPLATE_ALIAS_REJECT,
+      subject: "Votre demande de séjour — Le Nid de la Sittelle",
+      html,
+      variables,
+    },
+  ];
 }

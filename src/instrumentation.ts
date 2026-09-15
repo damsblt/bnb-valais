@@ -1,7 +1,21 @@
 export async function register() {
   if (process.env.NEXT_RUNTIME !== "nodejs") return;
   if (process.env.VERCEL_ENV !== "production") return;
-  if (!process.env.RESEND_API_KEY?.trim()) return;
+
+  const resendKey = process.env.RESEND_API_KEY?.trim();
+  if (resendKey) {
+    const { syncReservationReplyTemplates } = await import(
+      "@/lib/resend-template-sync"
+    );
+    void syncReservationReplyTemplates(resendKey).catch((err) => {
+      console.warn(
+        "[resend-template-sync]",
+        err instanceof Error ? err.message : err,
+      );
+    });
+  }
+
+  if (!resendKey) return;
 
   const hasEnvIds =
     process.env.RESEND_NEWSLETTER_SEGMENT_ID?.trim() &&

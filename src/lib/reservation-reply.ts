@@ -2,6 +2,10 @@ import {
   buildPaymentHtml,
   buildPaymentPlainText,
 } from "@/lib/bank-payment";
+import {
+  normalizeGuestAnswerLabels,
+  partitionAnswersForEmail,
+} from "@/lib/guest-answer-labels";
 import type { ReservationAnswer, ReservationRequest } from "@/lib/typeform";
 import {
   RESEND_TEMPLATE_ALIAS_ACCEPT,
@@ -72,7 +76,11 @@ export async function buildReplyEmail(
 ): Promise<ReplyEmailPayload> {
   const quote =
     action === "accept" ? await resolveStayQuote(request) : null;
-  const answers = enrichAnswersWithQuote(request.answers, quote);
+  const answers = normalizeGuestAnswerLabels(
+    enrichAnswersWithQuote(request.answers, quote),
+  );
+  const { guestIdentityHtml, detailAnswers } =
+    partitionAnswersForEmail(answers);
 
   const greeting = request.guestName
     ? `Bonjour ${request.guestName},`
@@ -80,7 +88,7 @@ export async function buildReplyEmail(
   const detailsPlain = answers
     .map((a) => `- ${a.label}: ${a.value}`)
     .join("\n");
-  const detailsHtml = buildDetailsHtml(answers);
+  const detailsHtml = buildDetailsHtml(detailAnswers);
 
   if (action === "accept") {
     const headline = "Disponibilité confirmée — finalisez votre réservation";
@@ -111,6 +119,7 @@ https://www.bnb-valais.ch
       GREETING: escapeHtml(greeting),
       HEADLINE: escapeHtml(headline),
       LEAD: escapeHtml(lead),
+      GUEST_IDENTITY_HTML: guestIdentityHtml,
       DETAILS_HTML: detailsHtml,
       FOOTER_NOTE: escapeHtml(footerNote),
       PAYMENT_HTML: paymentHtml,
@@ -150,6 +159,7 @@ Le Nid de la Sittelle
     GREETING: escapeHtml(greeting),
     HEADLINE: escapeHtml(headline),
     LEAD: escapeHtml(lead),
+    GUEST_IDENTITY_HTML: guestIdentityHtml,
     DETAILS_HTML: detailsHtml,
     FOOTER_NOTE: escapeHtml(footerNote),
     PAYMENT_HTML: "",
