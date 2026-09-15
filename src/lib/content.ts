@@ -175,6 +175,7 @@ export type SiteContent = {
     stayTotalDiscount: string;
     stayTotalLabel: string;
     stayTotalIncomplete: string;
+    stayTotalNoRatesForDates: string;
   };
   footer: {
     contact: string;
@@ -424,7 +425,8 @@ const content: Record<Locale, SiteContent> = {
       stayTotalDiscount: "Réduction code promo",
       stayTotalLabel: "Total",
       stayTotalIncomplete:
-        "Tarif indisponible pour une ou plusieurs nuits de ce séjour.",
+        "Tarif manquant pour {missing} nuit(s) sur ce séjour — vérifiez les dates ou contactez-nous.",
+      stayTotalNoRatesForDates: "Tarif non publié pour ces dates.",
     },
     footer: {
       contact: "Contact",
@@ -678,7 +680,8 @@ const content: Record<Locale, SiteContent> = {
       stayTotalDiscount: "Promo discount",
       stayTotalLabel: "Total",
       stayTotalIncomplete:
-        "Rate unavailable for one or more nights in this stay.",
+        "Rate missing for {missing} night(s) in this stay — check dates or contact us.",
+      stayTotalNoRatesForDates: "No published rate for these dates.",
     },
     footer: {
       contact: "Contact",

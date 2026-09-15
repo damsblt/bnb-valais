@@ -39,12 +39,23 @@ export default function StayTotalSummary({
 
   if (nights.length === 0) return null;
 
+  const anyPriceInMap = Object.keys(pricesByNight).length > 0;
+  if (!anyPriceInMap) {
+    return null;
+  }
+
+  const missingNights = nights.length - nights.filter((n) => pricesByNight[n] > 0).length;
+
   return (
     <div className="rounded-2xl border border-neutral-200 bg-neutral-50 p-4">
       <p className="text-sm font-semibold text-neutral-900">{copy.stayTotalTitle}</p>
       <p className="mt-1 text-xs text-neutral-600">{guestLine}</p>
       {!complete ? (
-        <p className="mt-2 text-sm text-amber-800">{copy.stayTotalIncomplete}</p>
+        <p className="mt-2 text-sm text-amber-800">
+          {missingNights === nights.length
+            ? copy.stayTotalNoRatesForDates
+            : copy.stayTotalIncomplete.replace("{missing}", String(missingNights))}
+        </p>
       ) : (
         <dl className="mt-3 space-y-1 text-sm text-neutral-800">
           <div className="flex justify-between gap-4">

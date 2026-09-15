@@ -102,14 +102,34 @@ export function expandRulesToPricesByGuests(
   return prices;
 }
 
+export function guestNightPrice(
+  tiers: GuestNightPrices | number | unknown,
+  guests: GuestCount,
+): number | undefined {
+  if (typeof tiers === "number") {
+    return tiers > 0 ? Math.round(tiers) : undefined;
+  }
+  if (!tiers || typeof tiers !== "object") return undefined;
+  const o = tiers as Record<string, number>;
+  const raw = o[String(guests)] ?? (o as GuestNightPrices)[guests];
+  if (raw == null || !Number.isFinite(raw) || raw <= 0) return undefined;
+  return Math.round(raw);
+}
+
+export function hasPublicPricingData(
+  pricesByNight: PricesByNightAndGuests | undefined,
+): boolean {
+  return Object.keys(pricesByNight ?? {}).length > 0;
+}
+
 export function pickPricesForGuestCount(
   pricesByNight: PricesByNightAndGuests,
   guests: GuestCount,
 ): Record<string, number> {
   const out: Record<string, number> = {};
   for (const [night, tiers] of Object.entries(pricesByNight)) {
-    const p = tiers[guests];
-    if (p != null && p > 0) out[night] = p;
+    const p = guestNightPrice(tiers, guests);
+    if (p != null) out[night] = p;
   }
   return out;
 }
@@ -137,15 +157,16 @@ export function computeStayPricing(
     nights.push(d);
   }
   let subtotal = 0;
-  let complete = nights.length > 0;
+  let pricedNights = 0;
   for (const n of nights) {
     const p = pricesByNight[n];
     if (p == null || !Number.isFinite(p) || p <= 0) {
-      complete = false;
       continue;
     }
+    pricedNights += 1;
     subtotal += p;
   }
+  const complete = nights.length > 0 && pricedNights === nights.length;
   const discount =
     percentOff > 0 ? Math.round((subtotal * percentOff) / 100) : 0;
   const total = Math.max(0, subtotal - discount);
