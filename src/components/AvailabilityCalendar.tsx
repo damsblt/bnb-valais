@@ -3,6 +3,12 @@
 import { useEffect, useMemo, useState } from "react";
 import type { Locale } from "@/lib/i18n";
 import {
+  formatChfCompact,
+  pickPricesForGuestCount,
+  type GuestCount,
+  type PricesByNightAndGuests,
+} from "@/lib/night-pricing";
+import {
   formatRangeLabel,
   isDayInRange,
   isRangeAvailable,
@@ -23,16 +29,24 @@ type AvailabilityCalendarProps = {
   clearRangeLabel: string;
   rangeInvalidHint: string;
   rangeMinNightsHint: string;
+  legendPrice?: string;
+  guestCount: GuestCount;
   selectedRange: DateRange | null;
   onRangeChange: (range: DateRange | null) => void;
+  /** When set (including while loading as `undefined` from parent), skips internal fetch. */
+  availability?: AvailabilityPayload | null;
 };
 
-type AvailabilityResponse = {
+export type AvailabilityPayload = {
   occupied: string[];
   accepted?: string[];
+  pricesByNight?: PricesByNightAndGuests;
+  currency?: string;
   syncedAt: string;
   configured: boolean;
 };
+
+type AvailabilityResponse = AvailabilityPayload;
 
 const weekdayLabels = {
   fr: ["L", "M", "M", "J", "V", "S", "D"],
@@ -59,10 +73,17 @@ export default function AvailabilityCalendar({
   clearRangeLabel,
   rangeInvalidHint,
   rangeMinNightsHint,
+  legendPrice,
+  guestCount,
   selectedRange,
   onRangeChange,
+  availability: availabilityProp,
 }: AvailabilityCalendarProps) {
-  const [data, setData] = useState<AvailabilityResponse | null>(null);
+  const [fetchedData, setFetchedData] = useState<AvailabilityResponse | null>(
+    null,
+  );
+  const data =
+    availabilityProp !== undefined ? availabilityProp : fetchedData;
   const [monthOffset, setMonthOffset] = useState(0);
   const [pendingStart, setPendingStart] = useState<string | null>(null);
   const [hoverDay, setHoverDay] = useState<string | null>(null);
@@ -83,18 +104,19 @@ export default function AvailabilityCalendar({
   }, [pendingStart, hoverDay, selectedRange]);
 
   useEffect(() => {
+    if (availabilityProp !== undefined) return;
     fetch("/api/availability", { cache: "no-store" })
       .then((res) => res.json())
-      .then(setData)
+      .then(setFetchedData)
       .catch(() =>
-        setData({
+        setFetchedData({
           occupied: [],
           accepted: [],
           syncedAt: new Date().toISOString(),
           configured: false,
         }),
       );
-  }, []);
+  }, [availabilityProp]);
 
   const occupiedSet = useMemo(
     () => new Set(data?.occupied ?? []),
@@ -111,6 +133,11 @@ export default function AvailabilityCalendar({
     for (const day of acceptedSet) merged.add(day);
     return merged;
   }, [occupiedSet, acceptedSet]);
+
+  const pricesByNight = useMemo(
+    () => pickPricesForGuestCount(data?.pricesByNight ?? {}, guestCount),
+    [data?.pricesByNight, guestCount],
+  );
 
   const monthDate = useMemo(() => {
     const d = new Date();
@@ -131,6 +158,7 @@ export default function AvailabilityCalendar({
       day?: number;
       occupied?: boolean;
       accepted?: boolean;
+      price?: number;
     }[] = [];
 
     for (let i = 0; i < startPad; i++) cells.push({ key: `pad-${i}` });
@@ -139,11 +167,18 @@ export default function AvailabilityCalendar({
       const key = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
       const occupied = occupiedSet.has(key);
       const accepted = !occupied && acceptedSet.has(key);
-      cells.push({ key, day, occupied, accepted });
+      const price = pricesByNight[key];
+      cells.push({
+        key,
+        day,
+        occupied,
+        accepted,
+        price: typeof price === "number" ? price : undefined,
+      });
     }
 
     return cells;
-  }, [monthDate, occupiedSet, acceptedSet]);
+  }, [monthDate, occupiedSet, acceptedSet, pricesByNight]);
 
   function handleDayClick(key: string, blocked: boolean) {
     if (blocked) return;
@@ -312,9 +347,14 @@ export default function AvailabilityCalendar({
                   Boolean(cell.occupied || cell.accepted),
                 )
               }
-              className={`flex aspect-square items-center justify-center rounded-xl text-sm font-medium transition ${dayClasses(cell.key, Boolean(cell.occupied), Boolean(cell.accepted))}`}
+              className={`flex aspect-square flex-col items-center justify-center gap-0.5 rounded-xl text-sm font-medium transition ${dayClasses(cell.key, Boolean(cell.occupied), Boolean(cell.accepted))}`}
             >
-              {cell.day}
+              <span>{cell.day}</span>
+              {cell.price != null ? (
+                <span className="text-[10px] font-normal leading-none opacity-90">
+                  {formatChfCompact(cell.price)}
+                </span>
+              ) : null}
             </button>
           ) : (
             <div key={cell.key} />
@@ -339,6 +379,9 @@ export default function AvailabilityCalendar({
           <span className="h-3 w-3 rounded-full bg-sky-500" />
           {locale === "fr" ? "Votre séjour" : "Your stay"}
         </span>
+        {legendPrice ? (
+          <span className="text-neutral-500">{legendPrice}</span>
+        ) : null}
       </div>
 
       <p className="mt-4 text-sm text-neutral-500">

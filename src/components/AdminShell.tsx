@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import AdminLayout, { type AdminSection } from "@/components/AdminLayout";
+import AdminNightPricing from "@/components/AdminNightPricing";
 import AdminPromoCodes from "@/components/AdminPromoCodes";
 import AdminReservationsDashboard from "@/components/AdminReservationsDashboard";
 import type { SiteContent } from "@/lib/content";
@@ -108,6 +109,8 @@ export default function AdminShell({ content, section }: AdminShellProps) {
     <AdminLayout content={content} section={section} onLogout={handleLogout}>
       {section === "promo" ? (
         <AdminPromoCodes content={content} />
+      ) : section === "pricing" ? (
+        <AdminNightPricing content={content} />
       ) : (
         <AdminReservationsDashboard
           content={content}

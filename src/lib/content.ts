@@ -41,8 +41,10 @@ export type SiteContent = {
     subtitle: string;
     navReservations: string;
     navPromo: string;
+    navPricing: string;
     reservationsPageTitle: string;
     promoPageTitle: string;
+    pricingPageTitle: string;
     loginTitle: string;
     loginHint: string;
     loginButton: string;
@@ -102,6 +104,38 @@ export type SiteContent = {
     promoFieldMaxUses: string;
     promoFieldStayFrom: string;
     promoFieldStayTo: string;
+    pricingRefresh: string;
+    pricingLoading: string;
+    pricingEmpty: string;
+    pricingSaveSuccess: string;
+    pricingSaveError: string;
+    pricingLoadError: string;
+    pricingUnauthorized: string;
+    pricingStorageInactive: string;
+    pricingAddTitle: string;
+    pricingAddButton: string;
+    pricingSaving: string;
+    pricingFormIncomplete: string;
+    pricingWeekdaysRequired: string;
+    pricingDelete: string;
+    pricingDeleteConfirm: string;
+    pricingFieldFrom: string;
+    pricingFieldTo: string;
+    pricingFieldPrice: string;
+    pricingFieldPriceByGuests: string;
+    pricingGuests1: string;
+    pricingGuests2: string;
+    pricingGuests3: string;
+    pricingGuests4: string;
+    pricingFieldWeekdays: string;
+    pricingPerNight: string;
+    pricingWeekdayMon: string;
+    pricingWeekdayTue: string;
+    pricingWeekdayWed: string;
+    pricingWeekdayThu: string;
+    pricingWeekdayFri: string;
+    pricingWeekdaySat: string;
+    pricingWeekdaySun: string;
   };
   reservations: {
     title: string;
@@ -130,6 +164,17 @@ export type SiteContent = {
     promoValidBadge: string;
     promoClearButton: string;
     promoInvalidHint: string;
+    legendPricePerNight: string;
+    guestCountLabel: string;
+    guestCountOne: string;
+    guestCountMany: string;
+    stayTotalTitle: string;
+    stayTotalForOneGuest: string;
+    stayTotalForGuests: string;
+    stayTotalNights: string;
+    stayTotalDiscount: string;
+    stayTotalLabel: string;
+    stayTotalIncomplete: string;
   };
   footer: {
     contact: string;
@@ -219,8 +264,10 @@ const content: Record<Locale, SiteContent> = {
       subtitle: "",
       navReservations: "Réservations",
       navPromo: "Codes promo",
+      navPricing: "Tarifs",
       reservationsPageTitle: "Réservations",
       promoPageTitle: "Codes promo",
+      pricingPageTitle: "Tarifs par nuit",
       loginTitle: "Accès administrateur",
       loginHint: "",
       loginButton: "Se connecter",
@@ -294,6 +341,39 @@ const content: Record<Locale, SiteContent> = {
       promoFieldMaxUses: "Limite d’utilisations (optionnel)",
       promoFieldStayFrom: "Première nuitée éligible",
       promoFieldStayTo: "Dernière nuitée éligible",
+      pricingRefresh: "Actualiser",
+      pricingLoading: "Chargement…",
+      pricingEmpty: "Aucun tarif défini.",
+      pricingSaveSuccess: "Tarifs enregistrés.",
+      pricingSaveError: "Enregistrement impossible.",
+      pricingLoadError: "Impossible de charger les tarifs.",
+      pricingUnauthorized: "Session expirée — reconnectez-vous.",
+      pricingStorageInactive: "Stockage Blob non configuré.",
+      pricingAddTitle: "Ajouter des tarifs (lot)",
+      pricingAddButton: "Appliquer au calendrier",
+      pricingSaving: "Enregistrement…",
+      pricingFormIncomplete:
+        "Dates valides et quatre prix (1 à 4 personnes) requis.",
+      pricingWeekdaysRequired: "Choisissez au moins un jour de la semaine.",
+      pricingDelete: "Supprimer",
+      pricingDeleteConfirm: "Supprimer cette règle de tarif ?",
+      pricingFieldFrom: "Première date",
+      pricingFieldTo: "Dernière date",
+      pricingFieldPrice: "Prix par nuit (CHF)",
+      pricingFieldPriceByGuests: "Prix par nuit selon le nombre de personnes (CHF)",
+      pricingGuests1: "1 personne",
+      pricingGuests2: "2 personnes",
+      pricingGuests3: "3 personnes",
+      pricingGuests4: "4 personnes",
+      pricingFieldWeekdays: "Jours concernés",
+      pricingPerNight: "nuit",
+      pricingWeekdayMon: "Lun",
+      pricingWeekdayTue: "Mar",
+      pricingWeekdayWed: "Mer",
+      pricingWeekdayThu: "Jeu",
+      pricingWeekdayFri: "Ven",
+      pricingWeekdaySat: "Sam",
+      pricingWeekdaySun: "Dim",
     },
     reservations: {
       title: "Demande de réservation",
@@ -332,6 +412,19 @@ const content: Record<Locale, SiteContent> = {
       promoClearButton: "Retirer",
       promoInvalidHint:
         "Code invalide ou non valable pour ces dates. Corrigez ou laissez le champ vide.",
+      legendPricePerNight:
+        "Montant affiché = prix par nuit pour le nombre de personnes choisi",
+      guestCountLabel: "Nombre de personnes",
+      guestCountOne: "1 personne",
+      guestCountMany: "{count} personnes",
+      stayTotalTitle: "Montant du séjour",
+      stayTotalForOneGuest: "Tarif pour 1 personne",
+      stayTotalForGuests: "Tarif pour {count} personnes",
+      stayTotalNights: "{count} nuits",
+      stayTotalDiscount: "Réduction code promo",
+      stayTotalLabel: "Total",
+      stayTotalIncomplete:
+        "Tarif indisponible pour une ou plusieurs nuits de ce séjour.",
     },
     footer: {
       contact: "Contact",
@@ -426,8 +519,10 @@ const content: Record<Locale, SiteContent> = {
       subtitle: "",
       navReservations: "Bookings",
       navPromo: "Promo codes",
+      navPricing: "Rates",
       reservationsPageTitle: "Bookings",
       promoPageTitle: "Promo codes",
+      pricingPageTitle: "Nightly rates",
       loginTitle: "Admin access",
       loginHint: "",
       loginButton: "Sign in",
@@ -501,6 +596,38 @@ const content: Record<Locale, SiteContent> = {
       promoFieldMaxUses: "Usage limit (optional)",
       promoFieldStayFrom: "First eligible night",
       promoFieldStayTo: "Last eligible night",
+      pricingRefresh: "Refresh",
+      pricingLoading: "Loading…",
+      pricingEmpty: "No rates defined yet.",
+      pricingSaveSuccess: "Rates saved.",
+      pricingSaveError: "Could not save.",
+      pricingLoadError: "Could not load rates.",
+      pricingUnauthorized: "Session expired — sign in again.",
+      pricingStorageInactive: "Blob storage not configured.",
+      pricingAddTitle: "Add rates (batch)",
+      pricingAddButton: "Apply to calendar",
+      pricingSaving: "Saving…",
+      pricingFormIncomplete: "Valid dates and price required.",
+      pricingWeekdaysRequired: "Select at least one weekday.",
+      pricingDelete: "Delete",
+      pricingDeleteConfirm: "Delete this rate rule?",
+      pricingFieldFrom: "First date",
+      pricingFieldTo: "Last date",
+      pricingFieldPrice: "Price per night (CHF)",
+      pricingFieldPriceByGuests: "Price per night by number of guests (CHF)",
+      pricingGuests1: "1 guest",
+      pricingGuests2: "2 guests",
+      pricingGuests3: "3 guests",
+      pricingGuests4: "4 guests",
+      pricingFieldWeekdays: "Weekdays",
+      pricingPerNight: "night",
+      pricingWeekdayMon: "Mon",
+      pricingWeekdayTue: "Tue",
+      pricingWeekdayWed: "Wed",
+      pricingWeekdayThu: "Thu",
+      pricingWeekdayFri: "Fri",
+      pricingWeekdaySat: "Sat",
+      pricingWeekdaySun: "Sun",
     },
     reservations: {
       title: "Booking request",
@@ -539,6 +666,19 @@ const content: Record<Locale, SiteContent> = {
       promoClearButton: "Remove",
       promoInvalidHint:
         "Invalid code or not valid for these dates. Fix it or leave the field empty.",
+      legendPricePerNight:
+        "Amount shown = nightly rate for the selected number of guests",
+      guestCountLabel: "Number of guests",
+      guestCountOne: "1 guest",
+      guestCountMany: "{count} guests",
+      stayTotalTitle: "Stay total",
+      stayTotalForOneGuest: "Rate for 1 guest",
+      stayTotalForGuests: "Rate for {count} guests",
+      stayTotalNights: "{count} nights",
+      stayTotalDiscount: "Promo discount",
+      stayTotalLabel: "Total",
+      stayTotalIncomplete:
+        "Rate unavailable for one or more nights in this stay.",
     },
     footer: {
       contact: "Contact",

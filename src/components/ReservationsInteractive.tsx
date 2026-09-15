@@ -2,8 +2,17 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import AvailabilityCalendar from "@/components/AvailabilityCalendar";
+import AvailabilityCalendar, {
+  type AvailabilityPayload,
+} from "@/components/AvailabilityCalendar";
 import StayDatesSummary from "@/components/StayDatesSummary";
+import GuestCountPicker from "@/components/GuestCountPicker";
+import StayTotalSummary from "@/components/StayTotalSummary";
+import {
+  parseGuestCount,
+  pickPricesForGuestCount,
+  type GuestCount,
+} from "@/lib/night-pricing";
 import TypeformEmbed from "@/components/TypeformEmbed";
 import type { Locale } from "@/lib/i18n";
 import type { SiteContent } from "@/lib/content";
@@ -15,6 +24,7 @@ import {
 } from "@/lib/typeform-prefill";
 import {
   getTypeformDateFieldKeys,
+  getTypeformGuestCountFieldKey,
   getTypeformPromoFieldKeys,
 } from "@/lib/typeform-refs";
 
@@ -26,6 +36,7 @@ type AppliedPromo = {
 
 const URL_PARAM_CHECKIN = "check_in";
 const URL_PARAM_CHECKOUT = "check_out";
+const URL_PARAM_GUESTS = "guests";
 
 type ReservationsInteractiveProps = {
   locale: Locale;
@@ -41,15 +52,55 @@ export default function ReservationsInteractive({
   const searchParams = useSearchParams();
   const fieldKeys = useMemo(() => getTypeformDateFieldKeys(), []);
   const promoKeys = useMemo(() => getTypeformPromoFieldKeys(), []);
+  const guestFieldKey = useMemo(() => getTypeformGuestCountFieldKey(), []);
+  const [guestCount, setGuestCount] = useState<GuestCount>(2);
   const [range, setRange] = useState<DateRange | null>(null);
   const [promoInput, setPromoInput] = useState("");
   const [appliedPromo, setAppliedPromo] = useState<AppliedPromo | null>(null);
   const [promoError, setPromoError] = useState<string | null>(null);
   const [promoLoading, setPromoLoading] = useState(false);
+  const [availability, setAvailability] = useState<
+    AvailabilityPayload | undefined
+  >(undefined);
 
   useEffect(() => {
     fetch("/api/typeform/prefill-config", { cache: "no-store" }).catch(() => undefined);
   }, []);
+
+  useEffect(() => {
+    fetch("/api/availability", { cache: "no-store" })
+      .then((res) => res.json())
+      .then((data: AvailabilityPayload) => setAvailability(data))
+      .catch(() =>
+        setAvailability({
+          occupied: [],
+          accepted: [],
+          syncedAt: new Date().toISOString(),
+          configured: false,
+        }),
+      );
+  }, []);
+
+  useEffect(() => {
+    setGuestCount(parseGuestCount(searchParams.get(URL_PARAM_GUESTS), 2));
+  }, [searchParams]);
+
+  const syncGuestCount = useCallback(
+    (next: GuestCount) => {
+      setGuestCount(next);
+      const params = new URLSearchParams(searchParams.toString());
+      params.set(URL_PARAM_GUESTS, String(next));
+      const qs = params.toString();
+      router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
+    },
+    [router, pathname, searchParams],
+  );
+
+  const pricesForGuests = useMemo(
+    () =>
+      pickPricesForGuestCount(availability?.pricesByNight ?? {}, guestCount),
+    [availability?.pricesByNight, guestCount],
+  );
 
   useEffect(() => {
     const checkIn = searchParams.get(URL_PARAM_CHECKIN);
@@ -152,6 +203,7 @@ export default function ReservationsInteractive({
     const base: Record<string, string> = {
       [fieldKeys.checkIn]: range.checkIn,
       [fieldKeys.checkOut]: range.checkOut,
+      [guestFieldKey]: String(guestCount),
     };
     if (appliedPromo) {
       base[promoKeys.code] = appliedPromo.code;
@@ -166,16 +218,25 @@ export default function ReservationsInteractive({
     appliedPromo,
     promoKeys.code,
     promoKeys.percent,
+    guestFieldKey,
+    guestCount,
   ]);
 
   return (
     <div className="mt-10 space-y-10">
+      <GuestCountPicker
+        locale={locale}
+        value={guestCount}
+        onChange={syncGuestCount}
+        copy={reservations}
+      />
       <AvailabilityCalendar
         locale={locale}
         title={reservations.calendarTitle}
         legendFree={reservations.legendFree}
         legendBusy={reservations.legendBusy}
         legendAccepted={reservations.legendAccepted}
+        legendPrice={reservations.legendPricePerNight}
         latencyNote={reservations.latencyNote}
         notConfiguredNote={reservations.notConfiguredNote}
         selectHint={reservations.calendarSelectHint}
@@ -183,8 +244,10 @@ export default function ReservationsInteractive({
         clearRangeLabel={reservations.clearRangeLabel}
         rangeInvalidHint={reservations.rangeInvalidHint}
         rangeMinNightsHint={reservations.rangeMinNightsHint}
+        guestCount={guestCount}
         selectedRange={range}
         onRangeChange={handleRangeChange}
+        availability={availability}
       />
 
       <div id="reservation-form">
@@ -248,6 +311,14 @@ export default function ReservationsInteractive({
                 <p className="mt-2 text-sm text-red-600">{promoError}</p>
               ) : null}
             </div>
+            <StayTotalSummary
+              locale={locale}
+              range={range}
+              guestCount={guestCount}
+              pricesByNight={pricesForGuests}
+              percentOff={appliedPromo?.percentOff ?? 0}
+              copy={reservations}
+            />
           </div>
         ) : null}
         <div className="mt-6 overflow-hidden rounded-3xl border border-neutral-200 bg-white shadow-sm">

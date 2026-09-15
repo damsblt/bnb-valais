@@ -3,7 +3,7 @@
 import Link from "next/link";
 import type { SiteContent } from "@/lib/content";
 
-export type AdminSection = "reservations" | "promo";
+export type AdminSection = "reservations" | "promo" | "pricing";
 
 type AdminLayoutProps = {
   content: SiteContent["admin"];
@@ -19,7 +19,11 @@ export default function AdminLayout({
   children,
 }: AdminLayoutProps) {
   const title =
-    section === "promo" ? content.promoPageTitle : content.reservationsPageTitle;
+    section === "promo"
+      ? content.promoPageTitle
+      : section === "pricing"
+        ? content.pricingPageTitle
+        : content.reservationsPageTitle;
 
   return (
     <div className="mx-auto max-w-3xl px-6 py-12 md:px-12 md:py-16">
@@ -57,6 +61,16 @@ export default function AdminLayout({
           }`}
         >
           {content.navPromo}
+        </Link>
+        <Link
+          href="/admin/pricing"
+          className={`rounded-full px-4 py-2 text-sm font-medium transition ${
+            section === "pricing"
+              ? "bg-neutral-900 text-white"
+              : "text-neutral-700 hover:bg-neutral-100"
+          }`}
+        >
+          {content.navPricing}
         </Link>
       </nav>
 
