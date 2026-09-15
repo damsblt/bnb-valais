@@ -275,6 +275,24 @@ function hiddenToAnswers(stay: StayDates | null): ReservationAnswer[] {
   ];
 }
 
+function isGuestCountAnswerLabel(label: string): boolean {
+  return /\b(nombre de personnes|personnes|guests?|number of guests)\b/i.test(
+    label,
+  );
+}
+
+function filterDuplicateGuestFormAnswers(
+  formAnswers: ReservationAnswer[],
+  hidden: Record<string, string> | undefined,
+): ReservationAnswer[] {
+  const hasHiddenGuest = Boolean(
+    hidden?.[getTypeformGuestCountFieldKey()]?.trim() ||
+      hidden?.nombre_personnes?.trim(),
+  );
+  if (!hasHiddenGuest) return formAnswers;
+  return formAnswers.filter((a) => !isGuestCountAnswerLabel(a.label));
+}
+
 function hiddenGuestAndTotalToAnswers(
   hidden: Record<string, string> | undefined,
 ): ReservationAnswer[] {
@@ -461,7 +479,10 @@ export async function fetchReservationRequests(): Promise<ReservationRequest[]> 
 
   return (responsesJson.items ?? []).map((item) => {
     const stayDates = parseStayDates(item.hidden);
-    const formAnswers = mapFormAnswers(item.answers ?? [], registry);
+    const formAnswers = filterDuplicateGuestFormAnswers(
+      mapFormAnswers(item.answers ?? [], registry),
+      item.hidden,
+    );
 
     const answers = [
       ...hiddenToAnswers(stayDates),

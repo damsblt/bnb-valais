@@ -392,7 +392,7 @@ const content: Record<Locale, SiteContent> = {
       formNote:
         "Choisissez d’abord vos dates sur le calendrier (minimum 2 nuits), puis complétez le formulaire.",
       formPrefillNote:
-        "Vos dates sont enregistrées ci-dessous. Complétez le reste du formulaire (coordonnées, nombre de personnes, message).",
+        "Vos dates sont enregistrées ci-dessous. Complétez le reste du formulaire (coordonnées, message).",
       formLockedTitle: "Formulaire verrouillé",
       formLockedHint:
         "Sélectionnez une date d’arrivée et une date de départ sur le calendrier (séjour d’au moins 2 nuits) pour envoyer votre demande.",
@@ -647,7 +647,7 @@ const content: Record<Locale, SiteContent> = {
       formNote:
         "Pick your dates on the calendar first (minimum 2 nights), then complete the form.",
       formPrefillNote:
-        "Your dates are saved below. Complete the rest of the form (contact details, guests, message).",
+        "Your dates are saved below. Complete the rest of the form (contact details, message).",
       formLockedTitle: "Form locked",
       formLockedHint:
         "Select check-in and check-out on the calendar (at least 2 nights) before you can submit a request.",

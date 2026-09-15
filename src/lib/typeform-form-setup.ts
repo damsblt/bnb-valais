@@ -1,4 +1,9 @@
 import { TYPEFORM_DEFAULT_API_FORM_ID } from "@/lib/typeform";
+import {
+  collectGuestCountFieldRefs,
+  countGuestCountQuestions,
+  removeGuestCountQuestions,
+} from "@/lib/typeform-guest-field";
 import { getRequiredTypeformHiddenFields } from "@/lib/typeform-refs";
 
 function resolveSyncFormId(): string {
@@ -31,6 +36,8 @@ export type TypeformFormSyncResult = {
   detail: string;
   dateQuestionsBefore: number;
   dateQuestionsAfter: number;
+  guestQuestionsBefore: number;
+  guestQuestionsAfter: number;
   hiddenConfigured: boolean;
 };
 
@@ -82,6 +89,10 @@ function removeDateQuestions(fields: FormField[]): FormField[] {
     });
 }
 
+function removeSitePrefilledQuestions(fields: FormField[]): FormField[] {
+  return removeGuestCountQuestions(removeDateQuestions(fields));
+}
+
 function collectDateFieldRefs(fields: FormField[] | undefined): Set<string> {
   const refs = new Set<string>();
   if (!fields) return refs;
@@ -94,7 +105,7 @@ function collectDateFieldRefs(fields: FormField[] | undefined): Set<string> {
   return refs;
 }
 
-function stripLogicForRemovedDates(
+function stripLogicForRemovedFields(
   logic: unknown[] | undefined,
   removedRefs: Set<string>,
 ): unknown[] | undefined {
@@ -128,15 +139,18 @@ function buildPutBody(form: TypeformForm): TypeformForm {
     }
   }
 
-  const removedRefs = collectDateFieldRefs(form.fields);
+  const removedRefs = new Set([
+    ...collectDateFieldRefs(form.fields),
+    ...collectGuestCountFieldRefs(form.fields),
+  ]);
   body.hidden = [
     ...new Set([
       ...(Array.isArray(form.hidden) ? form.hidden : []),
       ...getRequiredTypeformHiddenFields(),
     ]),
   ];
-  body.fields = removeDateQuestions(form.fields ?? []);
-  body.logic = stripLogicForRemovedDates(form.logic, removedRefs);
+  body.fields = removeSitePrefilledQuestions(form.fields ?? []);
+  body.logic = stripLogicForRemovedFields(form.logic, removedRefs);
 
   return body;
 }
@@ -157,6 +171,7 @@ export async function getTypeformFormDateStatus(): Promise<{
   const required = getRequiredTypeformHiddenFields();
   return {
     dateQuestions: countDateQuestions(form.fields),
+    guestQuestions: countGuestCountQuestions(form.fields),
     hiddenConfigured: required.every((key) => hidden.includes(key)),
     requiredHidden: required,
     missingHidden: required.filter((key) => !hidden.includes(key)),
@@ -175,21 +190,26 @@ export async function ensureTypeformPrefillOnForm(): Promise<TypeformFormSyncRes
       detail: `lecture formulaire HTTP ${getRes.status}`,
       dateQuestionsBefore: 0,
       dateQuestionsAfter: 0,
+      guestQuestionsBefore: 0,
+      guestQuestionsAfter: 0,
       hiddenConfigured: false,
     };
   }
 
   const form = (await getRes.json()) as TypeformForm;
-  const before = countDateQuestions(form.fields);
+  const dateBefore = countDateQuestions(form.fields);
+  const guestBefore = countGuestCountQuestions(form.fields);
   const currentHidden = form.hidden ?? [];
   const hiddenOk = hiddenParams.every((p) => currentHidden.includes(p));
 
-  if (hiddenOk && before === 0) {
+  if (hiddenOk && dateBefore === 0 && guestBefore === 0) {
     return {
       ok: true,
-      detail: "formulaire déjà adapté (hidden complets + sans questions date)",
+      detail: "formulaire déjà adapté (hidden OK, sans dates ni personnes)",
       dateQuestionsBefore: 0,
       dateQuestionsAfter: 0,
+      guestQuestionsBefore: 0,
+      guestQuestionsAfter: 0,
       hiddenConfigured: true,
     };
   }
@@ -207,32 +227,39 @@ export async function ensureTypeformPrefillOnForm(): Promise<TypeformFormSyncRes
         ok: false,
         detail:
           "token sans forms:write — ajoutez « Write forms » au token Typeform sur Vercel",
-        dateQuestionsBefore: before,
-        dateQuestionsAfter: before,
+        dateQuestionsBefore: dateBefore,
+        dateQuestionsAfter: dateBefore,
+        guestQuestionsBefore: guestBefore,
+        guestQuestionsAfter: guestBefore,
         hiddenConfigured: hiddenOk,
       };
     }
     return {
       ok: false,
       detail: errText || `PUT HTTP ${putRes.status}`,
-      dateQuestionsBefore: before,
-      dateQuestionsAfter: before,
+      dateQuestionsBefore: dateBefore,
+      dateQuestionsAfter: dateBefore,
+      guestQuestionsBefore: guestBefore,
+      guestQuestionsAfter: guestBefore,
       hiddenConfigured: hiddenOk,
     };
   }
 
   const verify = await typeformFetch(`/forms/${formId}`);
   const updated = verify.ok ? ((await verify.json()) as TypeformForm) : form;
-  const after = countDateQuestions(updated.fields);
+  const dateAfter = countDateQuestions(updated.fields);
+  const guestAfter = countGuestCountQuestions(updated.fields);
 
+  const ok = dateAfter === 0 && guestAfter === 0;
   return {
-    ok: after === 0,
-    detail:
-      after === 0
-        ? `hidden fields : ${hiddenParams.join(", ")}`
-        : `PUT réussi mais ${after} question(s) date restante(s)`,
-    dateQuestionsBefore: before,
-    dateQuestionsAfter: after,
+    ok,
+    detail: ok
+      ? `hidden : ${hiddenParams.join(", ")}`
+      : `PUT OK — reste ${dateAfter} date(s), ${guestAfter} question(s) personnes`,
+    dateQuestionsBefore: dateBefore,
+    dateQuestionsAfter: dateAfter,
+    guestQuestionsBefore: guestBefore,
+    guestQuestionsAfter: guestAfter,
     hiddenConfigured: true,
   };
 }

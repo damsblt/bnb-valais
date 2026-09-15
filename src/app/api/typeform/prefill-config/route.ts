@@ -16,6 +16,8 @@ export async function GET() {
       detail: err instanceof Error ? err.message : "setup failed",
       dateQuestionsBefore: 0,
       dateQuestionsAfter: 0,
+      guestQuestionsBefore: 0,
+      guestQuestionsAfter: 0,
       hiddenConfigured: false,
     };
   }

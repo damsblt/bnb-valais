@@ -63,6 +63,40 @@ function countDates(fields) {
   return n;
 }
 
+const GUEST_TITLE =
+  /\b(personnes?|invités?|voyageurs?|occupants?|guests?)\b/i;
+const GUEST_QUANTITY = /\b(combien|nombre|how many|number of)\b/i;
+const NOT_GUEST =
+  /\b(nom|prénom|prenom|e-?mail|mail|téléphone|telephone|phone|message|code promo|promo|adresse)\b/i;
+
+function isGuestField(f) {
+  const title = f.title?.trim() ?? "";
+  if (!title || NOT_GUEST.test(title)) return false;
+  if (GUEST_TITLE.test(title)) return true;
+  if (
+    GUEST_QUANTITY.test(title) &&
+    (f.type === "number" ||
+      f.type === "opinion_scale" ||
+      f.type === "multiple_choice" ||
+      GUEST_TITLE.test(title))
+  ) {
+    return true;
+  }
+  return false;
+}
+
+function countGuests(fields) {
+  if (!fields) return 0;
+  let n = 0;
+  for (const f of fields) {
+    if (isGuestField(f)) n++;
+    if (f.type === "group" && f.properties?.fields) {
+      n += countGuests(f.properties.fields);
+    }
+  }
+  return n;
+}
+
 function removeDates(fields) {
   return (fields || [])
     .filter((f) => f.type !== "date")
@@ -80,10 +114,39 @@ function removeDates(fields) {
     });
 }
 
+function removeGuests(fields) {
+  return (fields || [])
+    .filter((f) => !isGuestField(f))
+    .map((f) => {
+      if (f.type === "group" && f.properties?.fields?.length) {
+        return {
+          ...f,
+          properties: {
+            ...f.properties,
+            fields: removeGuests(f.properties.fields),
+          },
+        };
+      }
+      return f;
+    });
+}
+
+function removeSitePrefilled(fields) {
+  return removeGuests(removeDates(fields));
+}
+
 function collectDateRefs(fields, refs = new Set()) {
   for (const f of fields || []) {
     if (f.type === "date" && f.ref) refs.add(f.ref);
     if (f.type === "group") collectDateRefs(f.properties?.fields, refs);
+  }
+  return refs;
+}
+
+function collectGuestRefs(fields, refs = new Set()) {
+  for (const f of fields || []) {
+    if (isGuestField(f) && f.ref) refs.add(f.ref);
+    if (f.type === "group") collectGuestRefs(f.properties?.fields, refs);
   }
   return refs;
 }
@@ -104,9 +167,12 @@ function buildPutBody(form) {
   for (const [key, value] of Object.entries(form)) {
     if (!READ_ONLY.has(key) && value !== undefined) body[key] = value;
   }
-  const removedRefs = collectDateRefs(form.fields);
+  const removedRefs = new Set([
+    ...collectDateRefs(form.fields),
+    ...collectGuestRefs(form.fields),
+  ]);
   body.hidden = [...new Set([...(form.hidden || []), ...HIDDEN])];
-  body.fields = removeDates(form.fields || []);
+  body.fields = removeSitePrefilled(form.fields || []);
   body.logic = stripLogic(form.logic, removedRefs);
   return body;
 }
@@ -118,15 +184,17 @@ async function main() {
   }
 
   const form = await api(`/forms/${FORM_ID}`);
-  const before = countDates(form.fields);
+  const datesBefore = countDates(form.fields);
+  const guestsBefore = countGuests(form.fields);
   const hiddenBefore = form.hidden || [];
   const hiddenOk = HIDDEN.every((h) => hiddenBefore.includes(h));
 
   console.log("Form:", FORM_ID);
   console.log("Hidden before:", hiddenBefore.join(", ") || "(none)");
-  console.log("Date questions before:", before);
+  console.log("Date questions before:", datesBefore);
+  console.log("Guest questions before:", guestsBefore);
 
-  if (hiddenOk && before === 0) {
+  if (hiddenOk && datesBefore === 0 && guestsBefore === 0) {
     console.log("Already up to date.");
     return;
   }
@@ -138,9 +206,9 @@ async function main() {
   });
 
   const updated = await api(`/forms/${FORM_ID}`);
-  const after = countDates(updated.fields);
   console.log("Hidden after:", (updated.hidden || []).join(", "));
-  console.log("Date questions after:", after);
+  console.log("Date questions after:", countDates(updated.fields));
+  console.log("Guest questions after:", countGuests(updated.fields));
   console.log("Done.");
 }
 

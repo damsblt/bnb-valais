@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 
 type SyncState = {
   dateQuestions: number;
+  guestQuestions?: number;
   hiddenConfigured: boolean;
   missingHidden?: string[];
 } | null;
@@ -45,8 +46,13 @@ export default function AdminTypeformSync() {
         <div className="mt-2 space-y-1 text-sm text-violet-800">
           <p>
             {status.dateQuestions === 0
-              ? "Aucune question date dans le formulaire."
-              : `${status.dateQuestions} question(s) date dans le formulaire.`}
+              ? "Aucune question date."
+              : `${status.dateQuestions} question(s) date.`}
+          </p>
+          <p>
+            {(status.guestQuestions ?? 0) === 0
+              ? "Aucune question « nombre de personnes »."
+              : `${status.guestQuestions} question(s) personnes (à retirer via sync).`}
           </p>
           <p>
             {status.hiddenConfigured
