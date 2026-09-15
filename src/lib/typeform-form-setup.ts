@@ -1,20 +1,13 @@
-import { TYPEFORM_DEFAULT_API_FORM_ID } from "@/lib/typeform";
+import {
+  resolveTypeformApiFormId,
+  TypeformConfigError,
+} from "@/lib/typeform";
 import {
   collectGuestCountFieldRefs,
   countGuestCountQuestions,
   removeGuestCountQuestions,
 } from "@/lib/typeform-guest-field";
 import { getRequiredTypeformHiddenFields } from "@/lib/typeform-refs";
-
-function resolveSyncFormId(): string {
-  const fromEnv =
-    process.env.TYPEFORM_API_FORM_ID?.trim() ||
-    process.env.TYPEFORM_FORM_ID?.trim();
-  if (fromEnv && !fromEnv.startsWith("01")) {
-    return fromEnv;
-  }
-  return TYPEFORM_DEFAULT_API_FORM_ID;
-}
 
 type FormField = {
   type: string;
@@ -162,7 +155,7 @@ export async function getTypeformFormDateStatus(): Promise<{
   requiredHidden: string[];
   missingHidden: string[];
 }> {
-  const formId = resolveSyncFormId();
+  const formId = await resolveTypeformApiFormId();
   const getRes = await typeformFetch(`/forms/${formId}`);
   if (!getRes.ok) {
     throw new Error(`lecture formulaire HTTP ${getRes.status}`);
@@ -181,8 +174,26 @@ export async function getTypeformFormDateStatus(): Promise<{
 
 /** PUT complet : seule façon fiable de modifier fields + hidden (PATCH = JSON Patch limité). */
 export async function ensureTypeformPrefillOnForm(): Promise<TypeformFormSyncResult> {
-  const formId = resolveSyncFormId();
   const hiddenParams = getRequiredTypeformHiddenFields();
+
+  let formId: string;
+  try {
+    formId = await resolveTypeformApiFormId();
+  } catch (err) {
+    const detail =
+      err instanceof TypeformConfigError || err instanceof Error
+        ? err.message
+        : "Formulaire Typeform introuvable";
+    return {
+      ok: false,
+      detail,
+      dateQuestionsBefore: 0,
+      dateQuestionsAfter: 0,
+      guestQuestionsBefore: 0,
+      guestQuestionsAfter: 0,
+      hiddenConfigured: false,
+    };
+  }
 
   const getRes = await typeformFetch(`/forms/${formId}`);
   if (!getRes.ok) {

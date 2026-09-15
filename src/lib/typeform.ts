@@ -387,7 +387,7 @@ export async function listAccessibleForms(): Promise<TypeformFormSummary[]> {
 }
 
 /** ID court API : https://admin.typeform.com/form/{id} (≠ ID Live 01…) */
-async function resolveApiFormId(): Promise<string> {
+export async function resolveTypeformApiFormId(): Promise<string> {
   const fromEnv =
     process.env.TYPEFORM_API_FORM_ID?.trim() ||
     process.env.TYPEFORM_FORM_ID?.trim();
@@ -439,7 +439,7 @@ async function resolveApiFormId(): Promise<string> {
 }
 
 export async function fetchReservationRequests(): Promise<ReservationRequest[]> {
-  const formId = await resolveApiFormId();
+  const formId = await resolveTypeformApiFormId();
 
   const formRes = await typeformFetch(`/forms/${formId}`);
   if (!formRes.ok) {
