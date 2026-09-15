@@ -26,7 +26,9 @@ import {
   getTypeformDateFieldKeys,
   getTypeformGuestCountFieldKey,
   getTypeformPromoFieldKeys,
+  getTypeformStayTotalFieldKey,
 } from "@/lib/typeform-refs";
+import { computeStayPricing } from "@/lib/night-pricing";
 
 type AppliedPromo = {
   code: string;
@@ -53,6 +55,7 @@ export default function ReservationsInteractive({
   const fieldKeys = useMemo(() => getTypeformDateFieldKeys(), []);
   const promoKeys = useMemo(() => getTypeformPromoFieldKeys(), []);
   const guestFieldKey = useMemo(() => getTypeformGuestCountFieldKey(), []);
+  const stayTotalFieldKey = useMemo(() => getTypeformStayTotalFieldKey(), []);
   const [guestCount, setGuestCount] = useState<GuestCount>(2);
   const [range, setRange] = useState<DateRange | null>(null);
   const [promoInput, setPromoInput] = useState("");
@@ -209,6 +212,15 @@ export default function ReservationsInteractive({
       base[promoKeys.code] = appliedPromo.code;
       base[promoKeys.percent] = String(appliedPromo.percentOff);
     }
+    const quote = computeStayPricing(
+      range.checkIn,
+      range.checkOut,
+      pricesForGuests,
+      appliedPromo?.percentOff ?? 0,
+    );
+    if (quote.complete && quote.total > 0) {
+      base[stayTotalFieldKey] = String(quote.total);
+    }
     return base;
   }, [
     datesReady,
@@ -220,6 +232,8 @@ export default function ReservationsInteractive({
     promoKeys.percent,
     guestFieldKey,
     guestCount,
+    stayTotalFieldKey,
+    pricesForGuests,
   ]);
 
   return (

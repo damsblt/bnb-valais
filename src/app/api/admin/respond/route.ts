@@ -49,7 +49,7 @@ export async function POST(request: Request) {
     );
   }
 
-  const { subject, text } = buildReplyEmail(reservation, action);
+  const { subject, text } = await buildReplyEmail(reservation, action);
   const mailto = buildMailtoUrl(reservation.guestEmail, subject, text);
 
   const emailResult = await sendReplyEmail(

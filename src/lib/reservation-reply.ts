@@ -2,12 +2,13 @@ import {
   buildPaymentHtml,
   buildPaymentPlainText,
 } from "@/lib/bank-payment";
-import type { ReservationRequest } from "@/lib/typeform";
+import type { ReservationAnswer, ReservationRequest } from "@/lib/typeform";
 import {
   RESEND_TEMPLATE_ALIAS_ACCEPT,
   RESEND_TEMPLATE_ALIAS_REJECT,
   reservationEmailLayoutHtml,
 } from "@/lib/resend-template-html";
+import { resolveStayQuote, type StayQuote } from "@/lib/stay-quote";
 
 export type ReplyAction = "accept" | "reject";
 
@@ -27,8 +28,28 @@ function escapeHtml(value: string): string {
     .replace(/"/g, "&quot;");
 }
 
-function buildDetailsHtml(request: ReservationRequest): string {
-  const rows = request.answers
+function enrichAnswersWithQuote(
+  answers: ReservationAnswer[],
+  quote: StayQuote | null,
+): ReservationAnswer[] {
+  if (!quote?.complete) return answers;
+  const withoutAmount = answers.filter(
+    (a) => !/^Montant du séjour$/i.test(a.label.trim()),
+  );
+  const extra: ReservationAnswer[] = [
+    { label: "Montant du séjour", value: quote.formattedTotal },
+  ];
+  if (quote.discount > 0) {
+    extra.push({
+      label: "Réduction (code promo)",
+      value: `−${quote.formattedDiscount}`,
+    });
+  }
+  return [...withoutAmount, ...extra];
+}
+
+function buildDetailsHtml(answers: ReservationAnswer[]): string {
+  const rows = answers
     .map(
       (a) =>
         `<p style="margin:0 0 10px;font-size:15px;line-height:1.5;color:#3f3f46;"><strong style="color:#18181b;">${escapeHtml(a.label)}</strong><br />${escapeHtml(a.value)}</p>`,
@@ -45,17 +66,21 @@ function fillLayout(variables: Record<string, string>): string {
   return html;
 }
 
-export function buildReplyEmail(
+export async function buildReplyEmail(
   request: ReservationRequest,
   action: ReplyAction,
-): ReplyEmailPayload {
+): Promise<ReplyEmailPayload> {
+  const quote =
+    action === "accept" ? await resolveStayQuote(request) : null;
+  const answers = enrichAnswersWithQuote(request.answers, quote);
+
   const greeting = request.guestName
     ? `Bonjour ${request.guestName},`
     : "Bonjour,";
-  const detailsPlain = request.answers
+  const detailsPlain = answers
     .map((a) => `- ${a.label}: ${a.value}`)
     .join("\n");
-  const detailsHtml = buildDetailsHtml(request);
+  const detailsHtml = buildDetailsHtml(answers);
 
   if (action === "accept") {
     const headline = "Disponibilité confirmée — finalisez votre réservation";
@@ -63,8 +88,10 @@ export function buildReplyEmail(
       "Nous avons le plaisir de vous confirmer la disponibilité pour votre séjour au Nid de la Sittelle. Pour valider définitivement votre réservation, merci d'effectuer le virement bancaire indiqué ci-dessous.";
     const footerNote =
       "Dès réception du paiement, nous vous enverrons un message de confirmation définitive. Au plaisir de vous accueillir en Valais.";
-    const paymentHtml = buildPaymentHtml();
-    const paymentPlain = buildPaymentPlainText();
+    const payAmount =
+      quote?.complete && quote.total > 0 ? quote.total : null;
+    const paymentHtml = buildPaymentHtml({ amountChf: payAmount });
+    const paymentPlain = buildPaymentPlainText({ amountChf: payAmount });
     const subject = "Confirmation de votre demande — Le Nid de la Sittelle";
     const text = `${greeting}
 
@@ -187,7 +214,7 @@ export async function sendReplyEmail(
     return { sent: false, error: "RESEND_API_KEY not configured" };
   }
 
-  const payload = buildReplyEmail(request, action);
+  const payload = await buildReplyEmail(request, action);
   const base = {
     from,
     to: [to],

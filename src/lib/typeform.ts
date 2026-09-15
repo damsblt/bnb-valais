@@ -1,4 +1,7 @@
+import { parseGuestCount } from "@/lib/night-pricing";
 import {
+  getTypeformGuestCountFieldKey,
+  getTypeformStayTotalFieldKey,
   TYPEFORM_PARAM_ARRIVAL,
   TYPEFORM_PARAM_DEPARTURE,
 } from "@/lib/typeform-refs";
@@ -45,6 +48,7 @@ export type ReservationRequest = {
   submittedAt: string;
   answers: ReservationAnswer[];
   stayDates: StayDates | null;
+  hidden?: Record<string, string>;
   guestEmail: string | null;
   guestName: string | null;
   summaryLine: string;
@@ -271,6 +275,34 @@ function hiddenToAnswers(stay: StayDates | null): ReservationAnswer[] {
   ];
 }
 
+function hiddenGuestAndTotalToAnswers(
+  hidden: Record<string, string> | undefined,
+): ReservationAnswer[] {
+  if (!hidden) return [];
+  const out: ReservationAnswer[] = [];
+  const guestRaw =
+    hidden[getTypeformGuestCountFieldKey()] ?? hidden.nombre_personnes;
+  if (guestRaw?.trim()) {
+    const count = parseGuestCount(guestRaw, 2);
+    out.push({
+      label: "Nombre de personnes",
+      value: count === 1 ? "1 personne" : `${count} personnes`,
+    });
+  }
+  const totalKey = getTypeformStayTotalFieldKey();
+  const totalRaw = hidden[totalKey] ?? hidden.montant_total;
+  if (totalRaw?.trim()) {
+    const amount = Math.round(Number(totalRaw));
+    if (Number.isFinite(amount) && amount > 0) {
+      out.push({
+        label: "Montant du séjour",
+        value: `${amount} CHF`,
+      });
+    }
+  }
+  return out;
+}
+
 function hiddenPromoToAnswers(
   hidden: Record<string, string> | undefined,
 ): ReservationAnswer[] {
@@ -433,6 +465,7 @@ export async function fetchReservationRequests(): Promise<ReservationRequest[]> 
 
     const answers = [
       ...hiddenToAnswers(stayDates),
+      ...hiddenGuestAndTotalToAnswers(item.hidden),
       ...hiddenPromoToAnswers(item.hidden),
       ...formAnswers,
     ];
@@ -449,6 +482,7 @@ export async function fetchReservationRequests(): Promise<ReservationRequest[]> 
       submittedAt: item.submitted_at,
       answers,
       stayDates,
+      hidden: item.hidden,
       guestEmail,
       guestName,
       summaryLine: buildSummary(answers, stayDates),

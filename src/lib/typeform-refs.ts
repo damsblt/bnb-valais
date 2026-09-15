@@ -4,6 +4,7 @@ export const TYPEFORM_PARAM_DEPARTURE = "date_depart";
 export const TYPEFORM_PARAM_PROMO_CODE = "code_promo";
 export const TYPEFORM_PARAM_PROMO_PERCENT = "reduction_pct";
 export const TYPEFORM_PARAM_GUEST_COUNT = "nombre_personnes";
+export const TYPEFORM_PARAM_STAY_TOTAL = "montant_total";
 
 export function getTypeformPromoFieldKeys(): {
   code: string;
@@ -26,6 +27,12 @@ export const TYPEFORM_DATE_DEPARTURE_REF = "37840e24-6ae3-4049-9186-e4d75cca1783
 export function getTypeformGuestCountFieldKey(): string {
   return (
     process.env.TYPEFORM_PARAM_GUESTS?.trim() || TYPEFORM_PARAM_GUEST_COUNT
+  );
+}
+
+export function getTypeformStayTotalFieldKey(): string {
+  return (
+    process.env.TYPEFORM_PARAM_STAY_TOTAL?.trim() || TYPEFORM_PARAM_STAY_TOTAL
   );
 }
 
