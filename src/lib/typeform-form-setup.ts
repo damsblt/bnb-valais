@@ -157,6 +157,7 @@ function buildPutBody(form: TypeformForm): TypeformForm {
 
 export async function getTypeformFormDateStatus(): Promise<{
   dateQuestions: number;
+  guestQuestions: number;
   hiddenConfigured: boolean;
   requiredHidden: string[];
   missingHidden: string[];
