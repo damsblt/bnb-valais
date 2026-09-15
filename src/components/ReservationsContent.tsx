@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import ReservationsInteractive from "@/components/ReservationsInteractive";
+import { JsonLdBreadcrumb } from "@/components/JsonLd";
 import type { Locale } from "@/lib/i18n";
 import { getContent } from "@/lib/content";
 
@@ -12,6 +13,7 @@ export default function ReservationsContent({ locale }: ReservationsContentProps
 
   return (
     <div className="mx-auto max-w-5xl px-6 py-12 md:px-12 md:py-16">
+      <JsonLdBreadcrumb locale={locale} page="reservations" />
       <div className="text-center">
         <h1 className="text-3xl font-semibold text-neutral-900 md:text-4xl">
           {reservations.title}

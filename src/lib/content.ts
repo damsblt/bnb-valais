@@ -218,9 +218,9 @@ export type SiteContent = {
 const content: Record<Locale, SiteContent> = {
   fr: {
     meta: {
-      title: "BnB Valais — Votre prochain séjour en Valais",
+      title: "BnB Valais — Location appartement vacances Valais | Hébergement vue Alpes",
       description:
-        "Appartement de 2 chambres avec vue sur les Alpes, au cœur du Valais. Réservez votre séjour au BnB Valais.",
+        "Location appartement vacances en Valais, Suisse. Hébergement 2 chambres avec vue panoramique sur les Alpes, proche Sion et Anzère. Apparthotel idéal pour séjour semaine ou week-end. Réservation directe sans commission.",
     },
     nav: {
       home: "Accueil",
@@ -481,9 +481,9 @@ const content: Record<Locale, SiteContent> = {
   },
   en: {
     meta: {
-      title: "BnB Valais — Your next stay in Valais",
+      title: "BnB Valais — Holiday apartment rental Valais | Alps view accommodation",
       description:
-        "2-bedroom apartment with mountain views in the heart of Valais. Book your stay at BnB Valais.",
+        "Holiday apartment rental in Valais, Switzerland. 2-bedroom accommodation with panoramic Alps view, near Sion and Anzère. Ideal aparthotel for weekly or weekend stays. Direct booking without commission.",
     },
     nav: {
       home: "Home",
