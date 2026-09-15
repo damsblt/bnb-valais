@@ -105,6 +105,10 @@ export type SiteContent = {
     promoFieldStayFrom: string;
     promoFieldStayTo: string;
     pricingRefresh: string;
+    pricingImportPilotageButton: string;
+    pricingImportPilotageConfirm: string;
+    pricingImportPilotageSuccess: string;
+    pricingImportPilotageHint: string;
     pricingLoading: string;
     pricingEmpty: string;
     pricingSaveSuccess: string;
@@ -343,6 +347,13 @@ const content: Record<Locale, SiteContent> = {
       promoFieldStayFrom: "Première nuitée éligible",
       promoFieldStayTo: "Dernière nuitée éligible",
       pricingRefresh: "Actualiser",
+      pricingImportPilotageButton: "Importer la grille Excel (2026–2027)",
+      pricingImportPilotageConfirm:
+        "Remplacer tous les tarifs par la grille « Pilotage prix » (sept. 2026 → déc. 2027, 101 périodes) ?",
+      pricingImportPilotageSuccess:
+        "Grille importée — vérifiez le calendrier sur /reservations.",
+      pricingImportPilotageHint:
+        "Reprise de l’onglet Calendrier du fichier Pilotage_prix (4 paliers : semaine, week-end, haute saison, événements).",
       pricingLoading: "Chargement…",
       pricingEmpty: "Aucun tarif défini.",
       pricingSaveSuccess: "Tarifs enregistrés.",
@@ -599,6 +610,13 @@ const content: Record<Locale, SiteContent> = {
       promoFieldStayFrom: "First eligible night",
       promoFieldStayTo: "Last eligible night",
       pricingRefresh: "Refresh",
+      pricingImportPilotageButton: "Import Excel grid (2026–2027)",
+      pricingImportPilotageConfirm:
+        "Replace all rates with the « Pilotage prix » grid (Sep 2026 → Dec 2027, 101 periods)?",
+      pricingImportPilotageSuccess:
+        "Grid imported — check the calendar on /reservations.",
+      pricingImportPilotageHint:
+        "From the Excel Calendrier sheet (weekday, weekend, high season, events).",
       pricingLoading: "Loading…",
       pricingEmpty: "No rates defined yet.",
       pricingSaveSuccess: "Rates saved.",

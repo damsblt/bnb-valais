@@ -13,6 +13,8 @@
     "resend:send-promo-test": "curl -sS -X POST \"https://www.bnb-valais.ch/api/newsletter/send-promo-test\"",
     "setup:resend": "node scripts/setup-resend-production.mjs",
     "typeform:sync": "node scripts/sync-typeform-form.mjs",
+    "pricing:import-pilotage": "python3 scripts/import-pilotage-prix-xlsx.py",
+    "pricing:push-pilotage": "node scripts/push-pilotage-pricing.mjs",
     "setup:vercel-checklist": "bash scripts/print-vercel-env-checklist.sh",
     "vercel:newsletter-env": "node scripts/vercel-set-newsletter-env.mjs"
   },

@@ -172,6 +172,33 @@ export default function AdminNightPricing({ content }: AdminNightPricingProps) {
     void persist(rules.filter((r) => r.id !== id));
   }
 
+  async function importPilotageGrid() {
+    if (!window.confirm(content.pricingImportPilotageConfirm)) return;
+    setSaving(true);
+    setMessage(null);
+    setError(null);
+    try {
+      const res = await fetch("/api/admin/night-pricing/import-pilotage", {
+        method: "POST",
+      });
+      const data = (await res.json()) as {
+        ok?: boolean;
+        error?: string;
+        rulesCount?: number;
+      };
+      if (!res.ok || !data.ok) {
+        setError(data.error ?? content.pricingSaveError);
+        return;
+      }
+      setMessage(content.pricingImportPilotageSuccess);
+      await load();
+    } catch {
+      setError(content.pricingSaveError);
+    } finally {
+      setSaving(false);
+    }
+  }
+
   function formatRuleWeekdays(rule: NightPricingRule): string {
     const labels = weekdayOptions
       .filter((w) => rule.weekdays.includes(w.value))
@@ -181,7 +208,16 @@ export default function AdminNightPricing({ content }: AdminNightPricingProps) {
 
   return (
     <section className="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm">
-      <div className="flex flex-wrap items-center justify-end gap-3">
+      <p className="text-sm text-neutral-600">{content.pricingImportPilotageHint}</p>
+      <div className="mt-3 flex flex-wrap items-center justify-end gap-3">
+        <button
+          type="button"
+          onClick={() => void importPilotageGrid()}
+          disabled={loading || saving || !storageConfigured}
+          className="rounded-full bg-emerald-800 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-900 disabled:opacity-50"
+        >
+          {saving ? content.pricingSaving : content.pricingImportPilotageButton}
+        </button>
         <button
           type="button"
           onClick={() => void load()}
