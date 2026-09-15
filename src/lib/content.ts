@@ -395,8 +395,7 @@ const content: Record<Locale, SiteContent> = {
       legendFree: "Libre",
       legendBusy: "Occupé (Booking / Airbnb)",
       legendAccepted: "Réservation directe confirmée",
-      latencyNote:
-        "Calendrier synchronisé via iCal (Booking.com et Airbnb). Délai habituel : 2 à 6 heures.",
+      latencyNote: "",
       notConfiguredNote:
         "Les liens iCal Booking/Airbnb ne sont pas encore configurés sur le serveur — toutes les dates apparaissent libres.",
       formTitle: "Formulaire de réservation",
@@ -424,8 +423,7 @@ const content: Record<Locale, SiteContent> = {
       promoClearButton: "Retirer",
       promoInvalidHint:
         "Code invalide ou non valable pour ces dates. Corrigez ou laissez le champ vide.",
-      legendPricePerNight:
-        "Montant affiché = prix par nuit pour le nombre de personnes choisi",
+      legendPricePerNight: "",
       guestCountLabel: "Nombre de personnes",
       guestCountOne: "1 personne",
       guestCountMany: "{count} personnes",
@@ -657,8 +655,7 @@ const content: Record<Locale, SiteContent> = {
       legendFree: "Available",
       legendBusy: "Occupied (Booking / Airbnb)",
       legendAccepted: "Confirmed direct booking",
-      latencyNote:
-        "Calendar synced via iCal (Booking.com and Airbnb). Typical delay: 2 to 6 hours.",
+      latencyNote: "",
       notConfiguredNote:
         "Booking/Airbnb iCal links are not configured on the server yet — all dates show as available.",
       formTitle: "Booking form",
@@ -686,8 +683,7 @@ const content: Record<Locale, SiteContent> = {
       promoClearButton: "Remove",
       promoInvalidHint:
         "Invalid code or not valid for these dates. Fix it or leave the field empty.",
-      legendPricePerNight:
-        "Amount shown = nightly rate for the selected number of guests",
+      legendPricePerNight: "",
       guestCountLabel: "Number of guests",
       guestCountOne: "1 guest",
       guestCountMany: "{count} guests",
