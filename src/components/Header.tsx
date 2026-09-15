@@ -3,7 +3,7 @@ import Link from "next/link";
 import type { Locale } from "@/lib/i18n";
 import { localePath } from "@/lib/i18n";
 import { getContent } from "@/lib/content";
-import { heroImage } from "@/lib/gallery";
+import { heroImage, heroImageMobile } from "@/lib/gallery";
 import LanguageSwitcher from "./LanguageSwitcher";
 import ParallaxHero from "./ParallaxHero";
 
@@ -69,7 +69,7 @@ export default function Header({ locale, variant = "hero" }: HeaderProps) {
 
   return (
     <header className="relative">
-      <ParallaxHero imageSrc={heroImage} imageAlt="Le Nid de la Sittelle — Valais">
+      <ParallaxHero imageSrc={heroImage} imageSrcMobile={heroImageMobile} imageAlt="Le Nid de la Sittelle — Valais">
         <div className="mx-auto flex max-w-7xl items-start justify-between px-6 pt-8 md:px-10 md:pt-10">
           <Link href={homeHref} className="block drop-shadow-lg">
             <Image

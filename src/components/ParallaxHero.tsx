@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 
 type ParallaxHeroProps = {
   imageSrc: string;
+  imageSrcMobile?: string;
   imageAlt: string;
   children: React.ReactNode;
 };
@@ -18,6 +19,7 @@ function encodePhotoPath(path: string) {
 
 export default function ParallaxHero({
   imageSrc,
+  imageSrcMobile,
   imageAlt,
   children,
 }: ParallaxHeroProps) {
@@ -47,14 +49,26 @@ export default function ParallaxHero({
         style={{ transform: `translate3d(0, ${offset}px, 0) scale(1.08)` }}
         aria-hidden
       >
+        {/* Desktop image */}
         <Image
           src={encodePhotoPath(imageSrc)}
           alt={imageAlt}
           fill
           priority
-          className="object-cover object-left"
+          className={`object-cover object-left ${imageSrcMobile ? "hidden md:block" : ""}`}
           sizes="100vw"
         />
+        {/* Mobile image */}
+        {imageSrcMobile && (
+          <Image
+            src={encodePhotoPath(imageSrcMobile)}
+            alt={imageAlt}
+            fill
+            priority
+            className="object-cover object-center md:hidden"
+            sizes="100vw"
+          />
+        )}
       </div>
 
       <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-black/10 to-black/40" />

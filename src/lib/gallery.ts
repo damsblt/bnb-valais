@@ -6,7 +6,8 @@ export type GalleryPhoto = {
   };
 };
 
-export const heroImage = "/images/new/IMG_9119.JPG";
+export const heroImage = "/images/new/header-desktop.png";
+export const heroImageMobile = "/images/new/header-mobile.png";
 
 export const splitImages = {
   alps: "/images/new/DJI_0057.JPG",
