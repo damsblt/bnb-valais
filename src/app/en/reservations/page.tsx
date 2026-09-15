@@ -1,11 +1,28 @@
 import type { Metadata } from "next";
 import ReservationsContent from "@/components/ReservationsContent";
 import SiteLayout from "@/components/SiteLayout";
-import { getContent } from "@/lib/content";
+
+const BASE_URL = "https://www.bnb-valais.ch";
 
 export const metadata: Metadata = {
-  title: `${getContent("en").reservations.title} — BnB Valais`,
-  description: getContent("en").meta.description,
+  title: "Book accommodation Sion Anzère — Weekly rental Valais | BnB Valais",
+  description:
+    "Book your accommodation between Sion and Anzère. Weekly or weekend apartment rental in Valais. Check availability and rates. Alps view, ideal for skiing and hiking. Direct booking without commission.",
+  alternates: {
+    canonical: `${BASE_URL}/en/reservations`,
+    languages: {
+      "fr-CH": `${BASE_URL}/reservations`,
+      "en": `${BASE_URL}/en/reservations`,
+    },
+  },
+  openGraph: {
+    title: "Book accommodation Sion Anzère — Weekly rental Valais Switzerland",
+    description:
+      "Book your holiday rental between Sion and Anzère. 2-bedroom apartment with Alps view, weekly or weekend rental. Ideal for skiing and hiking.",
+    url: `${BASE_URL}/en/reservations`,
+    locale: "en_GB",
+    type: "website",
+  },
 };
 
 export default function EnglishReservationsPage() {

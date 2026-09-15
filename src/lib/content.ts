@@ -218,9 +218,9 @@ export type SiteContent = {
 const content: Record<Locale, SiteContent> = {
   fr: {
     meta: {
-      title: "BnB Valais — Votre prochain séjour en Valais",
+      title: "BnB Valais — Location appartement vacances Sion Anzère | Hébergement semaine Valais",
       description:
-        "Appartement de 2 chambres avec vue sur les Alpes, au cœur du Valais. Réservez votre séjour au BnB Valais.",
+        "Location appartement vacances en Valais entre Sion et Anzère (15 min). Hébergement 2 chambres vue Alpes, location semaine ou week-end. Gîte idéal ski, randonnée. Apparthotel avec terrasse plein Sud. Réservation directe sans commission.",
     },
     nav: {
       home: "Accueil",
@@ -481,9 +481,9 @@ const content: Record<Locale, SiteContent> = {
   },
   en: {
     meta: {
-      title: "BnB Valais — Your next stay in Valais",
+      title: "BnB Valais — Holiday apartment Sion Anzère | Weekly rental Valais Switzerland",
       description:
-        "2-bedroom apartment with mountain views in the heart of Valais. Book your stay at BnB Valais.",
+        "Holiday apartment rental in Valais between Sion and Anzère (15 min). 2-bedroom accommodation with Alps view, weekly or weekend rental. Ideal for skiing, hiking. Self-catering apartment with south-facing terrace. Direct booking without commission.",
     },
     nav: {
       home: "Home",
