@@ -44,3 +44,16 @@ export function getTypeformDateFieldKeys(): { checkIn: string; checkOut: string 
       process.env.TYPEFORM_PARAM_CHECKOUT?.trim() || TYPEFORM_PARAM_DEPARTURE,
   };
 }
+
+/** Hidden fields à déclarer sur le formulaire Typeform (prefill site → réponses). */
+export function getRequiredTypeformHiddenFields(): string[] {
+  const promo = getTypeformPromoFieldKeys();
+  return [
+    getTypeformDateFieldKeys().checkIn,
+    getTypeformDateFieldKeys().checkOut,
+    getTypeformGuestCountFieldKey(),
+    getTypeformStayTotalFieldKey(),
+    promo.code,
+    promo.percent,
+  ];
+}

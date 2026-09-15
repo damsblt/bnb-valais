@@ -1,8 +1,15 @@
 import { TYPEFORM_DEFAULT_API_FORM_ID } from "@/lib/typeform";
-import {
-  TYPEFORM_PARAM_ARRIVAL,
-  TYPEFORM_PARAM_DEPARTURE,
-} from "@/lib/typeform-refs";
+import { getRequiredTypeformHiddenFields } from "@/lib/typeform-refs";
+
+function resolveSyncFormId(): string {
+  const fromEnv =
+    process.env.TYPEFORM_API_FORM_ID?.trim() ||
+    process.env.TYPEFORM_FORM_ID?.trim();
+  if (fromEnv && !fromEnv.startsWith("01")) {
+    return fromEnv;
+  }
+  return TYPEFORM_DEFAULT_API_FORM_ID;
+}
 
 type FormField = {
   type: string;
@@ -125,8 +132,7 @@ function buildPutBody(form: TypeformForm): TypeformForm {
   body.hidden = [
     ...new Set([
       ...(Array.isArray(form.hidden) ? form.hidden : []),
-      TYPEFORM_PARAM_ARRIVAL,
-      TYPEFORM_PARAM_DEPARTURE,
+      ...getRequiredTypeformHiddenFields(),
     ]),
   ];
   body.fields = removeDateQuestions(form.fields ?? []);
@@ -138,26 +144,29 @@ function buildPutBody(form: TypeformForm): TypeformForm {
 export async function getTypeformFormDateStatus(): Promise<{
   dateQuestions: number;
   hiddenConfigured: boolean;
+  requiredHidden: string[];
+  missingHidden: string[];
 }> {
-  const formId = TYPEFORM_DEFAULT_API_FORM_ID;
+  const formId = resolveSyncFormId();
   const getRes = await typeformFetch(`/forms/${formId}`);
   if (!getRes.ok) {
     throw new Error(`lecture formulaire HTTP ${getRes.status}`);
   }
   const form = (await getRes.json()) as TypeformForm;
   const hidden = form.hidden ?? [];
+  const required = getRequiredTypeformHiddenFields();
   return {
     dateQuestions: countDateQuestions(form.fields),
-    hiddenConfigured:
-      hidden.includes(TYPEFORM_PARAM_ARRIVAL) &&
-      hidden.includes(TYPEFORM_PARAM_DEPARTURE),
+    hiddenConfigured: required.every((key) => hidden.includes(key)),
+    requiredHidden: required,
+    missingHidden: required.filter((key) => !hidden.includes(key)),
   };
 }
 
 /** PUT complet : seule façon fiable de modifier fields + hidden (PATCH = JSON Patch limité). */
 export async function ensureTypeformPrefillOnForm(): Promise<TypeformFormSyncResult> {
-  const formId = TYPEFORM_DEFAULT_API_FORM_ID;
-  const hiddenParams = [TYPEFORM_PARAM_ARRIVAL, TYPEFORM_PARAM_DEPARTURE];
+  const formId = resolveSyncFormId();
+  const hiddenParams = getRequiredTypeformHiddenFields();
 
   const getRes = await typeformFetch(`/forms/${formId}`);
   if (!getRes.ok) {
@@ -178,7 +187,7 @@ export async function ensureTypeformPrefillOnForm(): Promise<TypeformFormSyncRes
   if (hiddenOk && before === 0) {
     return {
       ok: true,
-      detail: "formulaire déjà adapté (hidden + sans questions date)",
+      detail: "formulaire déjà adapté (hidden complets + sans questions date)",
       dateQuestionsBefore: 0,
       dateQuestionsAfter: 0,
       hiddenConfigured: true,
@@ -220,7 +229,7 @@ export async function ensureTypeformPrefillOnForm(): Promise<TypeformFormSyncRes
     ok: after === 0,
     detail:
       after === 0
-        ? "questions date retirées du Typeform ; dates via le calendrier du site"
+        ? `hidden fields : ${hiddenParams.join(", ")}`
         : `PUT réussi mais ${after} question(s) date restante(s)`,
     dateQuestionsBefore: before,
     dateQuestionsAfter: after,
