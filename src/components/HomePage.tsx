@@ -4,7 +4,7 @@ import LocationSection from "@/components/LocationSection";
 import PhotoGallery from "@/components/PhotoGallery";
 import SiteLayout from "@/components/SiteLayout";
 import SplitSection from "@/components/SplitSection";
-import { JsonLdAccommodation, JsonLdBreadcrumb, JsonLdFAQ } from "@/components/JsonLd";
+import { JsonLdAccommodation, JsonLdBreadcrumb, JsonLdFAQ, JsonLdPricing } from "@/components/JsonLd";
 import type { Locale } from "@/lib/i18n";
 import { localePath } from "@/lib/i18n";
 import { getContent } from "@/lib/content";
@@ -24,6 +24,7 @@ export default function HomePage({ locale }: HomePageProps) {
       <JsonLdAccommodation locale={locale} />
       <JsonLdBreadcrumb locale={locale} />
       <JsonLdFAQ locale={locale} />
+      <JsonLdPricing locale={locale} />
       <IntroSection locale={locale} />
 
       <SplitSection

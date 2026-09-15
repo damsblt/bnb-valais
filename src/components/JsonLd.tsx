@@ -9,22 +9,24 @@ export function JsonLdOrganization() {
     "@context": "https://schema.org",
     "@type": "LodgingBusiness",
     "@id": "https://www.bnb-valais.ch/#organization",
-    name: "BnB Valais - Le Nid de la Sittelle",
+    name: "bnb Valais - by La Sittelle",
     alternateName: [
       "BnB Valais",
-      "Bed and Breakfast Valais",
       "Le Nid de la Sittelle",
+      "Bed and Breakfast Valais",
       "Hébergement Sion",
       "Location vacances Anzère",
       "Apparthotel Valais",
       "Gîte Valais",
     ],
     description:
-      "Location appartement vacances en Valais entre Sion et Anzère (15 min). Hébergement 2 chambres avec vue panoramique sur les Alpes. Location semaine ou week-end, idéal ski et randonnée.",
+      "Location appartement vacances en Valais entre Sion et Anzère (15 min). Hébergement 2 chambres avec vue panoramique sur les Alpes. Location semaine ou week-end, idéal ski et randonnée. Tarifs dès 109 CHF/nuit.",
     url: "https://www.bnb-valais.ch",
     logo: "https://www.bnb-valais.ch/images/logo-v2-r1zdvr4wx0fvk8au90hylll5skn9p52d7mwt04xwug.png",
     image: "https://www.bnb-valais.ch/images/logo-v2-r1zdvr4wx0fvk8au90hylll5skn9p52d7mwt04xwug.png",
-    priceRange: "$$",
+    priceRange: "CHF 109 - CHF 289",
+    currenciesAccepted: "CHF",
+    paymentAccepted: "Cash, Credit Card, Bank Transfer",
     address: {
       "@type": "PostalAddress",
       addressLocality: "Valais",
@@ -50,6 +52,14 @@ export function JsonLdOrganization() {
       { "@type": "LocationFeatureSpecification", name: "Proche station ski Anzère", value: true },
       { "@type": "LocationFeatureSpecification", name: "15 min de Sion", value: true },
     ],
+    checkinTime: "15:00",
+    checkoutTime: "10:00",
+    numberOfRooms: 2,
+    petsAllowed: false,
+    starRating: {
+      "@type": "Rating",
+      ratingValue: "3",
+    },
     sameAs: [],
     knowsAbout: [
       "Location appartement Valais",
@@ -75,11 +85,11 @@ export function JsonLdAccommodation({ locale }: JsonLdProps) {
     "@context": "https://schema.org",
     "@type": "Accommodation",
     name: isFr
-      ? "Appartement vacances BnB Valais - Le Nid de la Sittelle - Proche Sion et Anzère"
-      : "Holiday apartment BnB Valais - Le Nid de la Sittelle - Near Sion and Anzère",
+      ? "Appartement vacances bnb Valais - by La Sittelle - Proche Sion et Anzère"
+      : "Holiday apartment bnb Valais - by La Sittelle - Near Sion and Anzère",
     description: isFr
-      ? "Appartement de 2 chambres avec vue panoramique sur les Alpes au cœur du Valais. Location semaine ou week-end, à 15 min de Sion et de la station de ski d'Anzère. Hébergement idéal pour ski et randonnée."
-      : "2-bedroom apartment with panoramic Alps view in the heart of Valais. Weekly or weekend rental, 15 min from Sion and Anzère ski resort. Ideal accommodation for skiing and hiking.",
+      ? "Appartement de 2 chambres avec vue panoramique sur les Alpes au cœur du Valais. Location semaine ou week-end, à 15 min de Sion et de la station de ski d'Anzère. Tarifs dès 109 CHF/nuit."
+      : "2-bedroom apartment with panoramic Alps view in the heart of Valais. Weekly or weekend rental, 15 min from Sion and Anzère ski resort. Rates from CHF 109/night.",
     url: isFr ? "https://www.bnb-valais.ch" : "https://www.bnb-valais.ch/en",
     image: "https://www.bnb-valais.ch/images/logo-v2-r1zdvr4wx0fvk8au90hylll5skn9p52d7mwt04xwug.png",
     numberOfRooms: 2,
@@ -108,10 +118,10 @@ export function JsonLdAccommodation({ locale }: JsonLdProps) {
       addressRegion: "Valais",
       addressCountry: "CH",
     },
-    tourBookingPage: "https://www.bnb-valais.ch/reservations",
+    tourBookingPage: isFr ? "https://www.bnb-valais.ch/reservations" : "https://www.bnb-valais.ch/en/reservations",
     containedInPlace: {
       "@type": "LodgingBusiness",
-      name: "BnB Valais",
+      name: "bnb Valais - by La Sittelle",
       url: "https://www.bnb-valais.ch",
     },
   };
@@ -175,6 +185,106 @@ export function JsonLdWebSite() {
         "@type": "EntryPoint",
         urlTemplate: "https://www.bnb-valais.ch/reservations",
       },
+    },
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+    />
+  );
+}
+
+export function JsonLdPricing({ locale }: JsonLdProps) {
+  const isFr = locale === "fr";
+
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: isFr
+      ? "Séjour appartement vacances Valais - bnb Valais"
+      : "Holiday apartment stay Valais - bnb Valais",
+    description: isFr
+      ? "Location appartement 2 chambres avec vue Alpes, entre Sion et Anzère. Tarifs selon saison et nombre de personnes."
+      : "2-bedroom apartment rental with Alps view, between Sion and Anzère. Rates vary by season and number of guests.",
+    image: "https://www.bnb-valais.ch/images/logo-v2-r1zdvr4wx0fvk8au90hylll5skn9p52d7mwt04xwug.png",
+    brand: {
+      "@type": "Brand",
+      name: "bnb Valais - by La Sittelle",
+    },
+    offers: {
+      "@type": "AggregateOffer",
+      priceCurrency: "CHF",
+      lowPrice: 109,
+      highPrice: 289,
+      priceValidUntil: "2027-12-31",
+      availability: "https://schema.org/InStock",
+      url: isFr ? "https://www.bnb-valais.ch/reservations" : "https://www.bnb-valais.ch/en/reservations",
+      seller: {
+        "@type": "LodgingBusiness",
+        name: "bnb Valais - by La Sittelle",
+        url: "https://www.bnb-valais.ch",
+      },
+      offerCount: 4,
+      offers: [
+        {
+          "@type": "Offer",
+          name: isFr ? "Tarif 1 personne - Basse saison" : "1 guest rate - Low season",
+          price: 109,
+          priceCurrency: "CHF",
+          priceSpecification: {
+            "@type": "UnitPriceSpecification",
+            price: 109,
+            priceCurrency: "CHF",
+            unitText: isFr ? "par nuit" : "per night",
+          },
+          availability: "https://schema.org/InStock",
+          url: isFr ? "https://www.bnb-valais.ch/reservations" : "https://www.bnb-valais.ch/en/reservations",
+        },
+        {
+          "@type": "Offer",
+          name: isFr ? "Tarif 2 personnes - Basse saison" : "2 guests rate - Low season",
+          price: 129,
+          priceCurrency: "CHF",
+          priceSpecification: {
+            "@type": "UnitPriceSpecification",
+            price: 129,
+            priceCurrency: "CHF",
+            unitText: isFr ? "par nuit" : "per night",
+          },
+          availability: "https://schema.org/InStock",
+          url: isFr ? "https://www.bnb-valais.ch/reservations" : "https://www.bnb-valais.ch/en/reservations",
+        },
+        {
+          "@type": "Offer",
+          name: isFr ? "Tarif 3 personnes - Basse saison" : "3 guests rate - Low season",
+          price: 189,
+          priceCurrency: "CHF",
+          priceSpecification: {
+            "@type": "UnitPriceSpecification",
+            price: 189,
+            priceCurrency: "CHF",
+            unitText: isFr ? "par nuit" : "per night",
+          },
+          availability: "https://schema.org/InStock",
+          url: isFr ? "https://www.bnb-valais.ch/reservations" : "https://www.bnb-valais.ch/en/reservations",
+        },
+        {
+          "@type": "Offer",
+          name: isFr ? "Tarif 4 personnes - Basse saison" : "4 guests rate - Low season",
+          price: 209,
+          priceCurrency: "CHF",
+          priceSpecification: {
+            "@type": "UnitPriceSpecification",
+            price: 209,
+            priceCurrency: "CHF",
+            unitText: isFr ? "par nuit" : "per night",
+          },
+          availability: "https://schema.org/InStock",
+          url: isFr ? "https://www.bnb-valais.ch/reservations" : "https://www.bnb-valais.ch/en/reservations",
+        },
+      ],
     },
   };
 
