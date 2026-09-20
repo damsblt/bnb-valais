@@ -6,7 +6,7 @@ export type GalleryPhoto = {
   };
 };
 
-export const heroImage = "/images/new/header-desktop.png";
+export const heroImage = "/images/new/header.PNG";
 export const heroImageMobile = "/images/new/header-mobile.png";
 
 export const heroImages = {

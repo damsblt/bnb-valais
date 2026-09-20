@@ -55,6 +55,7 @@ export default function ParallaxHero({
           alt={imageAlt}
           fill
           priority
+          quality={90}
           className={`object-cover object-left ${imageSrcMobile ? "hidden md:block" : ""}`}
           sizes="100vw"
         />
@@ -65,6 +66,7 @@ export default function ParallaxHero({
             alt={imageAlt}
             fill
             priority
+            quality={90}
             className="object-cover object-center md:hidden"
             sizes="100vw"
           />
