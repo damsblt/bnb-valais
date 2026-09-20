@@ -1,14 +1,17 @@
-import ApartmentGallerySection from "@/components/ApartmentGallerySection";
 import IntroSection from "@/components/IntroSection";
 import LocationSection from "@/components/LocationSection";
 import PhotoGallery from "@/components/PhotoGallery";
 import SiteLayout from "@/components/SiteLayout";
-import SplitSection from "@/components/SplitSection";
-import { JsonLdAccommodation, JsonLdBreadcrumb, JsonLdFAQ, JsonLdPricing } from "@/components/JsonLd";
+import {
+  JsonLdAccommodation,
+  JsonLdBreadcrumb,
+  JsonLdFAQ,
+  JsonLdPricing,
+} from "@/components/JsonLd";
 import type { Locale } from "@/lib/i18n";
 import { localePath } from "@/lib/i18n";
 import { getContent } from "@/lib/content";
-import { splitImages } from "@/lib/gallery";
+import { galleryPhotos } from "@/lib/gallery";
 
 type HomePageProps = {
   locale: Locale;
@@ -27,35 +30,54 @@ export default function HomePage({ locale }: HomePageProps) {
       <JsonLdPricing locale={locale} />
       <IntroSection locale={locale} />
 
-      <SplitSection
+      <PhotoGallery
+        locale={locale}
         title={sections.alps.title}
         paragraphs={sections.alps.paragraphs}
-        imageSrc={splitImages.alps}
-        imageAlt={sections.alps.title}
-        imagePosition="left"
+        photos={[...galleryPhotos.exterieur]}
+        showAllLabel={gallery.showAll}
+        morePhotosTemplate={gallery.morePhotos}
         cta={{
           label: sections.alps.cta,
           href: reservationsHref,
         }}
       />
 
-      <ApartmentGallerySection
+      <PhotoGallery
+        locale={locale}
         title={sections.apartment.title}
         paragraphs={sections.apartment.paragraphs}
+        photos={[...galleryPhotos.sejour]}
+        showAllLabel={gallery.showAll}
+        morePhotosTemplate={gallery.morePhotos}
+        tone="muted"
+      />
+
+      <PhotoGallery
+        locale={locale}
+        title={sections.bedrooms.title}
+        paragraphs={sections.bedrooms.paragraphs}
+        photos={[...galleryPhotos.chambres]}
+        showAllLabel={gallery.showAll}
+        morePhotosTemplate={gallery.morePhotos}
         cta={{
-          label: sections.apartment.cta,
+          label: sections.bedrooms.cta,
           href: reservationsHref,
         }}
       />
 
       <PhotoGallery
         locale={locale}
-        title={gallery.title}
+        title={sections.building.title}
+        paragraphs={sections.building.paragraphs}
+        photos={[...galleryPhotos.batiment]}
         showAllLabel={gallery.showAll}
         morePhotosTemplate={gallery.morePhotos}
+        tone="muted"
       />
 
       <LocationSection
+        locale={locale}
         title={sections.location.title}
         description={sections.location.description}
       />

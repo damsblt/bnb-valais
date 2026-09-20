@@ -4,6 +4,8 @@ export type SiteContent = {
   meta: {
     title: string;
     description: string;
+    reservationsTitle: string;
+    reservationsDescription: string;
   };
   nav: {
     home: string;
@@ -24,7 +26,15 @@ export type SiteContent = {
     apartment: {
       title: string;
       paragraphs: string[];
+    };
+    bedrooms: {
+      title: string;
+      paragraphs: string[];
       cta: string;
+    };
+    building: {
+      title: string;
+      paragraphs: string[];
     };
     location: {
       title: string;
@@ -32,7 +42,6 @@ export type SiteContent = {
     };
   };
   gallery: {
-    title: string;
     showAll: string;
     morePhotos: string;
   };
@@ -185,6 +194,8 @@ export type SiteContent = {
     contact: string;
     copyright: string;
     credits: string;
+    privacy: string;
+    cookies: string;
   };
   newsletter: {
     title: string;
@@ -220,7 +231,10 @@ const content: Record<Locale, SiteContent> = {
     meta: {
       title: "BnB Valais — Location appartement vacances Sion Anzère | Hébergement semaine Valais",
       description:
-        "Location appartement vacances en Valais entre Sion et Anzère (15 min). Hébergement 2 chambres vue Alpes, location semaine ou week-end. Gîte idéal ski, randonnée. Apparthotel avec terrasse plein Sud. Réservation directe sans commission.",
+        "Appartement à louer en Valais entre Sion et Anzère (15 min). Réservation à la nuit, à la semaine ou au mois. 2 chambres, vue Alpes, Wi-Fi, parking, ascenseur.",
+      reservationsTitle: "Réserver un appartement à louer | BnB Valais",
+      reservationsDescription:
+        "Appartement à louer en Valais : réservez à la nuit, à la semaine ou au mois. Consultez les disponibilités, BnB 2 chambres avec vue Alpes.",
     },
     nav: {
       home: "Accueil",
@@ -245,13 +259,26 @@ const content: Record<Locale, SiteContent> = {
         ctaHref: "/reservations",
       },
       apartment: {
-        title: "Appartements avec vues sur les montagnes",
+        title: "Appartement tout équipé",
         paragraphs: [
-          "L'appartement est composé de 2 chambres, de 2 WC, d'une salle de bain ainsi que d'un espace cuisine et salon.",
+          "L'appartement de 70 m2 est composé de 2 chambres, de 2 WC, d'une salle de bain ainsi que d'un espace cuisine et salon.",
+          "Cuisine entièrement équipée, TV, Wi-Fi, parking et accès en ascenseur.",
+          "Réservation possible à la nuit, à la semaine ou au mois.",
+        ],
+      },
+      bedrooms: {
+        title: "Chambres avec accès terrasse",
+        paragraphs: [
           "Avec leurs grandes baies vitrées, les chambres donnent directement sur les terrasses.",
           "Vous profiterez ainsi d'une vue exceptionnelle sur les Alpes à votre réveil.",
         ],
         cta: "Réserver",
+      },
+      building: {
+        title: "Le Nid, vu du ciel",
+        paragraphs: [
+          "Une maison contemporaine en terrasses, ouverte sur la vallée.",
+        ],
       },
       location: {
         title: "Situation géographique",
@@ -260,7 +287,6 @@ const content: Record<Locale, SiteContent> = {
       },
     },
     gallery: {
-      title: "Galerie photos",
       showAll: "Afficher toutes les photos",
       morePhotos: "+{count} photos",
     },
@@ -441,6 +467,8 @@ const content: Record<Locale, SiteContent> = {
       contact: "Contact",
       copyright: "Copyright 2025",
       credits: "Site réalisé par db marketing",
+      privacy: "Protection des données",
+      cookies: "Cookies",
     },
     newsletter: {
       title: "Actualités",
@@ -481,7 +509,10 @@ const content: Record<Locale, SiteContent> = {
     meta: {
       title: "BnB Valais — Holiday apartment Sion Anzère | Weekly rental Valais Switzerland",
       description:
-        "Holiday apartment rental in Valais between Sion and Anzère (15 min). 2-bedroom accommodation with Alps view, weekly or weekend rental. Ideal for skiing, hiking. Self-catering apartment with south-facing terrace. Direct booking without commission.",
+        "Apartment to rent in Valais between Sion and Anzère (15 min). Book by the night, week or month. 2 bedrooms, Alpine views, Wi-Fi, parking, lift.",
+      reservationsTitle: "Book an apartment to rent | BnB Valais",
+      reservationsDescription:
+        "Apartment to rent in Valais: book by the night, week or month. Check availability, 2-bedroom BnB with Alpine views.",
     },
     nav: {
       home: "Home",
@@ -506,13 +537,26 @@ const content: Record<Locale, SiteContent> = {
         ctaHref: "/en/reservations",
       },
       apartment: {
-        title: "Apartments with mountain views",
+        title: "Fully equipped apartment",
         paragraphs: [
-          "The apartment comprises 2 bedrooms, 2 WCs, a bathroom and a kitchen and living area.",
+          "The 70 m² apartment comprises 2 bedrooms, 2 WCs, a bathroom and a kitchen and living area.",
+          "Fully equipped kitchen, TV, Wi-Fi, parking and lift access.",
+          "Available to book by the night, week or month.",
+        ],
+      },
+      bedrooms: {
+        title: "Bedrooms with terrace access",
+        paragraphs: [
           "With their large picture windows, the rooms open directly onto the terraces.",
           "You'll wake up to an exceptional view of the Alps.",
         ],
         cta: "Book now",
+      },
+      building: {
+        title: "The Nid from above",
+        paragraphs: [
+          "A contemporary terraced house, open to the valley.",
+        ],
       },
       location: {
         title: "Geographical location",
@@ -521,7 +565,6 @@ const content: Record<Locale, SiteContent> = {
       },
     },
     gallery: {
-      title: "Photo gallery",
       showAll: "Show all photos",
       morePhotos: "+{count} photos",
     },
@@ -701,6 +744,8 @@ const content: Record<Locale, SiteContent> = {
       contact: "Contact",
       copyright: "Copyright 2025",
       credits: "Website designed by db marketing",
+      privacy: "Privacy",
+      cookies: "Cookies",
     },
     newsletter: {
       title: "Newsletter",

@@ -1,9 +1,14 @@
+import ConsentMap from "@/components/ConsentMap";
+import type { Locale } from "@/lib/i18n";
+
 type LocationSectionProps = {
+  locale: Locale;
   title: string;
   description: string;
 };
 
 export default function LocationSection({
+  locale,
   title,
   description,
 }: LocationSectionProps) {
@@ -20,14 +25,7 @@ export default function LocationSection({
         </div>
 
         <div className="mt-10 overflow-hidden rounded-2xl shadow-lg shadow-neutral-900/10">
-          <iframe
-            title="Le Nid de la Sittelle — Google Maps"
-            src="https://www.google.com/maps/embed/v1/place?key=AIzaSyCF3GqCPfbM6TwJPzs3eENWvWFZjl-Op34&q=bnb%20la%20sittelle&zoom=10"
-            className="aspect-video w-full border-0"
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-            allowFullScreen
-          />
+          <ConsentMap locale={locale} />
         </div>
       </div>
     </section>

@@ -1,13 +1,5 @@
 import type { Locale } from "@/lib/i18n";
-
-function siteBaseUrl(): string {
-  const fromEnv = process.env.NEXT_PUBLIC_SITE_URL?.trim();
-  if (fromEnv) return fromEnv.replace(/\/$/, "");
-  if (process.env.VERCEL_URL) {
-    return `https://${process.env.VERCEL_URL.replace(/\/$/, "")}`;
-  }
-  return "https://www.bnb-valais.ch";
-}
+import { siteBaseUrl } from "@/lib/site";
 
 function fromAddress(): string {
   return (

@@ -11,13 +11,13 @@ export const metadata: Metadata = {
     canonical: `${BASE_URL}/en`,
     languages: {
       "fr-CH": BASE_URL,
-      "en": `${BASE_URL}/en`,
+      en: `${BASE_URL}/en`,
     },
   },
   openGraph: {
     title: "BnB Valais — Holiday apartment Sion Anzère | Weekly rental Valais Switzerland",
     description:
-      "Holiday apartment rental in Valais, 15 min from Sion and Anzère. 2-bedroom accommodation with Alps view, weekly or weekend rental. Ideal for skiing and hiking.",
+      "Apartment to rent in Valais, 15 min from Sion and Anzère. Book by the night, week or month. 2 bedrooms, Alpine views, Wi-Fi, parking, lift.",
     url: `${BASE_URL}/en`,
     locale: "en_GB",
     type: "website",

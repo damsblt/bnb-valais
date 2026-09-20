@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { Locale } from "@/lib/i18n";
+import { alternateLocaleHref } from "@/lib/i18n";
 import { getContent } from "@/lib/content";
 
 type LanguageSwitcherProps = {
@@ -16,14 +17,7 @@ export default function LanguageSwitcher({
 }: LanguageSwitcherProps) {
   const pathname = usePathname();
   const { language } = getContent(locale);
-
-  const pathWithoutLocale =
-    locale === "en" ? pathname.replace(/^\/en/, "") || "" : pathname;
-
-  const targetHref =
-    locale === "fr"
-      ? `/en${pathWithoutLocale === "/" ? "" : pathWithoutLocale}`
-      : pathWithoutLocale || "/";
+  const targetHref = alternateLocaleHref(locale, pathname);
 
   const className =
     variant === "compact"
@@ -31,7 +25,7 @@ export default function LanguageSwitcher({
       : "rounded-full border border-white/40 bg-white/10 px-4 py-2 text-sm font-medium text-white backdrop-blur-sm transition hover:bg-white/20";
 
   return (
-    <Link href={targetHref} className={className}>
+    <Link href={targetHref} hrefLang={locale === "fr" ? "en" : "fr"} className={className}>
       {language.switchTo}
     </Link>
   );

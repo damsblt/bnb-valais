@@ -11,13 +11,13 @@ export const metadata: Metadata = {
     canonical: BASE_URL,
     languages: {
       "fr-CH": BASE_URL,
-      "en": `${BASE_URL}/en`,
+      en: `${BASE_URL}/en`,
     },
   },
   openGraph: {
     title: "BnB Valais — Location appartement vacances Sion Anzère | Hébergement semaine Valais",
     description:
-      "Location appartement vacances en Valais à 15 min de Sion et Anzère. Hébergement 2 chambres vue Alpes, location semaine ou week-end. Gîte idéal ski et randonnée.",
+      "Appartement à louer en Valais à 15 min de Sion et Anzère. Réservation à la nuit, à la semaine ou au mois. 2 chambres, vue Alpes, Wi-Fi, parking, ascenseur.",
     url: BASE_URL,
     locale: "fr_CH",
     type: "website",

@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import type { Locale } from "@/lib/i18n";
 import type { SiteContent } from "@/lib/content";
+import { privacyPath } from "@/lib/legal";
 
 type NewsletterSignupProps = {
   locale: Locale;
@@ -66,7 +68,15 @@ export default function NewsletterSignup({ locale, copy }: NewsletterSignupProps
               required
               className="mt-0.5"
             />
-            <span>{copy.consentLabel}</span>
+            <span>
+              {copy.consentLabel}{" "}
+              <Link
+                href={privacyPath(locale)}
+                className="underline underline-offset-2 hover:text-neutral-800"
+              >
+                {locale === "fr" ? "Protection des données" : "Privacy"}
+              </Link>
+            </span>
           </label>
           <button
             type="submit"

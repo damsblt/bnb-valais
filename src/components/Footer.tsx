@@ -2,6 +2,7 @@ import Link from "next/link";
 import NewsletterSignup from "@/components/NewsletterSignup";
 import type { Locale } from "@/lib/i18n";
 import { getContent } from "@/lib/content";
+import { cookiesPath, privacyPath } from "@/lib/legal";
 
 type FooterProps = {
   locale: Locale;
@@ -38,6 +39,20 @@ export default function Footer({ locale }: FooterProps) {
         <div className="text-sm text-neutral-600 md:text-right">
           <p>{footer.copyright}</p>
           <p className="mt-1">{footer.credits}</p>
+          <p className="mt-4 flex flex-wrap gap-x-4 gap-y-2 md:justify-end">
+            <Link
+              href={privacyPath(locale)}
+              className="transition hover:text-sky-700"
+            >
+              {footer.privacy}
+            </Link>
+            <Link
+              href={cookiesPath(locale)}
+              className="transition hover:text-sky-700"
+            >
+              {footer.cookies}
+            </Link>
+          </p>
         </div>
       </div>
     </footer>
