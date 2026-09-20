@@ -8,6 +8,7 @@ import {
   SITE_OG_IMAGE,
   SITE_PHONE,
   absoluteUrl,
+  shareOgImage,
   siteBaseUrl,
 } from "@/lib/site";
 import { galleryPhotos, heroImages } from "@/lib/gallery";
@@ -31,7 +32,7 @@ export function pageMetadata({
   const canonical = absoluteUrl(canonicalPath);
   const frUrl = absoluteUrl(localePath("fr", frPath) || "/");
   const enUrl = absoluteUrl(localePath("en", enPath));
-  const ogImage = absoluteUrl(SITE_OG_IMAGE);
+  const ogImage = shareOgImage();
 
   return {
     title,
@@ -52,18 +53,13 @@ export function pageMetadata({
       siteName: SITE_BRAND,
       title,
       description,
-      images: [
-        {
-          url: ogImage,
-          alt: `${SITE_BRAND} — ${SITE_NAME}`,
-        },
-      ],
+      images: [ogImage],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: [ogImage],
+      images: [absoluteUrl(SITE_OG_IMAGE)],
     },
   };
 }

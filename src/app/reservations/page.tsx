@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import ReservationsContent from "@/components/ReservationsContent";
 import SiteLayout from "@/components/SiteLayout";
+import { shareOgImage } from "@/lib/site";
 
 const BASE_URL = "https://www.bnb-valais.ch";
 
@@ -22,6 +23,11 @@ export const metadata: Metadata = {
     url: `${BASE_URL}/reservations`,
     locale: "fr_CH",
     type: "website",
+    images: [shareOgImage()],
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: [shareOgImage().url],
   },
 };
 

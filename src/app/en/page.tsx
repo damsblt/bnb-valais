@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import HomePage from "@/components/HomePage";
 import { getContent } from "@/lib/content";
+import { shareOgImage } from "@/lib/site";
 
 const BASE_URL = "https://www.bnb-valais.ch";
 
@@ -21,6 +22,11 @@ export const metadata: Metadata = {
     url: `${BASE_URL}/en`,
     locale: "en_GB",
     type: "website",
+    images: [shareOgImage()],
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: [shareOgImage().url],
   },
 };
 
