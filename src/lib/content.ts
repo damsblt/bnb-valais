@@ -375,7 +375,7 @@ const content: Record<Locale, SiteContent> = {
       pricingRefresh: "Actualiser",
       pricingImportPilotageButton: "Importer la grille Excel (2026–2027)",
       pricingImportPilotageConfirm:
-        "Remplacer tous les tarifs par la grille « Pilotage prix » (sept. 2026 → déc. 2027, 101 périodes) ?",
+        "Remplacer tous les tarifs par la grille « Pilotage prix » (sept. 2026 → déc. 2027, 112 périodes) ?",
       pricingImportPilotageSuccess:
         "Grille importée — vérifiez le calendrier sur /reservations.",
       pricingImportPilotageHint:
@@ -653,7 +653,7 @@ const content: Record<Locale, SiteContent> = {
       pricingRefresh: "Refresh",
       pricingImportPilotageButton: "Import Excel grid (2026–2027)",
       pricingImportPilotageConfirm:
-        "Replace all rates with the « Pilotage prix » grid (Sep 2026 → Dec 2027, 101 periods)?",
+        "Replace all rates with the « Pilotage prix » grid (Sep 2026 → Dec 2027, 112 periods)?",
       pricingImportPilotageSuccess:
         "Grid imported — check the calendar on /reservations.",
       pricingImportPilotageHint:

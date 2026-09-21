@@ -24,6 +24,8 @@ export type NightPricingRule = {
 export type NightPricingStore = {
   currency: "CHF";
   rules: NightPricingRule[];
+  /** Identifiant de la grille Excel publiée. Les éditions admin restent en place tant qu’il ne change pas. */
+  bundleRevision?: string;
 };
 
 export type PricesByNightAndGuests = Record<string, GuestNightPrices>;

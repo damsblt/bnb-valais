@@ -24,7 +24,7 @@ export function JsonLdOrganization() {
     url: "https://www.bnb-valais.ch",
     logo: "https://www.bnb-valais.ch/images/logo-v2-r1zdvr4wx0fvk8au90hylll5skn9p52d7mwt04xwug.png",
     image: "https://www.bnb-valais.ch/images/logo-v2-r1zdvr4wx0fvk8au90hylll5skn9p52d7mwt04xwug.png",
-    priceRange: "CHF 109 - CHF 289",
+    priceRange: "CHF 109 - CHF 400",
     currenciesAccepted: "CHF",
     paymentAccepted: "Cash, Credit Card, Bank Transfer",
     address: {
@@ -217,7 +217,7 @@ export function JsonLdPricing({ locale }: JsonLdProps) {
       "@type": "AggregateOffer",
       priceCurrency: "CHF",
       lowPrice: 109,
-      highPrice: 289,
+      highPrice: 400,
       priceValidUntil: "2027-12-31",
       availability: "https://schema.org/InStock",
       url: isFr ? "https://www.bnb-valais.ch/reservations" : "https://www.bnb-valais.ch/en/reservations",

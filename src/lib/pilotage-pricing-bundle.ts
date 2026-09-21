@@ -12,7 +12,8 @@ export const PILOTAGE_PRICING_META = {
   label: "Pilotage Excel 2026–2027",
   from: "2026-09-01",
   to: "2027-12-31",
-  ruleCount: 101,
+  ruleCount: 112,
+  revision: "2026-09-21-weekend-corrige-v2",
 } as const;
 
 export function loadPilotagePricingRules(): NightPricingRule[] | null {
