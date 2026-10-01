@@ -189,6 +189,17 @@ export type SiteContent = {
     stayTotalLabel: string;
     stayTotalIncomplete: string;
     stayTotalNoRatesForDates: string;
+    payButton: string;
+    payLoading: string;
+    payError: string;
+    payUnavailable: string;
+    payDatesUnavailable: string;
+    paySuccessTitle: string;
+    paySuccessBody: string;
+    paySuccessHome: string;
+    payCancelTitle: string;
+    payCancelBody: string;
+    payCancelRetry: string;
   };
   footer: {
     contact: string;
@@ -414,9 +425,9 @@ const content: Record<Locale, SiteContent> = {
       pricingWeekdaySun: "Dim",
     },
     reservations: {
-      title: "Demande de réservation",
+      title: "Réserver et payer",
       subtitle:
-        "Consultez les disponibilités puis envoyez votre demande via le formulaire ci-dessous.",
+        "Choisissez vos dates, le nombre de personnes, puis payez le séjour en ligne (carte, Apple Pay, Google Pay).",
       calendarTitle: "Disponibilités",
       legendFree: "Libre",
       legendBusy: "Occupé (Booking / Airbnb)",
@@ -424,14 +435,14 @@ const content: Record<Locale, SiteContent> = {
       latencyNote: "",
       notConfiguredNote:
         "Les liens iCal Booking/Airbnb ne sont pas encore configurés sur le serveur — toutes les dates apparaissent libres.",
-      formTitle: "Formulaire de réservation",
+      formTitle: "Paiement",
       formNote:
-        "Choisissez d’abord vos dates sur le calendrier (minimum 2 nuits), puis complétez le formulaire.",
+        "Choisissez d’abord vos dates sur le calendrier (minimum 2 nuits), puis payez pour confirmer la réservation.",
       formPrefillNote:
-        "Vos dates sont enregistrées ci-dessous. Complétez le reste du formulaire (coordonnées, message).",
-      formLockedTitle: "Formulaire verrouillé",
+        "Vos dates et le montant sont prêts. Le paiement se fait sur la page sécurisée Stripe.",
+      formLockedTitle: "Paiement verrouillé",
       formLockedHint:
-        "Sélectionnez une date d’arrivée et une date de départ sur le calendrier (séjour d’au moins 2 nuits) pour envoyer votre demande.",
+        "Sélectionnez une date d’arrivée et une date de départ sur le calendrier (séjour d’au moins 2 nuits) pour payer.",
       formLockedAction: "Revenir au calendrier",
       calendarSelectHint:
         "Cliquez une date d'arrivée puis une date de départ (minimum 2 nuits, jours libres uniquement).",
@@ -462,6 +473,18 @@ const content: Record<Locale, SiteContent> = {
       stayTotalIncomplete:
         "Tarif manquant pour {missing} nuit(s) sur ce séjour — vérifiez les dates ou contactez-nous.",
       stayTotalNoRatesForDates: "Tarif non publié pour ces dates.",
+      payButton: "Payer et confirmer la réservation",
+      payLoading: "Redirection vers le paiement…",
+      payError: "Le paiement n’a pas pu démarrer. Réessayez ou contactez-nous.",
+      payUnavailable: "Le paiement en ligne n’est pas encore activé sur ce serveur.",
+      payDatesUnavailable: "Ces dates viennent d’être prises. Choisissez une autre période.",
+      paySuccessTitle: "Réservation confirmée",
+      paySuccessBody:
+        "Merci. Le paiement a bien été reçu. Un e-mail de confirmation et la facture vous seront envoyés.",
+      paySuccessHome: "Retour à l’accueil",
+      payCancelTitle: "Paiement non terminé",
+      payCancelBody: "Aucun montant n’a été débité. Vous pouvez relancer le paiement quand vous voulez.",
+      payCancelRetry: "Revenir aux réservations",
     },
     footer: {
       contact: "Contact",
@@ -691,9 +714,9 @@ const content: Record<Locale, SiteContent> = {
       pricingWeekdaySun: "Sun",
     },
     reservations: {
-      title: "Booking request",
+      title: "Book and pay",
       subtitle:
-        "Check availability, then send your request using the form below.",
+        "Choose your dates and number of guests, then pay online to confirm (card, Apple Pay, Google Pay).",
       calendarTitle: "Availability",
       legendFree: "Available",
       legendBusy: "Occupied (Booking / Airbnb)",
@@ -701,14 +724,14 @@ const content: Record<Locale, SiteContent> = {
       latencyNote: "",
       notConfiguredNote:
         "Booking/Airbnb iCal links are not configured on the server yet — all dates show as available.",
-      formTitle: "Booking form",
+      formTitle: "Payment",
       formNote:
-        "Pick your dates on the calendar first (minimum 2 nights), then complete the form.",
+        "Pick your dates on the calendar first (minimum 2 nights), then pay to confirm the booking.",
       formPrefillNote:
-        "Your dates are saved below. Complete the rest of the form (contact details, message).",
-      formLockedTitle: "Form locked",
+        "Your dates and total are ready. Payment is completed on Stripe’s secure page.",
+      formLockedTitle: "Payment locked",
       formLockedHint:
-        "Select check-in and check-out on the calendar (at least 2 nights) before you can submit a request.",
+        "Select check-in and check-out on the calendar (at least 2 nights) before you can pay.",
       formLockedAction: "Back to calendar",
       calendarSelectHint:
         "Click a check-in date, then a check-out date (minimum 2 nights, available days only).",
@@ -739,6 +762,18 @@ const content: Record<Locale, SiteContent> = {
       stayTotalIncomplete:
         "Rate missing for {missing} night(s) in this stay — check dates or contact us.",
       stayTotalNoRatesForDates: "No published rate for these dates.",
+      payButton: "Pay and confirm booking",
+      payLoading: "Redirecting to payment…",
+      payError: "Payment could not start. Please try again or contact us.",
+      payUnavailable: "Online payment is not enabled on this server yet.",
+      payDatesUnavailable: "These dates were just taken. Please choose another stay.",
+      paySuccessTitle: "Booking confirmed",
+      paySuccessBody:
+        "Thank you. Payment was received. A confirmation email and invoice will be sent to you.",
+      paySuccessHome: "Back to home",
+      payCancelTitle: "Payment not completed",
+      payCancelBody: "You were not charged. You can start the payment again whenever you like.",
+      payCancelRetry: "Back to bookings",
     },
     footer: {
       contact: "Contact",

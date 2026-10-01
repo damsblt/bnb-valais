@@ -25,7 +25,7 @@ export function cookiesPath(locale: Locale) {
 export function getCookieBannerCopy(locale: Locale) {
   if (locale === "en") {
     return {
-      text: "We use essential cookies to run the site. Google Maps is loaded only with your consent. Typeform is used to send a booking request.",
+      text: "We use essential cookies to run the site. Google Maps is loaded only with your consent. Payments are processed by Stripe on a secure page.",
       acceptAll: "Accept all",
       essentialOnly: "Essential only",
       privacy: "Privacy",
@@ -33,7 +33,7 @@ export function getCookieBannerCopy(locale: Locale) {
     };
   }
   return {
-    text: "Nous utilisons des cookies nécessaires au fonctionnement du site. La carte Google Maps n’est chargée qu’avec votre accord. Typeform sert à envoyer une demande de réservation.",
+    text: "Nous utilisons des cookies nécessaires au fonctionnement du site. La carte Google Maps n’est chargée qu’avec votre accord. Les paiements sont traités par Stripe sur une page sécurisée.",
     acceptAll: "Tout accepter",
     essentialOnly: "Nécessaires uniquement",
     privacy: "Protection des données",
@@ -73,14 +73,14 @@ export function getPrivacyCopy(locale: Locale): LegalPageCopy {
           paragraphs: [
             "Browsing data: technical logs needed to serve the pages (IP address, browser, date), kept by our hosting provider.",
             "Newsletter: email address, language, and your consent, after double confirmation by email.",
-            "Booking requests: identity, contact details, stay dates, number of guests, message and any promo code, via the Typeform form.",
+            "Bookings: identity, contact details, stay dates, number of guests and payment data, processed by Stripe to confirm the stay.",
             "We do not create marketing profiles and we do not sell your data.",
           ],
         },
         {
           title: "Why we process it",
           paragraphs: [
-            "To answer a booking request and manage the stay (performance of a contract or pre-contractual steps).",
+            "To take a booking, collect payment and manage the stay (performance of a contract).",
             "To send news if you have subscribed (consent, which you can withdraw at any time).",
             "To operate, secure and improve the website (legitimate interest).",
           ],
@@ -89,7 +89,7 @@ export function getPrivacyCopy(locale: Locale): LegalPageCopy {
           title: "Who we share data with",
           paragraphs: [
             "Data is shared only with providers needed to run the service:",
-            "Typeform (booking form), Resend (emails), Vercel (hosting and file storage), Google (map, only if you accept optional cookies).",
+            "Stripe (payments and invoices), Resend (emails), Vercel (hosting and file storage), Google (map, only if you accept optional cookies).",
             "These providers act on our instructions. Some may process data outside Switzerland (for example in the EU or the United States), with appropriate safeguards.",
             "We do not share data with advertisers or data brokers.",
           ],
@@ -136,14 +136,14 @@ export function getPrivacyCopy(locale: Locale): LegalPageCopy {
         paragraphs: [
           "Navigation : journaux techniques nécessaires à l’affichage des pages (adresse IP, navigateur, date), conservés par l’hébergeur.",
           "Newsletter : adresse e-mail, langue et votre consentement, après double confirmation par e-mail.",
-          "Demandes de réservation : identité, coordonnées, dates du séjour, nombre de personnes, message et éventuellement un code promo, via le formulaire Typeform.",
+          "Réservations : identité, coordonnées, dates du séjour, nombre de personnes et données de paiement, traitées par Stripe pour confirmer le séjour.",
           "Nous ne constituons pas de profils publicitaires et nous ne vendons pas vos données.",
         ],
       },
       {
         title: "Pourquoi nous les traitons",
         paragraphs: [
-          "Répondre à une demande de réservation et gérer le séjour (exécution d’un contrat ou de mesures précontractuelles).",
+          "Prendre une réservation, encaisser le paiement et gérer le séjour (exécution d’un contrat).",
           "Envoyer des actualités si vous vous y êtes inscrit (consentement, révocable à tout moment).",
           "Faire fonctionner, sécuriser et améliorer le site (intérêt légitime).",
         ],
@@ -152,7 +152,7 @@ export function getPrivacyCopy(locale: Locale): LegalPageCopy {
         title: "Avec qui nous les partageons",
         paragraphs: [
           "Les données sont transmises uniquement aux prestataires nécessaires au service :",
-          "Typeform (formulaire de réservation), Resend (envoi des e-mails), Vercel (hébergement et stockage), Google (carte, uniquement si vous acceptez les cookies optionnels).",
+          "Stripe (paiements et factures), Resend (envoi des e-mails), Vercel (hébergement et stockage), Google (carte, uniquement si vous acceptez les cookies optionnels).",
           "Ces prestataires agissent pour notre compte. Certains peuvent traiter des données hors de Suisse (par exemple dans l’UE ou aux États-Unis), avec des garanties appropriées.",
           "Nous ne transmettons pas vos données à des publicitaires ni à des courtiers en données.",
         ],
@@ -210,9 +210,9 @@ export function getCookiesCopy(locale: Locale): LegalPageCopy {
           ],
         },
         {
-          title: "Typeform (booking form)",
+          title: "Stripe (payment)",
           paragraphs: [
-            "The booking request form is provided by Typeform. It is needed to send your request. Typeform may use cookies or similar technologies to run the form, under its own policy.",
+            "Card payments are processed by Stripe on a secure page hosted by Stripe. We do not store your card number. Stripe may use cookies or similar technologies needed to complete the payment, under its own policy.",
           ],
         },
         {
@@ -251,9 +251,9 @@ export function getCookiesCopy(locale: Locale): LegalPageCopy {
         ],
       },
       {
-        title: "Typeform (formulaire de réservation)",
+        title: "Stripe (paiement)",
         paragraphs: [
-          "Le formulaire de demande de réservation est fourni par Typeform. Il est nécessaire pour envoyer votre demande. Typeform peut utiliser des cookies ou technologies similaires pour faire fonctionner le formulaire, selon sa propre politique.",
+          "Les paiements par carte sont traités par Stripe sur une page sécurisée hébergée par Stripe. Nous ne stockons pas votre numéro de carte. Stripe peut utiliser des cookies ou technologies similaires nécessaires au paiement, selon sa propre politique.",
         ],
       },
       {

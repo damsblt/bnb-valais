@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Roboto } from "next/font/google";
 import "./globals.css";
 import { JsonLdOrganization, JsonLdWebSite } from "@/components/JsonLd";
-import { shareOgImage } from "@/lib/site";
+import { absoluteUrl, shareOgImage } from "@/lib/site";
 
 const roboto = Roboto({
   subsets: ["latin"],
@@ -131,7 +131,7 @@ export const metadata: Metadata = {
     title: "BnB Valais — Location appartement Sion Anzère | Hébergement Valais",
     description:
       "Location appartement vacances en Valais à 15 min de Sion et Anzère. Hébergement 2 chambres vue Alpes, location semaine. Idéal ski et randonnée.",
-    images: [shareOgImage().url],
+    images: [absoluteUrl(shareOgImage().url)],
   },
   robots: {
     index: true,

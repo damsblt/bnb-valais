@@ -9,11 +9,11 @@ import StayDatesSummary from "@/components/StayDatesSummary";
 import GuestCountPicker from "@/components/GuestCountPicker";
 import StayTotalSummary from "@/components/StayTotalSummary";
 import {
+  computeStayPricing,
   parseGuestCount,
   pickPricesForGuestCount,
   type GuestCount,
 } from "@/lib/night-pricing";
-import TypeformEmbed from "@/components/TypeformEmbed";
 import type { Locale } from "@/lib/i18n";
 import type { SiteContent } from "@/lib/content";
 import {
@@ -22,13 +22,6 @@ import {
   meetsMinimumStay,
   type DateRange,
 } from "@/lib/typeform-prefill";
-import {
-  getTypeformDateFieldKeys,
-  getTypeformGuestCountFieldKey,
-  getTypeformPromoFieldKeys,
-  getTypeformStayTotalFieldKey,
-} from "@/lib/typeform-refs";
-import { computeStayPricing } from "@/lib/night-pricing";
 
 type AppliedPromo = {
   code: string;
@@ -52,10 +45,6 @@ export default function ReservationsInteractive({
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const fieldKeys = useMemo(() => getTypeformDateFieldKeys(), []);
-  const promoKeys = useMemo(() => getTypeformPromoFieldKeys(), []);
-  const guestFieldKey = useMemo(() => getTypeformGuestCountFieldKey(), []);
-  const stayTotalFieldKey = useMemo(() => getTypeformStayTotalFieldKey(), []);
   const [guestCount, setGuestCount] = useState<GuestCount>(2);
   const [range, setRange] = useState<DateRange | null>(null);
   const [promoInput, setPromoInput] = useState("");
@@ -65,10 +54,8 @@ export default function ReservationsInteractive({
   const [availability, setAvailability] = useState<
     AvailabilityPayload | undefined
   >(undefined);
-
-  useEffect(() => {
-    fetch("/api/typeform/prefill-config", { cache: "no-store" }).catch(() => undefined);
-  }, []);
+  const [payLoading, setPayLoading] = useState(false);
+  const [payError, setPayError] = useState<string | null>(null);
 
   useEffect(() => {
     fetch("/api/availability", { cache: "no-store" })
@@ -157,6 +144,64 @@ export default function ReservationsInteractive({
   const datesReady = isValidReservationRange(range);
   const canOpenForm = datesReady;
 
+  const quote = useMemo(() => {
+    if (!range || !datesReady) return null;
+    return computeStayPricing(
+      range.checkIn,
+      range.checkOut,
+      pricesForGuests,
+      appliedPromo?.percentOff ?? 0,
+    );
+  }, [range, datesReady, pricesForGuests, appliedPromo?.percentOff]);
+
+  const canPay = Boolean(quote?.complete && quote.total > 0);
+
+  const startPayment = useCallback(async () => {
+    if (!range || !canPay) return;
+    setPayLoading(true);
+    setPayError(null);
+    try {
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          checkIn: range.checkIn,
+          checkOut: range.checkOut,
+          guests: guestCount,
+          promoCode: appliedPromo?.code,
+          locale,
+        }),
+      });
+      const data = (await res.json()) as { url?: string; error?: string };
+      if (res.status === 409) {
+        setPayError(reservations.payDatesUnavailable);
+        return;
+      }
+      if (res.status === 503) {
+        setPayError(reservations.payUnavailable);
+        return;
+      }
+      if (!res.ok || !data.url) {
+        setPayError(reservations.payError);
+        return;
+      }
+      window.location.href = data.url;
+    } catch {
+      setPayError(reservations.payError);
+    } finally {
+      setPayLoading(false);
+    }
+  }, [
+    range,
+    canPay,
+    guestCount,
+    appliedPromo?.code,
+    locale,
+    reservations.payDatesUnavailable,
+    reservations.payUnavailable,
+    reservations.payError,
+  ]);
+
   const applyPromo = useCallback(async () => {
     if (!range || !promoDraft) {
       setAppliedPromo(null);
@@ -200,41 +245,6 @@ export default function ReservationsInteractive({
     setAppliedPromo(null);
     setPromoError(null);
   }, []);
-
-  const hidden = useMemo(() => {
-    if (!datesReady || !range) return {};
-    const base: Record<string, string> = {
-      [fieldKeys.checkIn]: range.checkIn,
-      [fieldKeys.checkOut]: range.checkOut,
-      [guestFieldKey]: String(guestCount),
-    };
-    if (appliedPromo) {
-      base[promoKeys.code] = appliedPromo.code;
-      base[promoKeys.percent] = String(appliedPromo.percentOff);
-    }
-    const quote = computeStayPricing(
-      range.checkIn,
-      range.checkOut,
-      pricesForGuests,
-      appliedPromo?.percentOff ?? 0,
-    );
-    if (quote.complete && quote.total > 0) {
-      base[stayTotalFieldKey] = String(quote.total);
-    }
-    return base;
-  }, [
-    datesReady,
-    range,
-    fieldKeys.checkIn,
-    fieldKeys.checkOut,
-    appliedPromo,
-    promoKeys.code,
-    promoKeys.percent,
-    guestFieldKey,
-    guestCount,
-    stayTotalFieldKey,
-    pricesForGuests,
-  ]);
 
   return (
     <div className="mt-10 space-y-10">
@@ -333,33 +343,19 @@ export default function ReservationsInteractive({
               percentOff={appliedPromo?.percentOff ?? 0}
               copy={reservations}
             />
+            <button
+              type="button"
+              onClick={() => void startPayment()}
+              disabled={!canPay || payLoading}
+              className="w-full rounded-full bg-neutral-900 px-5 py-3 text-sm font-medium text-white hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-50 md:w-auto"
+            >
+              {payLoading ? reservations.payLoading : reservations.payButton}
+            </button>
+            {payError ? (
+              <p className="text-sm text-red-600">{payError}</p>
+            ) : null}
           </div>
         ) : null}
-        <div className="mt-6 overflow-hidden rounded-3xl border border-neutral-200 bg-white shadow-sm">
-          {canOpenForm ? (
-            <TypeformEmbed hidden={hidden} />
-          ) : (
-            <div className="flex min-h-[420px] flex-col items-center justify-center gap-4 bg-neutral-50 px-8 py-16 text-center">
-              <p className="text-lg font-semibold text-neutral-900">
-                {reservations.formLockedTitle}
-              </p>
-              <p className="max-w-md text-sm text-neutral-600">
-                {reservations.formLockedHint}
-              </p>
-              <button
-                type="button"
-                className="rounded-full bg-neutral-900 px-5 py-2.5 text-sm font-medium text-white hover:bg-neutral-800"
-                onClick={() =>
-                  document
-                    .getElementById("availability-calendar")
-                    ?.scrollIntoView({ behavior: "smooth" })
-                }
-              >
-                {reservations.formLockedAction}
-              </button>
-            </div>
-          )}
-        </div>
       </div>
     </div>
   );
