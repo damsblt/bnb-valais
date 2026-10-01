@@ -1,4 +1,31 @@
+import { readFileSync } from "node:fs";
+import path from "node:path";
+
 const PROPERTY_TIMEZONE = "Europe/Zurich";
+const OPEN_OVERRIDES_PATH = path.join(
+  process.cwd(),
+  "data/calendar-open-overrides.json",
+);
+
+function loadOpenOverrideNights(): Set<string> {
+  try {
+    const raw = JSON.parse(readFileSync(OPEN_OVERRIDES_PATH, "utf8")) as {
+      inclusiveNights?: { from?: string; to?: string }[];
+    };
+    const nights = new Set<string>();
+    for (const range of raw.inclusiveNights ?? []) {
+      const from = range.from?.slice(0, 10);
+      const to = range.to?.slice(0, 10);
+      if (!from || !to || from > to) continue;
+      for (let d = from; d <= to; d = addDays(d, 1)) {
+        nights.add(d);
+      }
+    }
+    return nights;
+  } catch {
+    return new Set();
+  }
+}
 
 function addDays(isoDate: string, days: number): string {
   const [y, m, d] = isoDate.split("-").map(Number);
@@ -108,6 +135,10 @@ export async function getOccupiedDates(): Promise<{
       }
     }),
   );
+
+  for (const night of loadOpenOverrideNights()) {
+    occupied.delete(night);
+  }
 
   return {
     occupied: [...occupied].sort(),
