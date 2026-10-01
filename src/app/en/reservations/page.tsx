@@ -14,6 +14,7 @@ export const metadata: Metadata = {
     languages: {
       "fr-CH": `${BASE_URL}/reservations`,
       en: `${BASE_URL}/en/reservations`,
+      "de-CH": `${BASE_URL}/de/reservations`,
     },
   },
   openGraph: {

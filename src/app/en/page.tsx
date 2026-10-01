@@ -13,6 +13,7 @@ export const metadata: Metadata = {
     languages: {
       "fr-CH": BASE_URL,
       en: `${BASE_URL}/en`,
+      "de-CH": `${BASE_URL}/de`,
     },
   },
   openGraph: {

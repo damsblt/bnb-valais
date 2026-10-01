@@ -229,7 +229,9 @@ export default function PhotoGallery({
               type="button"
               onClick={close}
               className="rounded-full p-2 transition hover:bg-white/10"
-              aria-label={locale === "fr" ? "Fermer" : "Close"}
+              aria-label={
+                locale === "de" ? "Schliessen" : locale === "fr" ? "Fermer" : "Close"
+              }
             >
               <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -243,7 +245,13 @@ export default function PhotoGallery({
                 type="button"
                 onClick={goPrev}
                 className="absolute left-2 z-10 rounded-full bg-white/10 p-3 text-white transition hover:bg-white/20 md:left-6"
-                aria-label={locale === "fr" ? "Photo précédente" : "Previous photo"}
+                aria-label={
+                  locale === "de"
+                    ? "Vorheriges Foto"
+                    : locale === "fr"
+                      ? "Photo précédente"
+                      : "Previous photo"
+                }
               >
                 <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -267,7 +275,13 @@ export default function PhotoGallery({
                 type="button"
                 onClick={goNext}
                 className="absolute right-2 z-10 rounded-full bg-white/10 p-3 text-white transition hover:bg-white/20 md:right-6"
-                aria-label={locale === "fr" ? "Photo suivante" : "Next photo"}
+                aria-label={
+                  locale === "de"
+                    ? "Nächstes Foto"
+                    : locale === "fr"
+                      ? "Photo suivante"
+                      : "Next photo"
+                }
               >
                 <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />

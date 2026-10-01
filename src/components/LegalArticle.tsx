@@ -12,12 +12,16 @@ export default function LegalArticle({ locale, copy, related }: LegalArticleProp
   const relatedHref = related === "cookies" ? cookiesPath(locale) : privacyPath(locale);
   const relatedLabel =
     related === "cookies"
-      ? locale === "fr"
-        ? "Page cookies"
-        : "Cookies page"
-      : locale === "fr"
-        ? "Protection des données"
-        : "Privacy";
+      ? locale === "de"
+        ? "Cookie-Seite"
+        : locale === "fr"
+          ? "Page cookies"
+          : "Cookies page"
+      : locale === "de"
+        ? "Datenschutz"
+        : locale === "fr"
+          ? "Protection des données"
+          : "Privacy";
 
   return (
     <article className="px-4 py-12 md:px-8 md:py-16 lg:px-12">

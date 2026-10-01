@@ -51,10 +51,13 @@ type AvailabilityResponse = AvailabilityPayload;
 const weekdayLabels = {
   fr: ["L", "M", "M", "J", "V", "S", "D"],
   en: ["M", "T", "W", "T", "F", "S", "S"],
+  de: ["M", "D", "M", "D", "F", "S", "S"],
 };
 
 function monthLabel(date: Date, locale: Locale) {
-  return date.toLocaleDateString(locale === "fr" ? "fr-CH" : "en-GB", {
+  const loc =
+    locale === "fr" ? "fr-CH" : locale === "de" ? "de-CH" : "en-GB";
+  return date.toLocaleDateString(loc, {
     month: "long",
     year: "numeric",
   });
@@ -272,7 +275,13 @@ export default function AvailabilityCalendar({
               setHoverDay(null);
             }}
             className="rounded-full border border-neutral-300 px-3 py-1 text-sm hover:bg-neutral-50"
-            aria-label={locale === "fr" ? "Mois précédent" : "Previous month"}
+            aria-label={
+              locale === "de"
+                ? "Vorheriger Monat"
+                : locale === "fr"
+                  ? "Mois précédent"
+                  : "Previous month"
+            }
           >
             ←
           </button>
@@ -283,7 +292,13 @@ export default function AvailabilityCalendar({
               setHoverDay(null);
             }}
             className="rounded-full border border-neutral-300 px-3 py-1 text-sm hover:bg-neutral-50"
-            aria-label={locale === "fr" ? "Mois suivant" : "Next month"}
+            aria-label={
+              locale === "de"
+                ? "Nächster Monat"
+                : locale === "fr"
+                  ? "Mois suivant"
+                  : "Next month"
+            }
           >
             →
           </button>
@@ -377,7 +392,11 @@ export default function AvailabilityCalendar({
         </span>
         <span className="inline-flex items-center gap-2">
           <span className="h-3 w-3 rounded-full bg-sky-500" />
-          {locale === "fr" ? "Votre séjour" : "Your stay"}
+          {locale === "de"
+            ? "Ihr Aufenthalt"
+            : locale === "fr"
+              ? "Votre séjour"
+              : "Your stay"}
         </span>
         {legendPrice ? (
           <span className="text-neutral-500">{legendPrice}</span>

@@ -10,6 +10,7 @@ export const metadata: Metadata = pageMetadata({
   locale: "fr",
   frPath: "/cookies",
   enPath: "/cookies",
+  dePath: "/cookies",
   title: "Cookies | BnB Valais",
   description:
     "Cookies utilisés sur bnb-valais.ch : cookies nécessaires, Google Maps et formulaire Typeform.",

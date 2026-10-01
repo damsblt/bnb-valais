@@ -177,9 +177,11 @@ export function computeStayPricing(
 
 export function formatChf(
   amount: number,
-  locale: "fr" | "en",
+  locale: "fr" | "en" | "de",
 ): string {
-  return new Intl.NumberFormat(locale === "fr" ? "fr-CH" : "en-CH", {
+  const intl =
+    locale === "fr" ? "fr-CH" : locale === "de" ? "de-CH" : "en-CH";
+  return new Intl.NumberFormat(intl, {
     style: "currency",
     currency: "CHF",
     minimumFractionDigits: 0,
@@ -193,7 +195,7 @@ export function formatChfCompact(amount: number): string {
 
 export function formatGuestPricesSummary(
   prices: GuestNightPrices,
-  locale: "fr" | "en",
+  locale: "fr" | "en" | "de",
 ): string {
   return GUEST_COUNTS.map((g) => formatChf(prices[g], locale)).join(" · ");
 }

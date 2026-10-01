@@ -1,4 +1,5 @@
 import type { Locale } from "@/lib/i18n";
+import { localePath } from "@/lib/i18n";
 import { siteBaseUrl } from "@/lib/site";
 
 function fromAddress(): string {
@@ -44,8 +45,8 @@ async function sendEmail(payload: {
 
 export function buildOptInConfirmUrl(token: string, locale: Locale): string {
   const base = siteBaseUrl();
-  const prefix = locale === "en" ? "/en" : "";
-  return `${base}${prefix}/newsletter/confirm?token=${encodeURIComponent(token)}`;
+  const prefix = localePath(locale, "/newsletter/confirm");
+  return `${base}${prefix}?token=${encodeURIComponent(token)}`;
 }
 
 export async function sendNewsletterOptInEmail(input: {
@@ -54,6 +55,30 @@ export async function sendNewsletterOptInEmail(input: {
   locale: Locale;
 }): Promise<{ sent: boolean; error?: string }> {
   const confirmUrl = buildOptInConfirmUrl(input.token, input.locale);
+
+  if (input.locale === "de") {
+    return sendEmail({
+      to: input.email,
+      subject: "Bestätigen Sie Ihre Anmeldung — BnB Valais",
+      text: `Guten Tag,
+
+Bitte bestätigen Sie Ihre Anmeldung für Neuigkeiten vom Nid de la Sittelle (BnB Valais).
+
+Bestätigungslink (7 Tage gültig):
+${confirmUrl}
+
+Wenn Sie diese Anfrage nicht gestellt haben, ignorieren Sie diese E-Mail.
+
+Le Nid de la Sittelle
+${siteBaseUrl()}`,
+      html: `<p>Guten Tag,</p>
+<p>Bitte bestätigen Sie Ihre Anmeldung für Neuigkeiten vom <strong>Nid de la Sittelle</strong> (BnB Valais).</p>
+<p><a href="${confirmUrl}" style="display:inline-block;background:#0284c7;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:600;">Meine Anmeldung bestätigen</a></p>
+<p style="font-size:14px;color:#52525b;">Oder kopieren Sie diesen Link: ${confirmUrl}</p>
+<p style="font-size:14px;color:#52525b;">Link 7 Tage gültig. Wenn Sie diese Anfrage nicht gestellt haben, ignorieren Sie diese E-Mail.</p>
+<p>Le Nid de la Sittelle<br/><a href="${siteBaseUrl()}">bnb-valais.ch</a></p>`,
+    });
+  }
 
   if (input.locale === "en") {
     return sendEmail({

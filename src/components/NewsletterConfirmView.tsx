@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Locale } from "@/lib/i18n";
+import { localePath } from "@/lib/i18n";
 import { getContent } from "@/lib/content";
 import { confirmNewsletterSignup } from "@/lib/newsletter-confirm";
 
@@ -13,7 +14,7 @@ export default async function NewsletterConfirmView({
   token,
 }: NewsletterConfirmViewProps) {
   const { newsletterConfirm } = getContent(locale);
-  const homeHref = locale === "en" ? "/en" : "/";
+  const homeHref = localePath(locale);
   const result = await confirmNewsletterSignup(token);
 
   let title = newsletterConfirm.invalidTitle;

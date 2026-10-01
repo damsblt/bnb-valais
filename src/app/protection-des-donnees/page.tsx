@@ -10,6 +10,7 @@ export const metadata: Metadata = pageMetadata({
   locale: "fr",
   frPath: "/protection-des-donnees",
   enPath: "/privacy",
+  dePath: "/datenschutz",
   title: `${copy.title} | BnB Valais`,
   description:
     "Protection des données et partage des informations sur bnb-valais.ch : réservations, newsletter, prestataires.",

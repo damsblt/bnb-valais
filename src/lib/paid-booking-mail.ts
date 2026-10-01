@@ -59,27 +59,46 @@ export async function sendPaidBookingEmails(input: {
   const total = formatChf(quote.total, locale);
   const guests =
     quote.guestCount === 1
-      ? locale === "en"
-        ? "1 guest"
-        : "1 personne"
-      : locale === "en"
-        ? `${quote.guestCount} guests`
-        : `${quote.guestCount} personnes`;
+      ? locale === "de"
+        ? "1 Person"
+        : locale === "en"
+          ? "1 guest"
+          : "1 personne"
+      : locale === "de"
+        ? `${quote.guestCount} Personen`
+        : locale === "en"
+          ? `${quote.guestCount} guests`
+          : `${quote.guestCount} personnes`;
   const invoiceLine = invoiceUrl
-    ? locale === "en"
-      ? `\nInvoice: ${invoiceUrl}\n`
-      : `\nFacture : ${invoiceUrl}\n`
+    ? locale === "de"
+      ? `\nRechnung: ${invoiceUrl}\n`
+      : locale === "en"
+        ? `\nInvoice: ${invoiceUrl}\n`
+        : `\nFacture : ${invoiceUrl}\n`
     : "";
 
-  await sendEmail({
-    to: guestEmail,
-    subject:
-      locale === "en"
-        ? `Booking confirmed — ${SITE_BRAND}`
-        : `Réservation confirmée — ${SITE_BRAND}`,
-    text:
-      locale === "en"
-        ? `Hello ${guestName},
+  const guestCopy =
+    locale === "de"
+      ? {
+          subject: `Buchung bestätigt — ${SITE_BRAND}`,
+          text: `Guten Tag ${guestName},
+
+Ihr Aufenthalt im Nid de la Sittelle ist bestätigt und bezahlt.
+
+Anreise: ${quote.checkIn}
+Abreise: ${quote.checkOut}
+Gäste: ${guests}
+Bezahlter Betrag: ${total}
+${invoiceLine}
+Bis bald,
+${SITE_BRAND}
+${siteBaseUrl()}`,
+          html: `<p>Guten Tag ${guestName},</p><p>Ihr Aufenthalt im <strong>Nid de la Sittelle</strong> ist bestätigt und bezahlt.</p><p>Anreise: ${quote.checkIn}<br/>Abreise: ${quote.checkOut}<br/>Gäste: ${guests}<br/>Bezahlter Betrag: <strong>${total}</strong></p>${invoiceUrl ? `<p><a href="${invoiceUrl}">Rechnung herunterladen</a></p>` : ""}<p>${SITE_BRAND}<br/><a href="${siteBaseUrl()}">${siteBaseUrl()}</a></p>`,
+        }
+      : locale === "en"
+        ? {
+            subject: `Booking confirmed — ${SITE_BRAND}`,
+            text: `Hello ${guestName},
 
 Your stay at Le Nid de la Sittelle is confirmed and paid.
 
@@ -90,8 +109,12 @@ Total paid: ${total}
 ${invoiceLine}
 See you soon,
 ${SITE_BRAND}
-${siteBaseUrl()}`
-        : `Bonjour ${guestName},
+${siteBaseUrl()}`,
+            html: `<p>Hello ${guestName},</p><p>Your stay at <strong>Le Nid de la Sittelle</strong> is confirmed and paid.</p><p>Arrival: ${quote.checkIn}<br/>Departure: ${quote.checkOut}<br/>Guests: ${guests}<br/>Total paid: <strong>${total}</strong></p>${invoiceUrl ? `<p><a href="${invoiceUrl}">Download invoice</a></p>` : ""}<p>${SITE_BRAND}<br/><a href="${siteBaseUrl()}">${siteBaseUrl()}</a></p>`,
+          }
+        : {
+            subject: `Réservation confirmée — ${SITE_BRAND}`,
+            text: `Bonjour ${guestName},
 
 Votre séjour au Nid de la Sittelle est confirmé et payé.
 
@@ -103,10 +126,14 @@ ${invoiceLine}
 À bientôt,
 ${SITE_BRAND}
 ${siteBaseUrl()}`,
-    html:
-      locale === "en"
-        ? `<p>Hello ${guestName},</p><p>Your stay at <strong>Le Nid de la Sittelle</strong> is confirmed and paid.</p><p>Arrival: ${quote.checkIn}<br/>Departure: ${quote.checkOut}<br/>Guests: ${guests}<br/>Total paid: <strong>${total}</strong></p>${invoiceUrl ? `<p><a href="${invoiceUrl}">Download invoice</a></p>` : ""}<p>${SITE_BRAND}<br/><a href="${siteBaseUrl()}">${siteBaseUrl()}</a></p>`
-        : `<p>Bonjour ${guestName},</p><p>Votre séjour au <strong>Nid de la Sittelle</strong> est confirmé et payé.</p><p>Arrivée : ${quote.checkIn}<br/>Départ : ${quote.checkOut}<br/>Voyageurs : ${guests}<br/>Montant payé : <strong>${total}</strong></p>${invoiceUrl ? `<p><a href="${invoiceUrl}">Télécharger la facture</a></p>` : ""}<p>${SITE_BRAND}<br/><a href="${siteBaseUrl()}">${siteBaseUrl()}</a></p>`,
+            html: `<p>Bonjour ${guestName},</p><p>Votre séjour au <strong>Nid de la Sittelle</strong> est confirmé et payé.</p><p>Arrivée : ${quote.checkIn}<br/>Départ : ${quote.checkOut}<br/>Voyageurs : ${guests}<br/>Montant payé : <strong>${total}</strong></p>${invoiceUrl ? `<p><a href="${invoiceUrl}">Télécharger la facture</a></p>` : ""}<p>${SITE_BRAND}<br/><a href="${siteBaseUrl()}">${siteBaseUrl()}</a></p>`,
+          };
+
+  await sendEmail({
+    to: guestEmail,
+    subject: guestCopy.subject,
+    text: guestCopy.text,
+    html: guestCopy.html,
   });
 
   await sendEmail({

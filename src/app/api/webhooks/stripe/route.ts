@@ -5,7 +5,7 @@ import { sendPaidBookingEmails } from "@/lib/paid-booking-mail";
 import { stayOverlapsBooked, type CheckoutQuote } from "@/lib/paid-stay";
 import { parseGuestCount } from "@/lib/night-pricing";
 import { getStripe } from "@/lib/stripe";
-import type { Locale } from "@/lib/i18n";
+import { parseLocale } from "@/lib/i18n";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -64,7 +64,7 @@ export async function POST(request: Request) {
   const guestEmail =
     session.customer_details?.email || session.customer_email || "";
   const guestName = session.customer_details?.name || guestEmail || "Guest";
-  const locale = (session.metadata?.locale === "en" ? "en" : "fr") as Locale;
+  const locale = parseLocale(session.metadata?.locale);
   const guestCount = parseGuestCount(session.metadata?.guests, 2);
   const total = Number(session.metadata?.total ?? 0);
   const subtotal = Number(session.metadata?.subtotal ?? total);

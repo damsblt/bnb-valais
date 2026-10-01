@@ -15,7 +15,13 @@ export type LegalPageCopy = {
 };
 
 export function privacyPath(locale: Locale) {
-  return localePath(locale, locale === "fr" ? "/protection-des-donnees" : "/privacy");
+  const slug =
+    locale === "fr"
+      ? "/protection-des-donnees"
+      : locale === "de"
+        ? "/datenschutz"
+        : "/privacy";
+  return localePath(locale, slug);
 }
 
 export function cookiesPath(locale: Locale) {
@@ -29,6 +35,15 @@ export function getCookieBannerCopy(locale: Locale) {
       acceptAll: "Accept all",
       essentialOnly: "Essential only",
       privacy: "Privacy",
+      cookies: "Cookies",
+    };
+  }
+  if (locale === "de") {
+    return {
+      text: "Wir verwenden notwendige Cookies für den Betrieb der Website. Google Maps wird nur mit Ihrer Zustimmung geladen. Zahlungen werden von Stripe auf einer sicheren Seite verarbeitet.",
+      acceptAll: "Alle akzeptieren",
+      essentialOnly: "Nur notwendige",
+      privacy: "Datenschutz",
       cookies: "Cookies",
     };
   }
@@ -48,6 +63,12 @@ export function getMapConsentCopy(locale: Locale) {
       action: "Show the map",
     };
   }
+  if (locale === "de") {
+    return {
+      message: "Die Karte wird von Google bereitgestellt und verwendet optionale Cookies.",
+      action: "Karte anzeigen",
+    };
+  }
   return {
     message: "La carte est fournie par Google et utilise des cookies optionnels.",
     action: "Afficher la carte",
@@ -55,6 +76,70 @@ export function getMapConsentCopy(locale: Locale) {
 }
 
 export function getPrivacyCopy(locale: Locale): LegalPageCopy {
+  if (locale === "de") {
+    return {
+      title: "Datenschutz und Datenweitergabe",
+      updated: "Letzte Aktualisierung: 20. September 2026",
+      intro: `${SITE_BRAND} (${SITE_NAME}) erklärt hier, wie personenbezogene Daten auf bnb-valais.ch verarbeitet werden.`,
+      sections: [
+        {
+          title: "Wer verantwortlich ist",
+          paragraphs: [
+            `Verantwortlich für die Bearbeitung ist ${SITE_BRAND} — ${SITE_NAME}, Wallis, Schweiz.`,
+            `Kontakt: ${SITE_EMAIL} · ${SITE_PHONE}`,
+          ],
+        },
+        {
+          title: "Welche Daten wir bearbeiten",
+          paragraphs: [
+            "Nutzung: technische Protokolle, die für die Anzeige der Seiten nötig sind (IP-Adresse, Browser, Datum), aufbewahrt durch unseren Hosting-Anbieter.",
+            "Newsletter: E-Mail-Adresse, Sprache und Ihre Einwilligung, nach doppelter Bestätigung per E-Mail.",
+            "Buchungen: Identität, Kontaktdaten, Aufenthaltsdaten, Personenanzahl und Zahlungsdaten, von Stripe verarbeitet, um den Aufenthalt zu bestätigen.",
+            "Wir erstellen keine Werbeprofile und verkaufen Ihre Daten nicht.",
+          ],
+        },
+        {
+          title: "Weshalb wir sie bearbeiten",
+          paragraphs: [
+            "Eine Buchung entgegenzunehmen, die Zahlung einzuziehen und den Aufenthalt zu verwalten (Vertragserfüllung).",
+            "Nachrichten zu senden, wenn Sie sich angemeldet haben (Einwilligung, jederzeit widerrufbar).",
+            "Die Website zu betreiben, zu sichern und zu verbessern (berechtigte Interessen).",
+          ],
+        },
+        {
+          title: "Mit wem wir sie teilen",
+          paragraphs: [
+            "Daten werden nur an Dienstleister weitergegeben, die für den Service nötig sind:",
+            "Stripe (Zahlungen und Rechnungen), Resend (E-Mails), Vercel (Hosting und Dateispeicher), Google (Karte, nur wenn Sie optionale Cookies akzeptieren).",
+            "Diese Dienstleister handeln in unserem Auftrag. Einige können Daten ausserhalb der Schweiz bearbeiten (zum Beispiel in der EU oder den USA), mit angemessenen Garantien.",
+            "Wir geben Daten nicht an Werbetreibende oder Datenhändler weiter.",
+          ],
+        },
+        {
+          title: "Aufbewahrungsdauer",
+          paragraphs: [
+            "Newsletter: bis zu Ihrer Abmeldung, danach eine kurze technische Frist, um diesem Wunsch nachzukommen.",
+            "Buchungsanfragen: so lange, wie es für den Aufenthalt und gesetzliche Pflichten nötig ist (insbesondere Buchhaltung).",
+            "Serverprotokolle: für eine begrenzte Dauer, aus Sicherheitsgründen.",
+          ],
+        },
+        {
+          title: "Ihre Rechte",
+          paragraphs: [
+            "Nach dem schweizerischen Datenschutzgesetz (nDSG) können Sie Auskunft, Berichtigung oder Löschung Ihrer Daten verlangen und bestimmten Bearbeitungen widersprechen, soweit anwendbar.",
+            `Schreiben Sie an ${SITE_EMAIL}. Sie können auch den Eidgenössischen Datenschutz- und Öffentlichkeitsbeauftragten (EDÖB) kontaktieren.`,
+          ],
+        },
+        {
+          title: "Cookies",
+          paragraphs: [
+            "Einzelheiten zu Cookies und Drittdiensten stehen auf der Cookie-Seite.",
+          ],
+        },
+      ],
+    };
+  }
+
   if (locale === "en") {
     return {
       title: "Privacy and data sharing",
@@ -183,6 +268,48 @@ export function getPrivacyCopy(locale: Locale): LegalPageCopy {
 }
 
 export function getCookiesCopy(locale: Locale): LegalPageCopy {
+  if (locale === "de") {
+    return {
+      title: "Cookies",
+      updated: "Letzte Aktualisierung: 20. September 2026",
+      intro: "Diese Seite beschreibt die Cookies und ähnlichen Technologien, die auf der Website verwendet werden.",
+      sections: [
+        {
+          title: "Was ein Cookie ist",
+          paragraphs: [
+            "Ein Cookie ist eine kleine Datei, die auf Ihrem Gerät gespeichert wird. Sie kann für den Betrieb der Website nötig sein oder optional, wenn sie von einem Drittdienst wie einer Karte stammt.",
+          ],
+        },
+        {
+          title: "Notwendige Cookies",
+          paragraphs: [
+            "Sie halten die Website funktionsfähig (zum Beispiel die sichere Admin-Sitzung). Sie erfordern keine vorherige Einwilligung.",
+            "Die Schriften werden mit der Website gehostet: der Seitenaufruf lädt keine Google Fonts in Ihrem Browser.",
+          ],
+        },
+        {
+          title: "Optionale Cookies (Google Maps)",
+          paragraphs: [
+            "Die Karte auf der Startseite wird von Google bereitgestellt. Sie wird nur geladen, wenn Sie auf «Alle akzeptieren» oder «Karte anzeigen» klicken.",
+            "Google kann dann Cookies setzen und Verbindungsdaten nach eigener Richtlinie verarbeiten.",
+          ],
+        },
+        {
+          title: "Stripe (Zahlung)",
+          paragraphs: [
+            "Kartenzahlungen werden von Stripe auf einer sicheren, von Stripe gehosteten Seite verarbeitet. Wir speichern Ihre Kartennummer nicht. Stripe kann Cookies oder ähnliche Technologien verwenden, die für die Zahlung nötig sind, nach eigener Richtlinie.",
+          ],
+        },
+        {
+          title: "Ihre Wahl",
+          paragraphs: [
+            "Ein Banner ermöglicht, alle Cookies zu akzeptieren oder nur notwendige Cookies zu behalten. Sie können Cookies auch im Browser blockieren; einige Funktionen können dann eingeschränkt sein.",
+          ],
+        },
+      ],
+    };
+  }
+
   if (locale === "en") {
     return {
       title: "Cookies",

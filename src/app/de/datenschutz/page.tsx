@@ -4,22 +4,22 @@ import SiteLayout from "@/components/SiteLayout";
 import { getPrivacyCopy } from "@/lib/legal";
 import { pageMetadata } from "@/lib/seo";
 
-const copy = getPrivacyCopy("en");
+const copy = getPrivacyCopy("de");
 
 export const metadata: Metadata = pageMetadata({
-  locale: "en",
+  locale: "de",
   frPath: "/protection-des-donnees",
   enPath: "/privacy",
   dePath: "/datenschutz",
   title: `${copy.title} | BnB Valais`,
   description:
-    "Privacy and data sharing on bnb-valais.ch: bookings, newsletter and service providers.",
+    "Datenschutz und Datenweitergabe auf bnb-valais.ch: Buchungen, Newsletter und Dienstleister.",
 });
 
-export default function PrivacyEnPage() {
+export default function PrivacyDePage() {
   return (
-    <SiteLayout locale="en" variant="compact">
-      <LegalArticle locale="en" copy={copy} related="cookies" />
+    <SiteLayout locale="de" variant="compact">
+      <LegalArticle locale="de" copy={copy} related="cookies" />
     </SiteLayout>
   );
 }

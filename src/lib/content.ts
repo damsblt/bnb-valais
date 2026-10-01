@@ -817,6 +817,295 @@ const content: Record<Locale, SiteContent> = {
       switchTo: "Français",
     },
   },
+  de: {
+    meta: {
+      title: "BnB Valais — Ferienwohnung Sitten Anzère | Wochenmiete Wallis Schweiz",
+      description:
+        "Wohnung zur Miete im Wallis zwischen Sitten und Anzère (15 Min.). Buchung pro Nacht, Woche oder Monat. 2 Schlafzimmer, Alpenblick, WLAN, Parkplatz, Lift.",
+      reservationsTitle: "Ferienwohnung buchen | BnB Valais",
+      reservationsDescription:
+        "Wohnung im Wallis mieten: pro Nacht, Woche oder Monat. Verfügbarkeit prüfen, BnB mit 2 Schlafzimmern und Alpenblick.",
+    },
+    nav: {
+      home: "Startseite",
+      reservations: "Reservierung",
+    },
+    hero: {
+      title: "Ihr nächster Aufenthalt im Wallis",
+      subtitle: "Wohnung mit 2 Schlafzimmern und Bergblick",
+      paragraphs: [
+        "Wohnung mit 2 Schlafzimmern, Blick auf die Alpen, vollständig eingerichtet mit Wohnzimmer und Küche.",
+        "100 % freie Sicht, maximale Sonne!",
+      ],
+    },
+    sections: {
+      alps: {
+        title: "Atemberaubender Blick auf die Alpen",
+        paragraphs: [
+          "Nach Süden ausgerichtet, geniesst das Bed & Breakfast einen völlig freien Blick auf die Alpen.",
+          "Die Terrasse liegt angenehm in der Sonne; bei Hitze gibt es auch eine grüne, schattige Seite.",
+        ],
+        cta: "Reservieren",
+        ctaHref: "/de/reservations",
+      },
+      apartment: {
+        title: "Vollständig eingerichtete Wohnung",
+        paragraphs: [
+          "Die 70 m² grosse Wohnung umfasst 2 Schlafzimmer, 2 WCs, ein Badezimmer sowie Küche und Wohnbereich.",
+          "Voll ausgestattete Küche, TV, WLAN, Parkplatz und Lift.",
+          "Buchung möglich pro Nacht, Woche oder Monat.",
+        ],
+      },
+      bedrooms: {
+        title: "Schlafzimmer mit Terrassenzugang",
+        paragraphs: [
+          "Mit ihren grossen Fensterfronten öffnen sich die Zimmer direkt auf die Terrassen.",
+          "So erwachen Sie mit einem aussergewöhnlichen Blick auf die Alpen.",
+        ],
+        cta: "Reservieren",
+      },
+      building: {
+        title: "Das Nid aus der Luft",
+        paragraphs: [
+          "Ein zeitgenössisches Haus in Terrassen, offen zum Tal.",
+        ],
+      },
+      location: {
+        title: "Lage",
+        description:
+          "Im Herzen des Wallis, zwischen Ebene und Berg, liegt das BnB gleich weit von Sitten und Anzère (15 Min.). Ideal für Sport und Kultur.",
+      },
+    },
+    gallery: {
+      showAll: "Alle Fotos anzeigen",
+      morePhotos: "+{count} Fotos",
+    },
+    admin: {
+      title: "Administration",
+      subtitle: "",
+      navReservations: "Reservierungen",
+      navPromo: "Aktionscodes",
+      navPricing: "Tarife",
+      reservationsPageTitle: "Reservierungen",
+      promoPageTitle: "Aktionscodes",
+      pricingPageTitle: "Nachtpreise",
+      loginTitle: "Administratorzugang",
+      loginHint: "",
+      loginButton: "Anmelden",
+      logoutButton: "Abmelden",
+      requestsTitle: "Buchungsanfragen (Website)",
+      requestsEmpty: "Noch keine Anfragen.",
+      requestsRefresh: "Aktualisieren",
+      acceptButton: "Annehmen und senden",
+      rejectButton: "Ablehnen und senden",
+      noEmailError: "Keine E-Mail zu dieser Anfrage — antworten Sie über Typeform.",
+      emailSent: "E-Mail über Resend an den Gast gesendet.",
+      openMailClient: "Ihre Mail-App öffnet sich mit einer vorausgefüllten Nachricht — klicken Sie auf Senden.",
+      emailAutoActive: "Automatischer Versand (Resend): auf diesem Server aktiv.",
+      emailAutoInactive:
+        "Automatischer Versand ist aus: fügen Sie RESEND_API_KEY auf Vercel hinzu (Production aktiviert), verifizieren Sie die Domain auf resend.com und stellen Sie neu bereit.",
+      emailAutoFailed:
+        "Resend konnte die E-Mail nicht senden. Korrigieren Sie die Konfiguration oder nutzen Sie die Schaltfläche unten.",
+      openMailFallback: "In meiner Mail-App öffnen",
+      calendarStorageActive:
+        "Website-Kalender: angenommene Aufenthalte erscheinen orange auf /reservations.",
+      calendarStorageInactive:
+        "Oranger Kalender: verbinden Sie den Blob-Store « bnb-valais-blob » mit dem Vercel-Projekt (Storage → Connect → Production) und stellen Sie neu bereit.",
+      calendarMarkedOnAccept: "Daten im öffentlichen Kalender orange markiert.",
+      releaseDatesButton: "Daten freigeben (wieder grün)",
+      releaseDatesSuccess:
+        "Daten aus dem öffentlichen Kalender entfernt — sie erscheinen wieder als frei.",
+      orangeCalendarTitle: "Orange Daten im öffentlichen Kalender",
+      orangeCalendarHint:
+        "Diese Aufenthalte stammen von Admin-Annahmen (Blob). Das Löschen einer Typeform-Antwort entfernt sie hier nicht.",
+      orangeCalendarOrphan: "Typeform gelöscht",
+      orangeCalendarLoading: "Orangene Kalendereinträge werden geladen…",
+      setupMissing:
+        "Einrichtung unvollständig: fügen Sie ADMIN_PASSWORD und TYPEFORM_ACCESS_TOKEN auf Vercel hinzu und stellen Sie neu bereit.",
+      checklistTitle: "Checkliste — Buchung Booking / Airbnb",
+      checklist: [
+        "Benachrichtigung erhalten (Booking.com oder Airbnb)",
+        "Den Kalender der anderen Plattform über die Links unten öffnen",
+        "Die entsprechenden Daten blockieren",
+        "Prüfen, dass es keine Überschneidung gibt",
+      ],
+      linksTitle: "Schnellzugriff auf die Kalender",
+      bookingLabel: "Booking.com-Kalender",
+      airbnbLabel: "Airbnb-Kalender",
+      tip: "Tipp: innerhalb von 30 Minuten zu reagieren senkt das Risiko einer Doppelbuchung stark. Diese Seite wird von Suchmaschinen nicht indexiert.",
+      promoTitle: "Aktionscodes (Direktbuchungen)",
+      promoHint:
+        "Gespeichert in Vercel Blob (promo/codes.json). Gäste prüfen den Code auf /reservations vor Typeform.",
+      promoRefresh: "Aktualisieren",
+      promoLoading: "Codes werden geladen…",
+      promoEmpty: "Noch keine Codes — fügen Sie unten einen hinzu.",
+      promoSaveSuccess: "Aktionscodes gespeichert.",
+      promoSaveError: "Speichern nicht möglich — prüfen Sie die Felder.",
+      promoLoadError: "Aktionscodes konnten nicht geladen werden.",
+      promoUnauthorized: "Sitzung abgelaufen — bitte erneut anmelden.",
+      promoStorageInactive:
+        "Blob nicht konfiguriert: Änderungen bleiben in der Produktion nicht erhalten.",
+      promoInactiveBadge: "inaktiv",
+      promoActivate: "Aktivieren",
+      promoDeactivate: "Deaktivieren",
+      promoDelete: "Löschen",
+      promoDeleteConfirm: "Diesen Aktionscode löschen?",
+      promoAddTitle: "Code hinzufügen",
+      promoAddButton: "Hinzufügen und speichern",
+      promoSaving: "Speichern…",
+      promoFormIncomplete: "Code und Bezeichnung sind Pflicht.",
+      promoDuplicate: "Dieser Code existiert bereits.",
+      promoUsesLabel: "Nutzungen",
+      promoFieldCode: "Code",
+      promoFieldLabel: "Bezeichnung (für den Gast)",
+      promoFieldPercent: "Rabatt (%)",
+      promoFieldMaxUses: "Nutzungslimit (optional)",
+      promoFieldStayFrom: "Erste berechtigte Nacht",
+      promoFieldStayTo: "Letzte berechtigte Nacht",
+      pricingRefresh: "Aktualisieren",
+      pricingImportPilotageButton: "Excel-Raster importieren (2026–2027)",
+      pricingImportPilotageConfirm:
+        "Alle Tarife durch das Raster « Pilotage prix » ersetzen (Sept. 2026 → Dez. 2027, 112 Perioden)?",
+      pricingImportPilotageSuccess:
+        "Raster importiert — prüfen Sie den Kalender auf /reservations.",
+      pricingImportPilotageHint:
+        "Aus dem Excel-Blatt Calendrier (Wochentag, Wochenende, Hochsaison, Events).",
+      pricingLoading: "Laden…",
+      pricingEmpty: "Noch keine Tarife definiert.",
+      pricingSaveSuccess: "Tarife gespeichert.",
+      pricingSaveError: "Speichern nicht möglich.",
+      pricingLoadError: "Tarife konnten nicht geladen werden.",
+      pricingUnauthorized: "Sitzung abgelaufen — bitte erneut anmelden.",
+      pricingStorageInactive: "Blob-Speicher nicht konfiguriert.",
+      pricingAddTitle: "Tarife hinzufügen (Stapel)",
+      pricingAddButton: "Auf den Kalender anwenden",
+      pricingSaving: "Speichern…",
+      pricingFormIncomplete: "Gültige Daten und vier Preise (1 bis 4 Personen) erforderlich.",
+      pricingWeekdaysRequired: "Wählen Sie mindestens einen Wochentag.",
+      pricingDelete: "Löschen",
+      pricingDeleteConfirm: "Diese Tarifregel löschen?",
+      pricingFieldFrom: "Erstes Datum",
+      pricingFieldTo: "Letztes Datum",
+      pricingFieldPrice: "Preis pro Nacht (CHF)",
+      pricingFieldPriceByGuests: "Preis pro Nacht nach Personenanzahl (CHF)",
+      pricingGuests1: "1 Person",
+      pricingGuests2: "2 Personen",
+      pricingGuests3: "3 Personen",
+      pricingGuests4: "4 Personen",
+      pricingFieldWeekdays: "Betroffene Tage",
+      pricingPerNight: "Nacht",
+      pricingWeekdayMon: "Mo",
+      pricingWeekdayTue: "Di",
+      pricingWeekdayWed: "Mi",
+      pricingWeekdayThu: "Do",
+      pricingWeekdayFri: "Fr",
+      pricingWeekdaySat: "Sa",
+      pricingWeekdaySun: "So",
+    },
+    reservations: {
+      title: "Reservieren und bezahlen",
+      subtitle:
+        "Wählen Sie Ihre Daten und die Personenanzahl, dann bezahlen Sie den Aufenthalt online (Karte, Apple Pay, Google Pay).",
+      calendarTitle: "Verfügbarkeit",
+      legendFree: "Frei",
+      legendBusy: "Belegt (Booking / Airbnb)",
+      legendAccepted: "Bestätigte Direktbuchung",
+      latencyNote: "",
+      notConfiguredNote:
+        "Die iCal-Links von Booking/Airbnb sind auf dem Server noch nicht konfiguriert — alle Daten erscheinen frei.",
+      formTitle: "Zahlung",
+      formNote:
+        "Wählen Sie zuerst Ihre Daten im Kalender (mindestens 2 Nächte), dann bezahlen Sie, um die Buchung zu bestätigen.",
+      formPrefillNote:
+        "Ihre Daten und der Betrag sind bereit. Die Zahlung erfolgt auf der sicheren Stripe-Seite.",
+      formLockedTitle: "Zahlung gesperrt",
+      formLockedHint:
+        "Wählen Sie Anreise- und Abreisedatum im Kalender (Aufenthalt von mindestens 2 Nächten), um zu bezahlen.",
+      formLockedAction: "Zurück zum Kalender",
+      calendarSelectHint:
+        "Klicken Sie ein Anreisedatum, dann ein Abreisedatum (mindestens 2 Nächte, nur freie Tage).",
+      selectedRangeLabel: "Aufenthalt:",
+      clearRangeLabel: "Löschen",
+      rangeInvalidHint:
+        "Dieser Zeitraum überschneidet bereits gebuchte Daten — wählen Sie andere Tage.",
+      rangeMinNightsHint:
+        "Mindestaufenthalt 2 Nächte — wählen Sie ein Abreisedatum mindestens zwei Tage nach der Anreise.",
+      promoOptionalLabel: "Aktionscode (optional)",
+      promoPlaceholder: "z. B. NOV2026-10",
+      promoApplyButton: "Code prüfen",
+      promoApplying: "Prüfung…",
+      promoValidBadge: "Code akzeptiert",
+      promoClearButton: "Entfernen",
+      promoInvalidHint:
+        "Ungültiger Code oder nicht gültig für diese Daten. Korrigieren oder das Feld leer lassen.",
+      legendPricePerNight: "",
+      guestCountLabel: "Anzahl Personen",
+      guestCountOne: "1 Person",
+      guestCountMany: "{count} Personen",
+      stayTotalTitle: "Aufenthaltsbetrag",
+      stayTotalForOneGuest: "Tarif für 1 Person",
+      stayTotalForGuests: "Tarif für {count} Personen",
+      stayTotalNights: "{count} Nächte",
+      stayTotalDiscount: "Rabatt Aktionscode",
+      stayTotalLabel: "Total",
+      stayTotalIncomplete:
+        "Tarif fehlt für {missing} Nacht/Nächte in diesem Aufenthalt — prüfen Sie die Daten oder kontaktieren Sie uns.",
+      stayTotalNoRatesForDates: "Kein veröffentlichter Tarif für diese Daten.",
+      payButton: "Bezahlen und Buchung bestätigen",
+      payLoading: "Weiterleitung zur Zahlung…",
+      payError: "Die Zahlung konnte nicht gestartet werden. Bitte erneut versuchen oder uns kontaktieren.",
+      payUnavailable: "Die Online-Zahlung ist auf diesem Server noch nicht aktiviert.",
+      payDatesUnavailable: "Diese Daten wurden soeben vergeben. Bitte wählen Sie einen anderen Zeitraum.",
+      paySuccessTitle: "Buchung bestätigt",
+      paySuccessBody:
+        "Danke. Die Zahlung ist eingegangen. Eine Bestätigungs-E-Mail und die Rechnung werden Ihnen zugesendet.",
+      paySuccessHome: "Zurück zur Startseite",
+      payCancelTitle: "Zahlung nicht abgeschlossen",
+      payCancelBody: "Es wurde kein Betrag abgebucht. Sie können die Zahlung jederzeit erneut starten.",
+      payCancelRetry: "Zurück zur Reservierung",
+    },
+    footer: {
+      contact: "Kontakt",
+      copyright: "Copyright 2025",
+      credits: "Website von db marketing",
+      privacy: "Datenschutz",
+      cookies: "Cookies",
+    },
+    newsletter: {
+      title: "Aktuelles",
+      description:
+        "Nachrichten vom Nid de la Sittelle (Doppelbestätigung per E-Mail).",
+      emailPlaceholder: "Ihre E-Mail-Adresse",
+      consentLabel:
+        "Ich bin einverstanden, Informations-E-Mails von BnB Valais zu erhalten. Ich kann mich jederzeit abmelden.",
+      submitButton: "Anmelden",
+      submitting: "Senden…",
+      successInbox:
+        "Prüfen Sie Ihr Postfach und klicken Sie auf den Bestätigungslink (7 Tage gültig).",
+      errorGeneric: "Die E-Mail konnte momentan nicht gesendet werden. Bitte später erneut versuchen.",
+    },
+    newsletterConfirm: {
+      successTitle: "Anmeldung bestätigt",
+      successBody:
+        "Danke! Sie erhalten unsere nächsten Nachrichten. Sie können sich in jeder E-Mail abmelden.",
+      alreadyTitle: "Bereits angemeldet",
+      alreadyBody: "Diese Adresse ist bereits für unsere Nachrichten eingetragen.",
+      expiredTitle: "Link abgelaufen",
+      expiredBody:
+        "Dieser Bestätigungslink ist abgelaufen. Melden Sie sich erneut über die Fusszeile der Website an.",
+      invalidTitle: "Ungültiger Link",
+      invalidBody:
+        "Dieser Link ist ungültig oder wurde bereits verwendet. Melden Sie sich bei Bedarf erneut an.",
+      errorTitle: "Bestätigung unvollständig",
+      errorBody:
+        "Ihr Klick wurde erfasst, aber das Hinzufügen zur Liste ist fehlgeschlagen. Kontaktieren Sie uns oder versuchen Sie es erneut.",
+      backHome: "Zurück zur Startseite",
+    },
+    language: {
+      label: "Deutsch",
+      switchTo: "Français",
+    },
+  },
 };
 
 export function getContent(locale: Locale): SiteContent {

@@ -79,17 +79,18 @@ export function isDayInRange(
 
 export function formatRangeLabel(
   range: DateRange,
-  locale: "fr" | "en",
+  locale: "fr" | "en" | "de",
 ): string {
   const opts: Intl.DateTimeFormatOptions = {
     day: "numeric",
     month: "long",
     year: "numeric",
   };
-  const loc = locale === "fr" ? "fr-CH" : "en-GB";
+  const loc =
+    locale === "fr" ? "fr-CH" : locale === "de" ? "de-CH" : "en-GB";
   const inDate = new Date(`${range.checkIn}T12:00:00`);
   const outDate = new Date(`${range.checkOut}T12:00:00`);
   const a = inDate.toLocaleDateString(loc, opts);
   const b = outDate.toLocaleDateString(loc, opts);
-  return locale === "fr" ? `${a} → ${b}` : `${a} → ${b}`;
+  return `${a} → ${b}`;
 }

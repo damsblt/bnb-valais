@@ -74,7 +74,11 @@ export default function NewsletterSignup({ locale, copy }: NewsletterSignupProps
                 href={privacyPath(locale)}
                 className="underline underline-offset-2 hover:text-neutral-800"
               >
-                {locale === "fr" ? "Protection des données" : "Privacy"}
+                {locale === "de"
+                  ? "Datenschutz"
+                  : locale === "fr"
+                    ? "Protection des données"
+                    : "Privacy"}
               </Link>
             </span>
           </label>

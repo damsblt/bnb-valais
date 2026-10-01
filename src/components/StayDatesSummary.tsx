@@ -1,7 +1,8 @@
 import type { DateRange } from "@/lib/typeform-prefill";
+import type { Locale } from "@/lib/i18n";
 
 type StayDatesSummaryProps = {
-  locale: "fr" | "en";
+  locale: Locale;
   range: DateRange;
 };
 
@@ -19,12 +20,14 @@ function DateRow({
   number: number;
   label: string;
   iso: string;
-  locale: "fr" | "en";
+  locale: Locale;
 }) {
   const { day, month, year } = parts(iso);
-  const monthLabel = locale === "fr" ? "Mois" : "Month";
-  const dayLabel = locale === "fr" ? "Jour" : "Day";
-  const yearLabel = locale === "fr" ? "Année" : "Year";
+  const monthLabel =
+    locale === "de" ? "Monat" : locale === "fr" ? "Mois" : "Month";
+  const dayLabel = locale === "de" ? "Tag" : locale === "fr" ? "Jour" : "Day";
+  const yearLabel =
+    locale === "de" ? "Jahr" : locale === "fr" ? "Année" : "Year";
 
   return (
     <div className="border-b border-neutral-100 px-6 py-8 last:border-b-0">
@@ -55,8 +58,18 @@ function DateRow({
 }
 
 export default function StayDatesSummary({ locale, range }: StayDatesSummaryProps) {
-  const arrival = locale === "fr" ? "Date d'arrivée" : "Check-in date";
-  const departure = locale === "fr" ? "Date de départ" : "Check-out date";
+  const arrival =
+    locale === "de"
+      ? "Anreisedatum"
+      : locale === "fr"
+        ? "Date d'arrivée"
+        : "Check-in date";
+  const departure =
+    locale === "de"
+      ? "Abreisedatum"
+      : locale === "fr"
+        ? "Date de départ"
+        : "Check-out date";
 
   return (
     <div className="rounded-2xl border border-neutral-200 bg-white">

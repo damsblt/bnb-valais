@@ -118,7 +118,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "fr_CH",
-    alternateLocale: "en_GB",
+    alternateLocale: ["en_GB", "de_CH"],
     url: BASE_URL,
     siteName: "BnB Valais",
     title: "BnB Valais — Location appartement vacances Sion Anzère | Hébergement semaine Valais",
@@ -149,6 +149,7 @@ export const metadata: Metadata = {
     languages: {
       "fr-CH": BASE_URL,
       "en": `${BASE_URL}/en`,
+      "de-CH": `${BASE_URL}/de`,
     },
   },
   category: "travel",

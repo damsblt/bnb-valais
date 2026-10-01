@@ -1,4 +1,4 @@
-import type { Locale } from "@/lib/i18n";
+import { parseLocale } from "@/lib/i18n";
 import { sendNewsletterOptInEmail } from "@/lib/newsletter-mail";
 import {
   createNewsletterPending,
@@ -12,12 +12,12 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 export async function POST(request: Request) {
   const body = (await request.json()) as {
     email?: string;
-    locale?: Locale;
+    locale?: string;
     consent?: boolean;
   };
 
   const email = body.email?.trim() ?? "";
-  const locale: Locale = body.locale === "en" ? "en" : "fr";
+  const locale = parseLocale(body.locale);
   const consent = body.consent === true;
 
   if (!consent || !EMAIL_RE.test(email)) {

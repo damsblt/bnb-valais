@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { localePath } from "@/lib/i18n";
+import { localePath, parseLocale } from "@/lib/i18n";
 import { isStripeConfigured, getStripe } from "@/lib/stripe";
 import { quotePaidStay, stayOverlapsBooked } from "@/lib/paid-stay";
 import { siteBaseUrl } from "@/lib/site";
@@ -27,7 +27,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "invalid_body" }, { status: 400 });
   }
 
-  const locale = body.locale === "en" ? "en" : "fr";
+  const locale = parseLocale(body.locale);
   const quoted = await quotePaidStay({
     checkIn: body.checkIn ?? "",
     checkOut: body.checkOut ?? "",
@@ -58,7 +58,7 @@ export async function POST(request: Request) {
 
   const session = await stripe.checkout.sessions.create({
     mode: "payment",
-    locale: locale === "en" ? "en" : "fr",
+    locale,
     success_url: `${base}${successPath}?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${base}${cancelPath}?${cancelParams.toString()}`,
     billing_address_collection: "required",
@@ -75,13 +75,17 @@ export async function POST(request: Request) {
           unit_amount: quote.total * 100,
           product_data: {
             name:
-              locale === "en"
-                ? "Stay at BnB Valais — Le Nid de la Sittelle"
-                : "Séjour BnB Valais — Le Nid de la Sittelle",
+              locale === "de"
+                ? "Aufenthalt BnB Valais — Le Nid de la Sittelle"
+                : locale === "en"
+                  ? "Stay at BnB Valais — Le Nid de la Sittelle"
+                  : "Séjour BnB Valais — Le Nid de la Sittelle",
             description:
-              locale === "en"
-                ? `${quote.checkIn} → ${quote.checkOut} · ${quote.guestCount} guest(s) · ${quote.nights.length} night(s)`
-                : `${quote.checkIn} → ${quote.checkOut} · ${quote.guestCount} pers. · ${quote.nights.length} nuit(s)`,
+              locale === "de"
+                ? `${quote.checkIn} → ${quote.checkOut} · ${quote.guestCount} Pers. · ${quote.nights.length} Nacht/Nächte`
+                : locale === "en"
+                  ? `${quote.checkIn} → ${quote.checkOut} · ${quote.guestCount} guest(s) · ${quote.nights.length} night(s)`
+                  : `${quote.checkIn} → ${quote.checkOut} · ${quote.guestCount} pers. · ${quote.nights.length} nuit(s)`,
           },
         },
       },

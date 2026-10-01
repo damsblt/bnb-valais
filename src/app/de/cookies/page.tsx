@@ -4,22 +4,22 @@ import SiteLayout from "@/components/SiteLayout";
 import { getCookiesCopy } from "@/lib/legal";
 import { pageMetadata } from "@/lib/seo";
 
-const copy = getCookiesCopy("en");
+const copy = getCookiesCopy("de");
 
 export const metadata: Metadata = pageMetadata({
-  locale: "en",
+  locale: "de",
   frPath: "/cookies",
   enPath: "/cookies",
   dePath: "/cookies",
   title: "Cookies | BnB Valais",
   description:
-    "Cookies used on bnb-valais.ch: essential cookies, Google Maps and the Typeform booking form.",
+    "Cookies auf bnb-valais.ch: notwendige Cookies, Google Maps und Zahlungen über Stripe.",
 });
 
-export default function CookiesEnPage() {
+export default function CookiesDePage() {
   return (
-    <SiteLayout locale="en" variant="compact">
-      <LegalArticle locale="en" copy={copy} related="privacy" />
+    <SiteLayout locale="de" variant="compact">
+      <LegalArticle locale="de" copy={copy} related="privacy" />
     </SiteLayout>
   );
 }

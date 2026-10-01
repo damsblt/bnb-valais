@@ -3,8 +3,8 @@ export const BOOKING_LABEL = "mkt123sc-a149c0f5-bc10-473d-874d-8111ef4c22d9";
 
 const bookingBase = "https://www.booking.com/hotel/ch/maison-la-sittelle";
 
-export function getBookingHotelUrl(locale: "fr" | "en"): string {
-  const lang = locale === "fr" ? "fr" : "en-gb";
+export function getBookingHotelUrl(locale: "fr" | "en" | "de"): string {
+  const lang = locale === "fr" ? "fr" : locale === "de" ? "de" : "en-gb";
   const params = new URLSearchParams({
     aid: BOOKING_AID,
     label: BOOKING_LABEL,

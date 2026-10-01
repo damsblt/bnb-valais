@@ -6,10 +6,10 @@ import { shareOgImage } from "@/lib/site";
 const BASE_URL = "https://www.bnb-valais.ch";
 
 export const metadata: Metadata = {
-  title: getContent("fr").meta.title,
-  description: getContent("fr").meta.description,
+  title: getContent("de").meta.title,
+  description: getContent("de").meta.description,
   alternates: {
-    canonical: BASE_URL,
+    canonical: `${BASE_URL}/de`,
     languages: {
       "fr-CH": BASE_URL,
       en: `${BASE_URL}/en`,
@@ -17,11 +17,11 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: "BnB Valais — Location appartement vacances Sion Anzère | Hébergement semaine Valais",
+    title: "BnB Valais — Ferienwohnung Sitten Anzère | Wochenmiete Wallis Schweiz",
     description:
-      "Appartement à louer en Valais à 15 min de Sion et Anzère. Réservation à la nuit, à la semaine ou au mois. 2 chambres, vue Alpes, Wi-Fi, parking, ascenseur.",
-    url: BASE_URL,
-    locale: "fr_CH",
+      "Wohnung zur Miete im Wallis, 15 Min. von Sitten und Anzère. Buchung pro Nacht, Woche oder Monat. 2 Schlafzimmer, Alpenblick, WLAN, Parkplatz, Lift.",
+    url: `${BASE_URL}/de`,
+    locale: "de_CH",
     type: "website",
     images: [shareOgImage()],
   },
@@ -31,6 +31,6 @@ export const metadata: Metadata = {
   },
 };
 
-export default function Page() {
-  return <HomePage locale="fr" />;
+export default function GermanHomePage() {
+  return <HomePage locale="de" />;
 }
