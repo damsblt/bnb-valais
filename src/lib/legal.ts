@@ -290,7 +290,7 @@ export function getCookiesCopy(locale: Locale): LegalPageCopy {
         {
           title: "Optionale Cookies (Google Analytics und Google Maps)",
           paragraphs: [
-            "Google Analytics misst die Besuche auf der Website (Seiten, Herkunft, Gerät). Es wird nur geladen, wenn Sie auf «Alle akzeptieren» klicken.",
+            "Google Analytics misst die Besuche auf der Website (Seiten, Herkunft, Gerät). Google Tag Manager lädt diese Google-Tags. Sie werden nur geladen, wenn Sie auf «Alle akzeptieren» klicken.",
             "Die Karte auf der Startseite wird von Google bereitgestellt. Sie wird nur geladen, wenn Sie auf «Alle akzeptieren» oder «Karte anzeigen» klicken.",
             "Google kann dann Cookies setzen und Verbindungsdaten nach eigener Richtlinie verarbeiten.",
           ],
@@ -333,7 +333,7 @@ export function getCookiesCopy(locale: Locale): LegalPageCopy {
         {
           title: "Optional cookies (Google Analytics and Google Maps)",
           paragraphs: [
-            "Google Analytics measures visits to the site (pages, source, device). It is loaded only if you click “Accept all”.",
+            "Google Analytics measures visits to the site (pages, source, device). Google Tag Manager loads these Google tags. They are loaded only if you click “Accept all”.",
             "The homepage map is provided by Google. It is loaded only if you click “Accept all” or “Show the map”.",
             "Google may then set cookies and process connection data under its own policy.",
           ],
@@ -375,7 +375,7 @@ export function getCookiesCopy(locale: Locale): LegalPageCopy {
       {
         title: "Cookies optionnels (Google Analytics et Google Maps)",
         paragraphs: [
-          "Google Analytics mesure les visites sur le site (pages, provenance, appareil). Il n’est chargé que si vous cliquez sur « Tout accepter ».",
+            "Google Analytics mesure les visites sur le site (pages, provenance, appareil). Google Tag Manager charge ces balises Google. Ils ne sont chargés que si vous cliquez sur « Tout accepter ».",
           "La carte de la page d’accueil est fournie par Google. Elle n’est chargée que si vous cliquez sur « Tout accepter » ou « Afficher la carte ».",
           "Google peut alors déposer des cookies et traiter des données de connexion selon sa propre politique.",
         ],

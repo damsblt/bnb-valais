@@ -3,7 +3,8 @@ import { Roboto } from "next/font/google";
 import "./globals.css";
 import { JsonLdOrganization, JsonLdWebSite } from "@/components/JsonLd";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
-import { absoluteUrl, shareOgImage } from "@/lib/site";
+import GoogleTagManager from "@/components/GoogleTagManager";
+import { absoluteUrl, shareOgImage, GTM_CONTAINER_ID } from "@/lib/site";
 
 const roboto = Roboto({
   subsets: ["latin"],
@@ -174,6 +175,16 @@ export default function RootLayout({
         <JsonLdWebSite />
       </head>
       <body className="min-h-full flex flex-col bg-white font-sans text-neutral-800 antialiased">
+        <noscript>
+          <iframe
+            src={`https://www.googletagmanager.com/ns.html?id=${GTM_CONTAINER_ID}`}
+            height="0"
+            width="0"
+            style={{ display: "none", visibility: "hidden" }}
+            title="Google Tag Manager"
+          />
+        </noscript>
+        <GoogleTagManager />
         <GoogleAnalytics />
         {children}
       </body>
