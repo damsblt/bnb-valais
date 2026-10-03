@@ -1,3 +1,4 @@
+import type Stripe from "stripe";
 import { getStripe, isStripeConfigured } from "@/lib/stripe";
 
 export type PaidBookingReceipt = {
@@ -8,6 +9,22 @@ export type PaidBookingReceipt = {
   email: string | null;
 };
 
+async function orderNumberForSession(
+  stripe: Stripe,
+  session: Stripe.Checkout.Session,
+): Promise<string> {
+  let invoice = session.invoice;
+  if (typeof invoice === "string") {
+    invoice = await stripe.invoices.retrieve(invoice);
+  }
+  if (invoice && typeof invoice === "object" && invoice.number?.trim()) {
+    return invoice.number.trim();
+  }
+  const checkIn = session.metadata?.checkIn?.replaceAll("-", "") ?? "";
+  const tail = session.id.slice(-6).toUpperCase();
+  return checkIn ? `BNB-${checkIn}-${tail}` : `BNB-${tail}`;
+}
+
 export async function loadPaidBookingReceipt(
   sessionId: string | undefined,
 ): Promise<PaidBookingReceipt | null> {
@@ -15,7 +32,10 @@ export async function loadPaidBookingReceipt(
   if (!id.startsWith("cs_") || !isStripeConfigured()) return null;
 
   try {
-    const session = await getStripe().checkout.sessions.retrieve(id);
+    const stripe = getStripe();
+    const session = await stripe.checkout.sessions.retrieve(id, {
+      expand: ["invoice"],
+    });
     if (session.payment_status !== "paid" && session.status !== "complete") {
       return null;
     }
@@ -24,7 +44,7 @@ export async function loadPaidBookingReceipt(
     const value = cents / 100;
     const currency = (session.currency || "chf").toUpperCase();
     return {
-      transactionId: session.id,
+      transactionId: await orderNumberForSession(stripe, session),
       value,
       valueFormatted: value.toFixed(2),
       currency,
