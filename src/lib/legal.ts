@@ -31,7 +31,7 @@ export function cookiesPath(locale: Locale) {
 export function getCookieBannerCopy(locale: Locale) {
   if (locale === "en") {
     return {
-      text: "We use essential cookies to run the site. Google Maps is loaded only with your consent. Payments are processed by Stripe on a secure page.",
+      text: "We use essential cookies to run the site. Google Analytics and Google Maps are loaded only with your consent. Payments are processed by Stripe on a secure page.",
       acceptAll: "Accept all",
       essentialOnly: "Essential only",
       privacy: "Privacy",
@@ -40,7 +40,7 @@ export function getCookieBannerCopy(locale: Locale) {
   }
   if (locale === "de") {
     return {
-      text: "Wir verwenden notwendige Cookies für den Betrieb der Website. Google Maps wird nur mit Ihrer Zustimmung geladen. Zahlungen werden von Stripe auf einer sicheren Seite verarbeitet.",
+      text: "Wir verwenden notwendige Cookies für den Betrieb der Website. Google Analytics und Google Maps werden nur mit Ihrer Zustimmung geladen. Zahlungen werden von Stripe auf einer sicheren Seite verarbeitet.",
       acceptAll: "Alle akzeptieren",
       essentialOnly: "Nur notwendige",
       privacy: "Datenschutz",
@@ -48,7 +48,7 @@ export function getCookieBannerCopy(locale: Locale) {
     };
   }
   return {
-    text: "Nous utilisons des cookies nécessaires au fonctionnement du site. La carte Google Maps n’est chargée qu’avec votre accord. Les paiements sont traités par Stripe sur une page sécurisée.",
+    text: "Nous utilisons des cookies nécessaires au fonctionnement du site. Google Analytics et Google Maps ne sont chargés qu’avec votre accord. Les paiements sont traités par Stripe sur une page sécurisée.",
     acceptAll: "Tout accepter",
     essentialOnly: "Nécessaires uniquement",
     privacy: "Protection des données",
@@ -110,7 +110,7 @@ export function getPrivacyCopy(locale: Locale): LegalPageCopy {
           title: "Mit wem wir sie teilen",
           paragraphs: [
             "Daten werden nur an Dienstleister weitergegeben, die für den Service nötig sind:",
-            "Stripe (Zahlungen und Rechnungen), Resend (E-Mails), Vercel (Hosting und Dateispeicher), Google (Karte, nur wenn Sie optionale Cookies akzeptieren).",
+            "Stripe (Zahlungen und Rechnungen), Resend (E-Mails), Vercel (Hosting und Dateispeicher), Google (Karte und Analytics, nur wenn Sie optionale Cookies akzeptieren).",
             "Diese Dienstleister handeln in unserem Auftrag. Einige können Daten ausserhalb der Schweiz bearbeiten (zum Beispiel in der EU oder den USA), mit angemessenen Garantien.",
             "Wir geben Daten nicht an Werbetreibende oder Datenhändler weiter.",
           ],
@@ -174,7 +174,7 @@ export function getPrivacyCopy(locale: Locale): LegalPageCopy {
           title: "Who we share data with",
           paragraphs: [
             "Data is shared only with providers needed to run the service:",
-            "Stripe (payments and invoices), Resend (emails), Vercel (hosting and file storage), Google (map, only if you accept optional cookies).",
+            "Stripe (payments and invoices), Resend (emails), Vercel (hosting and file storage), Google (map and Analytics, only if you accept optional cookies).",
             "These providers act on our instructions. Some may process data outside Switzerland (for example in the EU or the United States), with appropriate safeguards.",
             "We do not share data with advertisers or data brokers.",
           ],
@@ -237,7 +237,7 @@ export function getPrivacyCopy(locale: Locale): LegalPageCopy {
         title: "Avec qui nous les partageons",
         paragraphs: [
           "Les données sont transmises uniquement aux prestataires nécessaires au service :",
-          "Stripe (paiements et factures), Resend (envoi des e-mails), Vercel (hébergement et stockage), Google (carte, uniquement si vous acceptez les cookies optionnels).",
+          "Stripe (paiements et factures), Resend (envoi des e-mails), Vercel (hébergement et stockage), Google (carte et Analytics, uniquement si vous acceptez les cookies optionnels).",
           "Ces prestataires agissent pour notre compte. Certains peuvent traiter des données hors de Suisse (par exemple dans l’UE ou aux États-Unis), avec des garanties appropriées.",
           "Nous ne transmettons pas vos données à des publicitaires ni à des courtiers en données.",
         ],
@@ -288,8 +288,9 @@ export function getCookiesCopy(locale: Locale): LegalPageCopy {
           ],
         },
         {
-          title: "Optionale Cookies (Google Maps)",
+          title: "Optionale Cookies (Google Analytics und Google Maps)",
           paragraphs: [
+            "Google Analytics misst die Besuche auf der Website (Seiten, Herkunft, Gerät). Es wird nur geladen, wenn Sie auf «Alle akzeptieren» klicken.",
             "Die Karte auf der Startseite wird von Google bereitgestellt. Sie wird nur geladen, wenn Sie auf «Alle akzeptieren» oder «Karte anzeigen» klicken.",
             "Google kann dann Cookies setzen und Verbindungsdaten nach eigener Richtlinie verarbeiten.",
           ],
@@ -330,8 +331,9 @@ export function getCookiesCopy(locale: Locale): LegalPageCopy {
           ],
         },
         {
-          title: "Optional cookies (Google Maps)",
+          title: "Optional cookies (Google Analytics and Google Maps)",
           paragraphs: [
+            "Google Analytics measures visits to the site (pages, source, device). It is loaded only if you click “Accept all”.",
             "The homepage map is provided by Google. It is loaded only if you click “Accept all” or “Show the map”.",
             "Google may then set cookies and process connection data under its own policy.",
           ],
@@ -371,8 +373,9 @@ export function getCookiesCopy(locale: Locale): LegalPageCopy {
         ],
       },
       {
-        title: "Cookies optionnels (Google Maps)",
+        title: "Cookies optionnels (Google Analytics et Google Maps)",
         paragraphs: [
+          "Google Analytics mesure les visites sur le site (pages, provenance, appareil). Il n’est chargé que si vous cliquez sur « Tout accepter ».",
           "La carte de la page d’accueil est fournie par Google. Elle n’est chargée que si vous cliquez sur « Tout accepter » ou « Afficher la carte ».",
           "Google peut alors déposer des cookies et traiter des données de connexion selon sa propre politique.",
         ],

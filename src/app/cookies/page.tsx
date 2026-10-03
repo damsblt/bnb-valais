@@ -13,7 +13,7 @@ export const metadata: Metadata = pageMetadata({
   dePath: "/cookies",
   title: "Cookies | BnB Valais",
   description:
-    "Cookies utilisés sur bnb-valais.ch : cookies nécessaires, Google Maps et formulaire Typeform.",
+    "Cookies utilisés sur bnb-valais.ch : cookies nécessaires, Google Analytics, Google Maps et Stripe.",
 });
 
 export default function CookiesFrPage() {

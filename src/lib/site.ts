@@ -3,6 +3,7 @@ export const SITE_NAME = "Le Nid de la Sittelle";
 export const SITE_BRAND = "BnB Valais";
 export const SITE_EMAIL = "info@bnb-valais.ch";
 export const SITE_PHONE = "+41 79 520 08 85";
+export const GA_MEASUREMENT_ID = "G-ZC0CT5BB2Z";
 export const SITE_OG_IMAGE = "/images/og-header.jpg?v=header-9432";
 export const SITE_OG_IMAGE_WIDTH = 1200;
 export const SITE_OG_IMAGE_HEIGHT = 630;

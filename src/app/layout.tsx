@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Roboto } from "next/font/google";
 import "./globals.css";
 import { JsonLdOrganization, JsonLdWebSite } from "@/components/JsonLd";
+import GoogleAnalytics from "@/components/GoogleAnalytics";
 import { absoluteUrl, shareOgImage } from "@/lib/site";
 
 const roboto = Roboto({
@@ -173,6 +174,7 @@ export default function RootLayout({
         <JsonLdWebSite />
       </head>
       <body className="min-h-full flex flex-col bg-white font-sans text-neutral-800 antialiased">
+        <GoogleAnalytics />
         {children}
       </body>
     </html>
