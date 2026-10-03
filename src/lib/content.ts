@@ -197,6 +197,10 @@ export type SiteContent = {
     paySuccessTitle: string;
     paySuccessBody: string;
     paySuccessHome: string;
+    paySuccessTransaction: string;
+    paySuccessAmount: string;
+    paySuccessCurrency: string;
+    paySuccessEmail: string;
     payCancelTitle: string;
     payCancelBody: string;
     payCancelRetry: string;
@@ -482,6 +486,10 @@ const content: Record<Locale, SiteContent> = {
       paySuccessBody:
         "Merci. Le paiement a bien été reçu. Un e-mail de confirmation et la facture vous seront envoyés.",
       paySuccessHome: "Retour à l’accueil",
+      paySuccessTransaction: "N° de commande",
+      paySuccessAmount: "Montant",
+      paySuccessCurrency: "Devise",
+      paySuccessEmail: "E-mail",
       payCancelTitle: "Paiement non terminé",
       payCancelBody: "Aucun montant n’a été débité. Vous pouvez relancer le paiement quand vous voulez.",
       payCancelRetry: "Revenir aux réservations",
@@ -771,6 +779,10 @@ const content: Record<Locale, SiteContent> = {
       paySuccessBody:
         "Thank you. Payment was received. A confirmation email and invoice will be sent to you.",
       paySuccessHome: "Back to home",
+      paySuccessTransaction: "Order number",
+      paySuccessAmount: "Amount",
+      paySuccessCurrency: "Currency",
+      paySuccessEmail: "Email",
       payCancelTitle: "Payment not completed",
       payCancelBody: "You were not charged. You can start the payment again whenever you like.",
       payCancelRetry: "Back to bookings",
@@ -1060,6 +1072,10 @@ const content: Record<Locale, SiteContent> = {
       paySuccessBody:
         "Danke. Die Zahlung ist eingegangen. Eine Bestätigungs-E-Mail und die Rechnung werden Ihnen zugesendet.",
       paySuccessHome: "Zurück zur Startseite",
+      paySuccessTransaction: "Bestellnummer",
+      paySuccessAmount: "Betrag",
+      paySuccessCurrency: "Währung",
+      paySuccessEmail: "E-Mail",
       payCancelTitle: "Zahlung nicht abgeschlossen",
       payCancelBody: "Es wurde kein Betrag abgebucht. Sie können die Zahlung jederzeit erneut starten.",
       payCancelRetry: "Zurück zur Reservierung",
