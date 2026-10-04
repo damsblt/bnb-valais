@@ -13,7 +13,10 @@ export default function LocationSection({
   description,
 }: LocationSectionProps) {
   return (
-    <section className="px-4 py-10 md:px-8 md:py-16 lg:px-12">
+    <section
+      id="situation"
+      className="scroll-mt-8 px-4 py-10 md:px-8 md:py-16 lg:px-12"
+    >
       <div className="mx-auto max-w-5xl rounded-3xl bg-neutral-50 px-8 py-10 md:px-12 md:py-14">
         <div className="text-center">
           <h2 className="text-3xl font-semibold tracking-tight text-neutral-900 md:text-4xl">
