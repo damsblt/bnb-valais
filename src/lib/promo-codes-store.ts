@@ -23,6 +23,14 @@ const DEV_FILE = "promo-codes.json";
 
 const DEFAULT_CODES: PromoCode[] = [
   {
+    code: "OCT2026-10",
+    label: "−10 % — séjour en octobre 2026",
+    percentOff: 10,
+    active: true,
+    validStayFrom: "2026-10-01",
+    validStayTo: "2026-10-31",
+  },
+  {
     code: "NOV2026-10",
     label: "−10 % — séjour en novembre 2026",
     percentOff: 10,
@@ -48,9 +56,22 @@ export async function writePromoCodes(codes: PromoCode[]): Promise<void> {
 
 export async function ensureDefaultPromoCodes(): Promise<PromoCode[]> {
   const existing = await readPromoCodes();
-  if (existing.length > 0) return existing;
-  await writePromoCodes(DEFAULT_CODES);
-  return DEFAULT_CODES;
+  const byCode = new Map(
+    existing.map((code) => [normalizePromoCode(code.code), code]),
+  );
+  let changed = false;
+  for (const def of DEFAULT_CODES) {
+    const key = normalizePromoCode(def.code);
+    if (!byCode.has(key)) {
+      byCode.set(key, def);
+      changed = true;
+    }
+  }
+  const codes = [...byCode.values()];
+  if (changed) {
+    await writePromoCodes(codes);
+  }
+  return codes;
 }
 
 export function normalizePromoCode(raw: string): string {

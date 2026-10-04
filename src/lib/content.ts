@@ -457,7 +457,7 @@ const content: Record<Locale, SiteContent> = {
       rangeMinNightsHint:
         "Séjour minimum de 2 nuits — choisissez une date de départ au moins deux jours après l'arrivée.",
       promoOptionalLabel: "Code promo (facultatif)",
-      promoPlaceholder: "Ex. NOV2026-10",
+      promoPlaceholder: "Ex. OCT2026-10",
       promoApplyButton: "Vérifier le code",
       promoApplying: "Vérification…",
       promoValidBadge: "Code accepté",
@@ -750,7 +750,7 @@ const content: Record<Locale, SiteContent> = {
       rangeMinNightsHint:
         "Minimum stay is 2 nights — pick a check-out at least two days after check-in.",
       promoOptionalLabel: "Promo code (optional)",
-      promoPlaceholder: "E.g. NOV2026-10",
+      promoPlaceholder: "E.g. OCT2026-10",
       promoApplyButton: "Verify code",
       promoApplying: "Checking…",
       promoValidBadge: "Code accepted",
@@ -1043,7 +1043,7 @@ const content: Record<Locale, SiteContent> = {
       rangeMinNightsHint:
         "Mindestaufenthalt 2 Nächte — wählen Sie ein Abreisedatum mindestens zwei Tage nach der Anreise.",
       promoOptionalLabel: "Aktionscode (optional)",
-      promoPlaceholder: "z. B. NOV2026-10",
+      promoPlaceholder: "z. B. OCT2026-10",
       promoApplyButton: "Code prüfen",
       promoApplying: "Prüfung…",
       promoValidBadge: "Code akzeptiert",

@@ -2,7 +2,7 @@ import { ensureDefaultPromoCodes } from "@/lib/promo-codes-store";
 
 export const runtime = "nodejs";
 
-/** Initialise promo/codes.json dans le Blob si vide (ex. NOV2026-10). */
+/** Initialise promo/codes.json dans le Blob si vide, et ajoute les codes par défaut manquants. */
 export async function GET() {
   try {
     const codes = await ensureDefaultPromoCodes();
