@@ -12,6 +12,7 @@ import { validatePromoForStay } from "@/lib/promo-validate";
 import {
   addDays,
   enumerateNights,
+  isPastCalendarDate,
   isValidReservationRange,
   meetsMinimumStay,
 } from "@/lib/typeform-prefill";
@@ -38,7 +39,11 @@ export async function quotePaidStay(input: {
   const checkOut = String(input.checkOut ?? "").slice(0, 10);
   const guestCount = parseGuestCount(input.guests, 2);
 
-  if (!isValidReservationRange({ checkIn, checkOut }) || !meetsMinimumStay(checkIn, checkOut)) {
+  if (
+    !isValidReservationRange({ checkIn, checkOut }) ||
+    !meetsMinimumStay(checkIn, checkOut) ||
+    isPastCalendarDate(checkIn)
+  ) {
     return { ok: false, error: "invalid_dates", status: 400 };
   }
 

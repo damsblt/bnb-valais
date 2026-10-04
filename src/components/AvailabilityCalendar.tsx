@@ -11,8 +11,10 @@ import {
 import {
   formatRangeLabel,
   isDayInRange,
+  isPastCalendarDate,
   isRangeAvailable,
   meetsMinimumStay,
+  todayIsoDate,
   type DateRange,
 } from "@/lib/typeform-prefill";
 
@@ -20,6 +22,7 @@ type AvailabilityCalendarProps = {
   locale: Locale;
   title: string;
   legendFree: string;
+  legendPast: string;
   legendBusy: string;
   legendAccepted: string;
   latencyNote: string;
@@ -67,6 +70,7 @@ export default function AvailabilityCalendar({
   locale,
   title,
   legendFree,
+  legendPast,
   legendBusy,
   legendAccepted,
   latencyNote,
@@ -142,12 +146,12 @@ export default function AvailabilityCalendar({
     [data?.pricesByNight, guestCount],
   );
 
+  const todayKey = todayIsoDate();
+
   const monthDate = useMemo(() => {
-    const d = new Date();
-    d.setDate(1);
-    d.setMonth(d.getMonth() + monthOffset);
-    return d;
-  }, [monthOffset]);
+    const [year, month] = todayKey.split("-").map(Number);
+    return new Date(year, month - 1 + monthOffset, 1);
+  }, [monthOffset, todayKey]);
 
   const days = useMemo(() => {
     const year = monthDate.getFullYear();
@@ -161,6 +165,7 @@ export default function AvailabilityCalendar({
       day?: number;
       occupied?: boolean;
       accepted?: boolean;
+      past?: boolean;
       price?: number;
     }[] = [];
 
@@ -168,6 +173,7 @@ export default function AvailabilityCalendar({
 
     for (let day = 1; day <= lastDay.getDate(); day++) {
       const key = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+      const past = isPastCalendarDate(key);
       const occupied = occupiedSet.has(key);
       const accepted = !occupied && acceptedSet.has(key);
       const price = pricesByNight[key];
@@ -176,6 +182,7 @@ export default function AvailabilityCalendar({
         day,
         occupied,
         accepted,
+        past,
         price: typeof price === "number" ? price : undefined,
       });
     }
@@ -184,7 +191,7 @@ export default function AvailabilityCalendar({
   }, [monthDate, occupiedSet, acceptedSet, pricesByNight]);
 
   function handleDayClick(key: string, blocked: boolean) {
-    if (blocked) return;
+    if (blocked || isPastCalendarDate(key)) return;
 
     if (!pendingStart || selectedRange) {
       setPendingStart(key);
@@ -226,10 +233,14 @@ export default function AvailabilityCalendar({
     key: string,
     occupied: boolean,
     accepted: boolean,
+    past: boolean,
   ): string {
     const inRange = isDayInRange(key, selectedRange);
     const isPending = pendingStart === key;
 
+    if (past) {
+      return "bg-neutral-100 text-neutral-400 cursor-not-allowed";
+    }
     if (occupied) {
       return "bg-rose-200 text-rose-900 cursor-not-allowed";
     }
@@ -270,11 +281,12 @@ export default function AvailabilityCalendar({
         <div className="flex gap-2">
           <button
             type="button"
+            disabled={monthOffset <= 0}
             onClick={() => {
               setMonthOffset((m) => m - 1);
               setHoverDay(null);
             }}
-            className="rounded-full border border-neutral-300 px-3 py-1 text-sm hover:bg-neutral-50"
+            className="rounded-full border border-neutral-300 px-3 py-1 text-sm hover:bg-neutral-50 disabled:cursor-not-allowed disabled:opacity-40"
             aria-label={
               locale === "de"
                 ? "Vorheriger Monat"
@@ -350,22 +362,22 @@ export default function AvailabilityCalendar({
             <button
               key={cell.key}
               type="button"
-              disabled={cell.occupied || cell.accepted}
+              disabled={Boolean(cell.past || cell.occupied || cell.accepted)}
               onMouseEnter={() => {
-                if (pendingStart && !selectedRange) {
+                if (pendingStart && !selectedRange && !cell.past) {
                   setHoverDay(cell.key);
                 }
               }}
               onClick={() =>
                 handleDayClick(
                   cell.key,
-                  Boolean(cell.occupied || cell.accepted),
+                  Boolean(cell.occupied || cell.accepted || cell.past),
                 )
               }
-              className={`flex aspect-square flex-col items-center justify-center gap-0.5 rounded-xl text-sm font-medium transition ${dayClasses(cell.key, Boolean(cell.occupied), Boolean(cell.accepted))}`}
+              className={`flex aspect-square flex-col items-center justify-center gap-0.5 rounded-xl text-sm font-medium transition ${dayClasses(cell.key, Boolean(cell.occupied), Boolean(cell.accepted), Boolean(cell.past))}`}
             >
               <span>{cell.day}</span>
-              {cell.price != null ? (
+              {cell.price != null && !cell.past ? (
                 <span className="text-[10px] font-normal leading-none opacity-90">
                   {formatChfCompact(cell.price)}
                 </span>
@@ -381,6 +393,10 @@ export default function AvailabilityCalendar({
         <span className="inline-flex items-center gap-2">
           <span className="h-3 w-3 rounded-full bg-emerald-400" />
           {legendFree}
+        </span>
+        <span className="inline-flex items-center gap-2">
+          <span className="h-3 w-3 rounded-full bg-neutral-300" />
+          {legendPast}
         </span>
         <span className="inline-flex items-center gap-2">
           <span className="h-3 w-3 rounded-full bg-rose-400" />

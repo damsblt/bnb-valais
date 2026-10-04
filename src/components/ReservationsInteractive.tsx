@@ -18,6 +18,7 @@ import type { Locale } from "@/lib/i18n";
 import type { SiteContent } from "@/lib/content";
 import {
   formatRangeLabel,
+  isPastCalendarDate,
   isValidReservationRange,
   meetsMinimumStay,
   type DateRange,
@@ -99,7 +100,8 @@ export default function ReservationsInteractive({
       checkIn &&
       checkOut &&
       checkIn < checkOut &&
-      meetsMinimumStay(checkIn, checkOut)
+      meetsMinimumStay(checkIn, checkOut) &&
+      !isPastCalendarDate(checkIn)
     ) {
       setRange({ checkIn, checkOut });
       return;
@@ -258,6 +260,7 @@ export default function ReservationsInteractive({
         locale={locale}
         title={reservations.calendarTitle}
         legendFree={reservations.legendFree}
+        legendPast={reservations.legendPast}
         legendBusy={reservations.legendBusy}
         legendAccepted={reservations.legendAccepted}
         legendPrice={reservations.legendPricePerNight}

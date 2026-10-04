@@ -12,6 +12,17 @@ export function getPrefillParamNames(): { checkIn: string; checkOut: string } {
   return getTypeformDateFieldKeys();
 }
 
+const PROPERTY_TIMEZONE = "Europe/Zurich";
+
+/** Date calendaire du jour au BnB (YYYY-MM-DD). */
+export function todayIsoDate(): string {
+  return new Date().toLocaleDateString("en-CA", { timeZone: PROPERTY_TIMEZONE });
+}
+
+export function isPastCalendarDate(isoDate: string): boolean {
+  return isoDate < todayIsoDate();
+}
+
 export function addDays(isoDate: string, days: number): string {
   const [y, m, d] = isoDate.split("-").map(Number);
   const next = new Date(Date.UTC(y, m - 1, d + days));

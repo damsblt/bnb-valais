@@ -155,6 +155,7 @@ export type SiteContent = {
     subtitle: string;
     calendarTitle: string;
     legendFree: string;
+    legendPast: string;
     legendBusy: string;
     legendAccepted: string;
     latencyNote: string;
@@ -434,6 +435,7 @@ const content: Record<Locale, SiteContent> = {
         "Choisissez vos dates, le nombre de personnes, puis payez le séjour en ligne (carte, Apple Pay, Google Pay).",
       calendarTitle: "Disponibilités",
       legendFree: "Libre",
+      legendPast: "Passé",
       legendBusy: "Occupé (Booking / Airbnb)",
       legendAccepted: "Réservation directe confirmée",
       latencyNote: "",
@@ -727,6 +729,7 @@ const content: Record<Locale, SiteContent> = {
         "Choose your dates and number of guests, then pay online to confirm (card, Apple Pay, Google Pay).",
       calendarTitle: "Availability",
       legendFree: "Available",
+      legendPast: "Past",
       legendBusy: "Occupied (Booking / Airbnb)",
       legendAccepted: "Confirmed direct booking",
       latencyNote: "",
@@ -1020,6 +1023,7 @@ const content: Record<Locale, SiteContent> = {
         "Wählen Sie Ihre Daten und die Personenanzahl, dann bezahlen Sie den Aufenthalt online (Karte, Apple Pay, Google Pay).",
       calendarTitle: "Verfügbarkeit",
       legendFree: "Frei",
+      legendPast: "Vergangen",
       legendBusy: "Belegt (Booking / Airbnb)",
       legendAccepted: "Bestätigte Direktbuchung",
       latencyNote: "",
