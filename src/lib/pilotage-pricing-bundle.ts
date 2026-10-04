@@ -13,7 +13,7 @@ export const PILOTAGE_PRICING_META = {
   from: "2026-09-01",
   to: "2027-12-31",
   ruleCount: 111,
-  revision: "2026-10-03-test-oct-1chf",
+  revision: "2026-10-04-restore-oct4-189",
 } as const;
 
 export function loadPilotagePricingRules(): NightPricingRule[] | null {
