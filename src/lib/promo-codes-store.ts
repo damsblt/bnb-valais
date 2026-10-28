@@ -38,6 +38,14 @@ const DEFAULT_CODES: PromoCode[] = [
     validStayFrom: "2026-11-01",
     validStayTo: "2026-11-30",
   },
+  {
+    code: "9NOV26",
+    label: "−10 % — nuits du 9 au 13 novembre 2026",
+    percentOff: 10,
+    active: true,
+    validStayFrom: "2026-11-09",
+    validStayTo: "2026-11-13",
+  },
 ];
 
 export async function readPromoCodes(): Promise<PromoCode[]> {
