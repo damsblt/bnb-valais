@@ -40,8 +40,8 @@ const DEFAULT_CODES: PromoCode[] = [
   },
   {
     code: "9NOV26",
-    label: "−10 % — nuits du 9 au 13 novembre 2026",
-    percentOff: 10,
+    label: "−27 % — nuits du 9 au 13 novembre 2026",
+    percentOff: 27,
     active: true,
     validStayFrom: "2026-11-09",
     validStayTo: "2026-11-13",
@@ -70,8 +70,27 @@ export async function ensureDefaultPromoCodes(): Promise<PromoCode[]> {
   let changed = false;
   for (const def of DEFAULT_CODES) {
     const key = normalizePromoCode(def.code);
-    if (!byCode.has(key)) {
+    const current = byCode.get(key);
+    if (!current) {
       byCode.set(key, def);
+      changed = true;
+      continue;
+    }
+    if (
+      current.percentOff !== def.percentOff ||
+      current.label !== def.label ||
+      current.validStayFrom !== def.validStayFrom ||
+      current.validStayTo !== def.validStayTo ||
+      current.active !== def.active
+    ) {
+      byCode.set(key, {
+        ...current,
+        percentOff: def.percentOff,
+        label: def.label,
+        validStayFrom: def.validStayFrom,
+        validStayTo: def.validStayTo,
+        active: def.active,
+      });
       changed = true;
     }
   }
