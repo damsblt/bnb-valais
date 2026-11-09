@@ -10,6 +10,10 @@ import {
 import { readNightPricingStore } from "@/lib/night-pricing-store";
 import { validatePromoForStay } from "@/lib/promo-validate";
 import {
+  findPrivateBookingInvite,
+  inviteCoversStay,
+} from "@/lib/private-booking-access";
+import {
   addDays,
   enumerateNights,
   isPastCalendarDate,
@@ -96,12 +100,20 @@ export async function quotePaidStay(input: {
 export async function stayOverlapsBooked(
   checkIn: string,
   checkOut: string,
+  accessToken?: string | null,
 ): Promise<boolean> {
   const nights = enumerateNights(checkIn, checkOut);
   const [{ occupied }, accepted] = await Promise.all([
-    getOccupiedDates(),
+    getOccupiedDates(accessToken),
     listAcceptedDayKeys(),
   ]);
+  const invite = findPrivateBookingInvite(accessToken);
+  const invited =
+    invite && inviteCoversStay(invite, checkIn, checkOut)
+      ? new Set(enumerateNights(invite.checkIn, invite.checkOut))
+      : null;
   const blocked = new Set([...occupied, ...accepted]);
-  return nights.some((night) => blocked.has(night));
+  return nights.some(
+    (night) => blocked.has(night) && !(invited?.has(night) && !accepted.includes(night)),
+  );
 }

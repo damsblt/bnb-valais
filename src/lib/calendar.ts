@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { applyAvailabilityWindows } from "@/lib/availability-windows";
 import { readAvailabilityWindows } from "@/lib/availability-windows-store";
+import { releaseInvitedNights } from "@/lib/private-booking-access";
 
 const PROPERTY_TIMEZONE = "Europe/Zurich";
 const OPEN_OVERRIDES_PATH = path.join(
@@ -121,7 +122,7 @@ export type FeedSyncResult = {
   count?: number;
 };
 
-export async function getOccupiedDates(): Promise<{
+export async function getOccupiedDates(accessToken?: string | null): Promise<{
   occupied: string[];
   sources: string[];
   feeds: FeedSyncResult[];
@@ -153,6 +154,7 @@ export async function getOccupiedDates(): Promise<{
   }
 
   applyAvailabilityWindows(occupied, await readAvailabilityWindows());
+  releaseInvitedNights(occupied, accessToken);
 
   return {
     occupied: [...occupied].sort(),

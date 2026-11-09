@@ -8,9 +8,10 @@ import { readPublicPricesByNight } from "@/lib/night-pricing-store";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-export async function GET() {
+export async function GET(request: Request) {
+  const access = new URL(request.url).searchParams.get("access");
   const [{ occupied, sources, feeds }, accepted, pricing] = await Promise.all([
-    getOccupiedDates(),
+    getOccupiedDates(access),
     listAcceptedDayKeys(),
     readPublicPricesByNight(),
   ]);

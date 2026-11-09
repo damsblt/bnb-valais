@@ -21,6 +21,7 @@ export async function POST(request: Request) {
     guests?: number;
     promoCode?: string;
     locale?: string;
+    access?: string;
   } | null;
 
   if (!body) {
@@ -40,7 +41,8 @@ export async function POST(request: Request) {
   }
 
   const { quote } = quoted;
-  if (await stayOverlapsBooked(quote.checkIn, quote.checkOut)) {
+  const access = body.access?.trim() || null;
+  if (await stayOverlapsBooked(quote.checkIn, quote.checkOut, access)) {
     return NextResponse.json({ error: "dates_unavailable" }, { status: 409 });
   }
 
@@ -52,6 +54,7 @@ export async function POST(request: Request) {
     check_out: quote.checkOut,
     guests: String(quote.guestCount),
   });
+  if (access) cancelParams.set("access", access);
 
   const stripe = getStripe();
   const automaticTax = process.env.STRIPE_AUTOMATIC_TAX === "true";

@@ -33,6 +33,7 @@ type AppliedPromo = {
 const URL_PARAM_CHECKIN = "check_in";
 const URL_PARAM_CHECKOUT = "check_out";
 const URL_PARAM_GUESTS = "guests";
+const URL_PARAM_ACCESS = "access";
 
 type ReservationsInteractiveProps = {
   locale: Locale;
@@ -58,8 +59,13 @@ export default function ReservationsInteractive({
   const [payLoading, setPayLoading] = useState(false);
   const [payError, setPayError] = useState<string | null>(null);
 
+  const accessToken = searchParams.get(URL_PARAM_ACCESS)?.trim() ?? "";
+
   useEffect(() => {
-    fetch("/api/availability", { cache: "no-store" })
+    const query = accessToken
+      ? `?access=${encodeURIComponent(accessToken)}`
+      : "";
+    fetch(`/api/availability${query}`, { cache: "no-store" })
       .then((res) => res.json())
       .then((data: AvailabilityPayload) => setAvailability(data))
       .catch(() =>
@@ -70,7 +76,7 @@ export default function ReservationsInteractive({
           configured: false,
         }),
       );
-  }, []);
+  }, [accessToken]);
 
   useEffect(() => {
     setGuestCount(parseGuestCount(searchParams.get(URL_PARAM_GUESTS), 2));
@@ -172,6 +178,7 @@ export default function ReservationsInteractive({
           guests: guestCount,
           promoCode: appliedPromo?.code,
           locale,
+          access: accessToken || undefined,
         }),
       });
       const data = (await res.json()) as { url?: string; error?: string };
@@ -202,6 +209,7 @@ export default function ReservationsInteractive({
     reservations.payDatesUnavailable,
     reservations.payUnavailable,
     reservations.payError,
+    accessToken,
   ]);
 
   const applyPromo = useCallback(async () => {
