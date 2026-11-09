@@ -1,5 +1,7 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
+import { applyAvailabilityWindows } from "@/lib/availability-windows";
+import { readAvailabilityWindows } from "@/lib/availability-windows-store";
 
 const PROPERTY_TIMEZONE = "Europe/Zurich";
 const OPEN_OVERRIDES_PATH = path.join(
@@ -7,24 +9,34 @@ const OPEN_OVERRIDES_PATH = path.join(
   "data/calendar-open-overrides.json",
 );
 
-function loadOpenOverrideNights(): Set<string> {
+export type OpenOverrideRange = { from: string; to: string };
+
+export function loadOpenOverrideRanges(): OpenOverrideRange[] {
   try {
     const raw = JSON.parse(readFileSync(OPEN_OVERRIDES_PATH, "utf8")) as {
       inclusiveNights?: { from?: string; to?: string }[];
     };
-    const nights = new Set<string>();
+    const ranges: OpenOverrideRange[] = [];
     for (const range of raw.inclusiveNights ?? []) {
       const from = range.from?.slice(0, 10);
       const to = range.to?.slice(0, 10);
       if (!from || !to || from > to) continue;
-      for (let d = from; d <= to; d = addDays(d, 1)) {
-        nights.add(d);
-      }
+      ranges.push({ from, to });
     }
-    return nights;
+    return ranges;
   } catch {
-    return new Set();
+    return [];
   }
+}
+
+function loadOpenOverrideNights(): Set<string> {
+  const nights = new Set<string>();
+  for (const range of loadOpenOverrideRanges()) {
+    for (let d = range.from; d <= range.to; d = addDays(d, 1)) {
+      nights.add(d);
+    }
+  }
+  return nights;
 }
 
 function addDays(isoDate: string, days: number): string {
@@ -139,6 +151,8 @@ export async function getOccupiedDates(): Promise<{
   for (const night of loadOpenOverrideNights()) {
     occupied.delete(night);
   }
+
+  applyAvailabilityWindows(occupied, await readAvailabilityWindows());
 
   return {
     occupied: [...occupied].sort(),

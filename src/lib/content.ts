@@ -51,9 +51,28 @@ export type SiteContent = {
     navReservations: string;
     navPromo: string;
     navPricing: string;
+    navAvailability: string;
     reservationsPageTitle: string;
     promoPageTitle: string;
     pricingPageTitle: string;
+    availabilityPageTitle: string;
+    availabilityHint: string;
+    availabilityFrom: string;
+    availabilityTo: string;
+    availabilityOpen: string;
+    availabilityClose: string;
+    availabilityOpenBadge: string;
+    availabilityClosedBadge: string;
+    availabilitySeededTitle: string;
+    availabilitySeededBadge: string;
+    availabilityManualTitle: string;
+    availabilityDelete: string;
+    availabilityDeleteConfirm: string;
+    availabilityEmpty: string;
+    availabilityInvalid: string;
+    availabilitySaved: string;
+    availabilityError: string;
+    availabilityLoading: string;
     loginTitle: string;
     loginHint: string;
     loginButton: string;
@@ -312,9 +331,29 @@ const content: Record<Locale, SiteContent> = {
       navReservations: "Réservations",
       navPromo: "Codes promo",
       navPricing: "Tarifs",
+      navAvailability: "Ouverture",
       reservationsPageTitle: "Réservations",
       promoPageTitle: "Codes promo",
       pricingPageTitle: "Tarifs par nuit",
+      availabilityPageTitle: "Ouverture des dates",
+      availabilityHint:
+        "Ouvrir une période la rend réservable sur le site, même si Booking ou Airbnb la marque occupée. Fermer une période la bloque. Une réservation directe déjà payée reste bloquée. La dernière nuit indiquée est incluse.",
+      availabilityFrom: "Première nuit",
+      availabilityTo: "Dernière nuit",
+      availabilityOpen: "Ouvrir",
+      availabilityClose: "Fermer",
+      availabilityOpenBadge: "Ouverte",
+      availabilityClosedBadge: "Fermée",
+      availabilitySeededTitle: "Déjà ouvertes avec le site",
+      availabilitySeededBadge: "Ouverte",
+      availabilityManualTitle: "Ouvertures et fermetures manuelles",
+      availabilityDelete: "Retirer",
+      availabilityDeleteConfirm: "Retirer cette période ?",
+      availabilityEmpty: "Aucune période manuelle.",
+      availabilityInvalid: "Indiquez une première nuit et une dernière nuit valides.",
+      availabilitySaved: "Calendrier mis à jour.",
+      availabilityError: "Enregistrement impossible.",
+      availabilityLoading: "Chargement…",
       loginTitle: "Accès administrateur",
       loginHint: "",
       loginButton: "Se connecter",
@@ -607,9 +646,29 @@ const content: Record<Locale, SiteContent> = {
       navReservations: "Bookings",
       navPromo: "Promo codes",
       navPricing: "Rates",
+      navAvailability: "Availability",
       reservationsPageTitle: "Bookings",
       promoPageTitle: "Promo codes",
       pricingPageTitle: "Nightly rates",
+      availabilityPageTitle: "Open and close dates",
+      availabilityHint:
+        "Opening a period makes it bookable on the site, even if Booking or Airbnb marks it busy. Closing a period blocks it. A paid direct booking stays blocked. The last night entered is included.",
+      availabilityFrom: "First night",
+      availabilityTo: "Last night",
+      availabilityOpen: "Open",
+      availabilityClose: "Close",
+      availabilityOpenBadge: "Open",
+      availabilityClosedBadge: "Closed",
+      availabilitySeededTitle: "Already open with the site",
+      availabilitySeededBadge: "Open",
+      availabilityManualTitle: "Manual openings and closures",
+      availabilityDelete: "Remove",
+      availabilityDeleteConfirm: "Remove this period?",
+      availabilityEmpty: "No manual period yet.",
+      availabilityInvalid: "Enter a valid first night and last night.",
+      availabilitySaved: "Calendar updated.",
+      availabilityError: "Could not save.",
+      availabilityLoading: "Loading…",
       loginTitle: "Admin access",
       loginHint: "",
       loginButton: "Sign in",
@@ -901,9 +960,29 @@ const content: Record<Locale, SiteContent> = {
       navReservations: "Reservierungen",
       navPromo: "Aktionscodes",
       navPricing: "Tarife",
+      navAvailability: "Öffnung",
       reservationsPageTitle: "Reservierungen",
       promoPageTitle: "Aktionscodes",
       pricingPageTitle: "Nachtpreise",
+      availabilityPageTitle: "Daten öffnen und schliessen",
+      availabilityHint:
+        "Eine geöffnete Periode ist auf der Website buchbar, auch wenn Booking oder Airbnb sie als belegt markiert. Eine geschlossene Periode ist blockiert. Eine bereits bezahlte Direktbuchung bleibt blockiert. Die letzte angegebene Nacht ist eingeschlossen.",
+      availabilityFrom: "Erste Nacht",
+      availabilityTo: "Letzte Nacht",
+      availabilityOpen: "Öffnen",
+      availabilityClose: "Schliessen",
+      availabilityOpenBadge: "Offen",
+      availabilityClosedBadge: "Geschlossen",
+      availabilitySeededTitle: "Bereits mit der Website geöffnet",
+      availabilitySeededBadge: "Offen",
+      availabilityManualTitle: "Manuelle Öffnungen und Schliessungen",
+      availabilityDelete: "Entfernen",
+      availabilityDeleteConfirm: "Diesen Zeitraum entfernen?",
+      availabilityEmpty: "Noch kein manueller Zeitraum.",
+      availabilityInvalid: "Geben Sie eine gültige erste und letzte Nacht an.",
+      availabilitySaved: "Kalender aktualisiert.",
+      availabilityError: "Speichern nicht möglich.",
+      availabilityLoading: "Wird geladen…",
       loginTitle: "Administratorzugang",
       loginHint: "",
       loginButton: "Anmelden",

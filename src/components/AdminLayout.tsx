@@ -3,7 +3,7 @@
 import Link from "next/link";
 import type { SiteContent } from "@/lib/content";
 
-export type AdminSection = "reservations" | "promo" | "pricing";
+export type AdminSection = "reservations" | "promo" | "pricing" | "availability";
 
 type AdminLayoutProps = {
   content: SiteContent["admin"];
@@ -23,7 +23,9 @@ export default function AdminLayout({
       ? content.promoPageTitle
       : section === "pricing"
         ? content.pricingPageTitle
-        : content.reservationsPageTitle;
+        : section === "availability"
+          ? content.availabilityPageTitle
+          : content.reservationsPageTitle;
 
   return (
     <div className="mx-auto max-w-3xl px-6 py-12 md:px-12 md:py-16">
@@ -39,7 +41,7 @@ export default function AdminLayout({
       </div>
 
       <nav
-        className="mt-8 flex gap-2 border-b border-neutral-200 pb-3"
+        className="mt-8 flex flex-wrap gap-2 border-b border-neutral-200 pb-3"
         aria-label="Admin"
       >
         <Link
@@ -71,6 +73,16 @@ export default function AdminLayout({
           }`}
         >
           {content.navPricing}
+        </Link>
+        <Link
+          href="/admin/disponibilites"
+          className={`rounded-full px-4 py-2 text-sm font-medium transition ${
+            section === "availability"
+              ? "bg-neutral-900 text-white"
+              : "text-neutral-700 hover:bg-neutral-100"
+          }`}
+        >
+          {content.navAvailability}
         </Link>
       </nav>
 

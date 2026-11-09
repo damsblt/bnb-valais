@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import AdminAvailabilityWindows from "@/components/AdminAvailabilityWindows";
 import AdminLayout, { type AdminSection } from "@/components/AdminLayout";
 import AdminNightPricing from "@/components/AdminNightPricing";
 import AdminPromoCodes from "@/components/AdminPromoCodes";
@@ -111,6 +112,8 @@ export default function AdminShell({ content, section }: AdminShellProps) {
         <AdminPromoCodes content={content} />
       ) : section === "pricing" ? (
         <AdminNightPricing content={content} />
+      ) : section === "availability" ? (
+        <AdminAvailabilityWindows content={content} />
       ) : (
         <AdminReservationsDashboard
           content={content}
