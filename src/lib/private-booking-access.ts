@@ -36,7 +36,7 @@ const INVITES: PrivateBookingInvite[] = [
     token: "32ff489183b05cab6552a82674c00b47854ae0baa04fc7a3",
     checkIn: "2026-11-13",
     checkOut: "2026-11-16",
-    guests: 1,
+    guests: 2,
     listPriceChf: 390,
     payPriceChf: 350,
   },
