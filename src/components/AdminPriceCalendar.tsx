@@ -25,8 +25,7 @@ export default function AdminPriceCalendar({ content }: AdminPriceCalendarProps)
   const [monthOffset, setMonthOffset] = useState(0);
   const [pricesByNight, setPricesByNight] = useState<PricesByNightAndGuests>({});
   const [guestCount, setGuestCount] = useState<GuestCount>(2);
-  const [rangeStart, setRangeStart] = useState<string | null>(null);
-  const [rangeEnd, setRangeEnd] = useState<string | null>(null);
+  const [selected, setSelected] = useState<string[]>([]);
   const [draft, setDraft] = useState(emptyDraft);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -86,13 +85,7 @@ export default function AdminPriceCalendar({ content }: AdminPriceCalendarProps)
     return cells;
   }, [monthDate]);
 
-  const selection = useMemo(() => {
-    if (!rangeStart) return null;
-    const end = rangeEnd ?? rangeStart;
-    return rangeStart <= end
-      ? { from: rangeStart, to: end }
-      : { from: end, to: rangeStart };
-  }, [rangeStart, rangeEnd]);
+  const selectedNights = useMemo(() => [...selected].sort(), [selected]);
 
   function fillDraft(night: string) {
     const prices = pricesByNight[night];
@@ -108,20 +101,18 @@ export default function AdminPriceCalendar({ content }: AdminPriceCalendarProps)
     });
   }
 
-  function selectNight(night: string) {
+  function toggleNight(night: string) {
     setMessage(null);
     setError(null);
-    if (!rangeStart || rangeEnd) {
-      setRangeStart(night);
-      setRangeEnd(null);
-      fillDraft(night);
-      return;
-    }
-    setRangeEnd(night);
+    setSelected((current) => {
+      if (current.includes(night)) return current.filter((day) => day !== night);
+      if (current.length === 0) fillDraft(night);
+      return [...current, night];
+    });
   }
 
   async function save() {
-    if (!selection) return;
+    if (selectedNights.length === 0) return;
     const pricesByGuests = {} as GuestNightPrices;
     for (const guests of GUEST_COUNTS) {
       const value = Math.round(Number(draft[guests]));
@@ -139,8 +130,7 @@ export default function AdminPriceCalendar({ content }: AdminPriceCalendarProps)
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          from: selection.from,
-          to: selection.to,
+          nights: selectedNights,
           pricesByGuests,
         }),
       });
@@ -149,8 +139,7 @@ export default function AdminPriceCalendar({ content }: AdminPriceCalendarProps)
         return;
       }
       setMessage(content.pricingSaveSuccess);
-      setRangeStart(null);
-      setRangeEnd(null);
+      setSelected([]);
       await load();
     } catch {
       setError(content.pricingSaveError);
@@ -170,8 +159,9 @@ export default function AdminPriceCalendar({ content }: AdminPriceCalendarProps)
     <section className="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm">
       <h2 className="text-lg font-semibold text-neutral-900">Calendrier des tarifs</h2>
       <p className="mt-2 text-sm leading-relaxed text-neutral-600">
-        Cliquez une nuit, puis une seconde pour couvrir une période. Le montant
-        enregistré remplace le tarif actuel de ces nuits, pour 1 à 4 personnes.
+        Cliquez une case pour la sélectionner, et la même case pour la retirer.
+        Les nuits choisies n’ont pas besoin de se suivre. Le montant enregistré
+        remplace leur tarif, pour 1 à 4 personnes.
       </p>
 
       <div className="mt-4 flex flex-wrap gap-2">
@@ -228,15 +218,15 @@ export default function AdminPriceCalendar({ content }: AdminPriceCalendarProps)
         {days.map((cell) => {
           if (!cell.day) return <div key={cell.key} />;
           const price = pricesByNight[cell.key]?.[guestCount];
-          const selected =
-            selection !== null && cell.key >= selection.from && cell.key <= selection.to;
+          const selectedNight = selected.includes(cell.key);
           return (
             <button
               key={cell.key}
               type="button"
-              onClick={() => selectNight(cell.key)}
+              onClick={() => toggleNight(cell.key)}
+              aria-pressed={selectedNight}
               className={`flex aspect-square flex-col items-center justify-center rounded-xl text-sm font-medium ${
-                selected
+                selectedNight
                   ? "bg-sky-600 text-white"
                   : "bg-neutral-100 text-neutral-900 hover:bg-neutral-200"
               }`}
@@ -250,10 +240,12 @@ export default function AdminPriceCalendar({ content }: AdminPriceCalendarProps)
         })}
       </div>
 
-      {selection ? (
+      {selectedNights.length > 0 ? (
         <div className="mt-6 border-t border-neutral-200 pt-5">
           <p className="text-sm text-neutral-800">
-            {selection.from} → {selection.to}
+            {selectedNights.length === 1
+              ? selectedNights[0]
+              : `${selectedNights.length} nuits : ${selectedNights.join(", ")}`}
           </p>
           <div className="mt-3 grid gap-3 sm:grid-cols-2">
             {GUEST_COUNTS.map((guests) => (

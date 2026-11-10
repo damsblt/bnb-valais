@@ -1,5 +1,5 @@
 import { isAdminAuthenticated } from "@/lib/admin-session";
-import { addAdminPriceOverride } from "@/lib/admin-price-overrides";
+import { addAdminPriceOverrides } from "@/lib/admin-price-overrides";
 import {
   expandRulesToPricesByGuests,
   GUEST_COUNTS,
@@ -41,31 +41,49 @@ export async function GET(request: Request) {
   });
 }
 
+const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
+
+function groupConsecutiveNights(nights: string[]): { from: string; to: string }[] {
+  const unique = [...new Set(nights.filter((night) => ISO_DATE.test(night)))].sort();
+  const groups: { from: string; to: string }[] = [];
+  let from = "";
+  let previous = "";
+  for (const night of unique) {
+    if (!from) {
+      from = previous = night;
+      continue;
+    }
+    if (night === addDays(previous, 1)) {
+      previous = night;
+      continue;
+    }
+    groups.push({ from, to: previous });
+    from = previous = night;
+  }
+  if (from) groups.push({ from, to: previous });
+  return groups;
+}
+
 export async function POST(request: Request) {
   if (!(await isAdminAuthenticated())) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const body = (await request.json().catch(() => null)) as {
+    nights?: string[];
     from?: string;
     to?: string;
     pricesByGuests?: Partial<GuestNightPrices>;
   } | null;
 
-  const from = body?.from?.slice(0, 10) ?? "";
-  const to = body?.to?.slice(0, 10) ?? "";
-  if (!from || !to || from > to) {
+  const nights = Array.isArray(body?.nights)
+    ? body.nights.map((night) => night.slice(0, 10))
+    : body?.from && body?.to
+      ? expandRange(body.from.slice(0, 10), body.to.slice(0, 10))
+      : [];
+  const groups = groupConsecutiveNights(nights);
+  if (!groups.length || nights.length > 370) {
     return Response.json({ error: "Invalid dates" }, { status: 400 });
-  }
-
-  let cursor = from;
-  let count = 0;
-  while (cursor <= to) {
-    count += 1;
-    cursor = addDays(cursor, 1);
-    if (count > 370) {
-      return Response.json({ error: "Range too long" }, { status: 400 });
-    }
   }
 
   const prices = {} as GuestNightPrices;
@@ -77,10 +95,22 @@ export async function POST(request: Request) {
     prices[guests] = value;
   }
 
-  const rule = await addAdminPriceOverride({ from, to, pricesByGuests: prices });
-  if (!rule) {
+  const rules = await addAdminPriceOverrides(
+    groups.map((group) => ({ ...group, pricesByGuests: prices })),
+  );
+  if (!rules.length) {
     return Response.json({ error: "Invalid prices" }, { status: 400 });
   }
 
   return Response.json({ ok: true });
+}
+
+function expandRange(from: string, to: string): string[] {
+  if (!ISO_DATE.test(from) || !ISO_DATE.test(to) || from > to) return [];
+  const nights: string[] = [];
+  for (let cursor = from; cursor <= to; cursor = addDays(cursor, 1)) {
+    nights.push(cursor);
+    if (nights.length > 370) return [];
+  }
+  return nights;
 }

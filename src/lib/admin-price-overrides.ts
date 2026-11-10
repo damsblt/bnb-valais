@@ -24,17 +24,34 @@ export async function addAdminPriceOverride(input: {
   to: string;
   pricesByGuests: GuestNightPrices;
 }): Promise<NightPricingRule | null> {
-  const rule = sanitizeNightPricingRule({
-    id: `admin-cal-${randomUUID()}`,
-    from: input.from,
-    to: input.to,
-    weekdays: [0, 1, 2, 3, 4, 5, 6],
-    pricesByGuests: input.pricesByGuests,
-    createdAt: new Date().toISOString(),
-  });
-  if (!rule) return null;
+  const saved = await addAdminPriceOverrides([input]);
+  return saved[0] ?? null;
+}
+
+export async function addAdminPriceOverrides(
+  inputs: {
+    from: string;
+    to: string;
+    pricesByGuests: GuestNightPrices;
+  }[],
+): Promise<NightPricingRule[]> {
+  const createdAt = new Date().toISOString();
+  const next: NightPricingRule[] = [];
+  for (const input of inputs) {
+    const rule = sanitizeNightPricingRule({
+      id: `admin-cal-${randomUUID()}`,
+      from: input.from,
+      to: input.to,
+      weekdays: [0, 1, 2, 3, 4, 5, 6],
+      pricesByGuests: input.pricesByGuests,
+      createdAt,
+    });
+    if (!rule) return [];
+    next.push(rule);
+  }
+  if (!next.length) return [];
   const rules = await readAdminPriceOverrides();
-  rules.push(rule);
+  rules.push(...next);
   await writeJsonStore(BLOB_PATH, DEV_FILE, { rules });
-  return rule;
+  return next;
 }
