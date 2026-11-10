@@ -29,11 +29,13 @@ export async function POST(request: Request) {
   }
 
   const locale = parseLocale(body.locale);
+  const access = body.access?.trim() || null;
   const quoted = await quotePaidStay({
     checkIn: body.checkIn ?? "",
     checkOut: body.checkOut ?? "",
     guests: body.guests,
     promoCode: body.promoCode,
+    access,
   });
 
   if (!quoted.ok) {
@@ -41,7 +43,6 @@ export async function POST(request: Request) {
   }
 
   const { quote } = quoted;
-  const access = body.access?.trim() || null;
   if (await stayOverlapsBooked(quote.checkIn, quote.checkOut, access)) {
     return NextResponse.json({ error: "dates_unavailable" }, { status: 409 });
   }

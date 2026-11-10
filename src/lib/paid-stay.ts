@@ -12,6 +12,7 @@ import { validatePromoForStay } from "@/lib/promo-validate";
 import {
   findPrivateBookingInvite,
   inviteCoversStay,
+  privateStayOffer,
 } from "@/lib/private-booking-access";
 import {
   addDays,
@@ -38,6 +39,7 @@ export async function quotePaidStay(input: {
   checkOut: string;
   guests: unknown;
   promoCode?: string | null;
+  access?: string | null;
 }): Promise<{ ok: true; quote: CheckoutQuote } | { ok: false; error: string; status: number }> {
   const checkIn = String(input.checkIn ?? "").slice(0, 10);
   const checkOut = String(input.checkOut ?? "").slice(0, 10);
@@ -76,8 +78,12 @@ export async function quotePaidStay(input: {
   );
   const nightly = pickPricesForGuestCount(expanded, guestCount);
   const pricing = computeStayPricing(checkIn, checkOut, nightly, percentOff);
+  const offer = privateStayOffer(input.access, checkIn, checkOut, guestCount);
+  const subtotal = offer?.listPriceChf ?? pricing.subtotal;
+  const total = offer?.payPriceChf ?? pricing.total;
+  const discount = offer ? Math.max(0, subtotal - total) : pricing.discount;
 
-  if (!pricing.complete || pricing.total <= 0) {
+  if (!pricing.complete || total <= 0) {
     return { ok: false, error: "incomplete_pricing", status: 400 };
   }
 
@@ -88,11 +94,11 @@ export async function quotePaidStay(input: {
       checkOut,
       guestCount,
       nights: pricing.nights,
-      subtotal: pricing.subtotal,
-      discount: pricing.discount,
-      total: pricing.total,
-      percentOff,
-      promoCode,
+      subtotal,
+      discount,
+      total,
+      percentOff: offer ? 10 : percentOff,
+      promoCode: offer ? null : promoCode,
     },
   };
 }

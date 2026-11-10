@@ -47,6 +47,13 @@ export type AvailabilityPayload = {
   currency?: string;
   syncedAt: string;
   configured: boolean;
+  privateOffer?: {
+    checkIn: string;
+    checkOut: string;
+    guests: number;
+    listPriceChf: number;
+    payPriceChf: number;
+  } | null;
 };
 
 type AvailabilityResponse = AvailabilityPayload;

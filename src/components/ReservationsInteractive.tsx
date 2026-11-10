@@ -152,15 +152,33 @@ export default function ReservationsInteractive({
   const datesReady = isValidReservationRange(range);
   const canOpenForm = datesReady;
 
+  const privateOffer = availability?.privateOffer ?? null;
+  const fixedOffer =
+    privateOffer &&
+    range &&
+    guestCount === privateOffer.guests &&
+    range.checkIn === privateOffer.checkIn &&
+    range.checkOut === privateOffer.checkOut
+      ? privateOffer
+      : null;
+
   const quote = useMemo(() => {
     if (!range || !datesReady) return null;
-    return computeStayPricing(
+    const pricing = computeStayPricing(
       range.checkIn,
       range.checkOut,
       pricesForGuests,
-      appliedPromo?.percentOff ?? 0,
+      fixedOffer ? 0 : (appliedPromo?.percentOff ?? 0),
     );
-  }, [range, datesReady, pricesForGuests, appliedPromo?.percentOff]);
+    if (!fixedOffer) return pricing;
+    return {
+      ...pricing,
+      subtotal: fixedOffer.listPriceChf,
+      discount: Math.max(0, fixedOffer.listPriceChf - fixedOffer.payPriceChf),
+      total: fixedOffer.payPriceChf,
+      complete: pricing.complete,
+    };
+  }, [range, datesReady, pricesForGuests, appliedPromo?.percentOff, fixedOffer]);
 
   const canPay = Boolean(quote?.complete && quote.total > 0);
 
@@ -351,7 +369,17 @@ export default function ReservationsInteractive({
               range={range}
               guestCount={guestCount}
               pricesByNight={pricesForGuests}
-              percentOff={appliedPromo?.percentOff ?? 0}
+              percentOff={fixedOffer ? 0 : (appliedPromo?.percentOff ?? 0)}
+              fixedOffer={fixedOffer}
+              discountLabel={
+                fixedOffer
+                  ? locale === "de"
+                    ? "Rabatt −10 %"
+                    : locale === "en"
+                      ? "10% discount"
+                      : "Réduction −10 %"
+                  : undefined
+              }
               copy={reservations}
             />
             <button

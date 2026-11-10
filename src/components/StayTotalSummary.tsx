@@ -15,6 +15,8 @@ type StayTotalSummaryProps = {
   guestCount: GuestCount;
   pricesByNight: Record<string, number>;
   percentOff?: number;
+  fixedOffer?: { listPriceChf: number; payPriceChf: number } | null;
+  discountLabel?: string;
   copy: SiteContent["reservations"];
 };
 
@@ -24,18 +26,24 @@ export default function StayTotalSummary({
   guestCount,
   pricesByNight,
   percentOff = 0,
+  fixedOffer = null,
+  discountLabel,
   copy,
 }: StayTotalSummaryProps) {
   const guestLine =
     guestCount === 1
       ? copy.stayTotalForOneGuest
       : copy.stayTotalForGuests.replace("{count}", String(guestCount));
-  const { subtotal, discount, total, complete, nights } = computeStayPricing(
+  const computed = computeStayPricing(
     range.checkIn,
     range.checkOut,
     pricesByNight,
-    percentOff,
+    fixedOffer ? 0 : percentOff,
   );
+  const subtotal = fixedOffer?.listPriceChf ?? computed.subtotal;
+  const total = fixedOffer?.payPriceChf ?? computed.total;
+  const discount = fixedOffer ? Math.max(0, subtotal - total) : computed.discount;
+  const { complete, nights } = computed;
 
   if (nights.length === 0) return null;
 
@@ -62,11 +70,13 @@ export default function StayTotalSummary({
             <dt>
               {copy.stayTotalNights.replace("{count}", String(nights.length))}
             </dt>
-            <dd className="font-medium">{formatChf(subtotal, locale)}</dd>
+            <dd className={`font-medium ${fixedOffer ? "text-neutral-400 line-through" : ""}`}>
+              {formatChf(subtotal, locale)}
+            </dd>
           </div>
           {discount > 0 ? (
             <div className="flex justify-between gap-4 text-orange-900">
-              <dt>{copy.stayTotalDiscount}</dt>
+              <dt>{discountLabel ?? copy.stayTotalDiscount}</dt>
               <dd className="font-medium">−{formatChf(discount, locale)}</dd>
             </div>
           ) : null}

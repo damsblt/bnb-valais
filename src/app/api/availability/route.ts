@@ -4,6 +4,7 @@ import {
 } from "@/lib/accepted-stays-store";
 import { getOccupiedDates } from "@/lib/calendar";
 import { readPublicPricesByNight } from "@/lib/night-pricing-store";
+import { privateStayOffer } from "@/lib/private-booking-access";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -25,6 +26,7 @@ export async function GET(request: Request) {
       pricesByNight: pricing.pricesByNight,
       sources,
       feeds,
+      privateOffer: privateStayOffer(access),
       syncedAt: new Date().toISOString(),
       configured: sources.length > 0,
     },
