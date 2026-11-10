@@ -288,7 +288,6 @@ export default function ReservationsInteractive({
         legendFree={reservations.legendFree}
         legendPast={reservations.legendPast}
         legendBusy={reservations.legendBusy}
-        legendAccepted={reservations.legendAccepted}
         legendPrice={reservations.legendPricePerNight}
         latencyNote={reservations.latencyNote}
         notConfiguredNote={reservations.notConfiguredNote}

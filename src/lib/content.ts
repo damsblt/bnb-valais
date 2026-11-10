@@ -373,10 +373,10 @@ const content: Record<Locale, SiteContent> = {
         "Resend n’a pas pu envoyer l’e-mail. Corrigez la config ou utilisez le bouton ci-dessous.",
       openMailFallback: "Ouvrir dans ma messagerie",
       calendarStorageActive:
-        "Calendrier site : les séjours acceptés s’affichent en orange sur /reservations.",
+        "Calendrier site : les séjours acceptés s’affichent en rouge sur /reservations, comme les autres dates occupées.",
       calendarStorageInactive:
         "Calendrier orange : liez le Blob « bnb-valais-blob » au projet Vercel (Storage → Connect → Production), puis redéployez.",
-      calendarMarkedOnAccept: "Dates marquées en orange sur le calendrier public.",
+      calendarMarkedOnAccept: "Dates marquées occupées, en rouge, sur le calendrier public.",
       releaseDatesButton: "Libérer les dates (revenir au vert)",
       releaseDatesSuccess:
         "Dates retirées du calendrier public — elles s’affichent à nouveau en vert.",
@@ -475,7 +475,7 @@ const content: Record<Locale, SiteContent> = {
       calendarTitle: "Disponibilités",
       legendFree: "Libre",
       legendPast: "Passé",
-      legendBusy: "Occupé (Booking / Airbnb)",
+      legendBusy: "Occupé",
       legendAccepted: "Réservation directe confirmée",
       latencyNote: "",
       notConfiguredNote:
@@ -688,10 +688,10 @@ const content: Record<Locale, SiteContent> = {
         "Resend could not send the email. Fix the configuration or use the button below.",
       openMailFallback: "Open in my mail app",
       calendarStorageActive:
-        "Site calendar: accepted stays show in orange on /reservations.",
+        "Site calendar: accepted stays show in red on /reservations, like every other occupied date.",
       calendarStorageInactive:
         "Orange calendar: connect Blob store « bnb-valais-blob » to the Vercel project (Storage → Connect → Production), then redeploy.",
-      calendarMarkedOnAccept: "Dates marked orange on the public calendar.",
+      calendarMarkedOnAccept: "Dates marked occupied, in red, on the public calendar.",
       releaseDatesButton: "Release dates (back to green)",
       releaseDatesSuccess:
         "Dates removed from the public calendar — they show as available again.",
@@ -789,7 +789,7 @@ const content: Record<Locale, SiteContent> = {
       calendarTitle: "Availability",
       legendFree: "Available",
       legendPast: "Past",
-      legendBusy: "Occupied (Booking / Airbnb)",
+      legendBusy: "Occupied",
       legendAccepted: "Confirmed direct booking",
       latencyNote: "",
       notConfiguredNote:
@@ -1002,10 +1002,10 @@ const content: Record<Locale, SiteContent> = {
         "Resend konnte die E-Mail nicht senden. Korrigieren Sie die Konfiguration oder nutzen Sie die Schaltfläche unten.",
       openMailFallback: "In meiner Mail-App öffnen",
       calendarStorageActive:
-        "Website-Kalender: angenommene Aufenthalte erscheinen orange auf /reservations.",
+        "Website-Kalender: angenommene Aufenthalte erscheinen rot auf /reservations, wie die anderen belegten Daten.",
       calendarStorageInactive:
         "Oranger Kalender: verbinden Sie den Blob-Store « bnb-valais-blob » mit dem Vercel-Projekt (Storage → Connect → Production) und stellen Sie neu bereit.",
-      calendarMarkedOnAccept: "Daten im öffentlichen Kalender orange markiert.",
+      calendarMarkedOnAccept: "Daten im öffentlichen Kalender rot als belegt markiert.",
       releaseDatesButton: "Daten freigeben (wieder grün)",
       releaseDatesSuccess:
         "Daten aus dem öffentlichen Kalender entfernt — sie erscheinen wieder als frei.",
@@ -1103,7 +1103,7 @@ const content: Record<Locale, SiteContent> = {
       calendarTitle: "Verfügbarkeit",
       legendFree: "Frei",
       legendPast: "Vergangen",
-      legendBusy: "Belegt (Booking / Airbnb)",
+      legendBusy: "Belegt",
       legendAccepted: "Bestätigte Direktbuchung",
       latencyNote: "",
       notConfiguredNote:

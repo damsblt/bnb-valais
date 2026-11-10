@@ -24,7 +24,6 @@ type AvailabilityCalendarProps = {
   legendFree: string;
   legendPast: string;
   legendBusy: string;
-  legendAccepted: string;
   latencyNote: string;
   notConfiguredNote: string;
   selectHint: string;
@@ -79,7 +78,6 @@ export default function AvailabilityCalendar({
   legendFree,
   legendPast,
   legendBusy,
-  legendAccepted,
   latencyNote,
   notConfiguredNote,
   selectHint,
@@ -248,11 +246,8 @@ export default function AvailabilityCalendar({
     if (past) {
       return "bg-neutral-100 text-neutral-400 cursor-not-allowed";
     }
-    if (occupied) {
+    if (occupied || accepted) {
       return "bg-rose-200 text-rose-900 cursor-not-allowed";
-    }
-    if (accepted) {
-      return "bg-orange-200 text-orange-950 cursor-not-allowed ring-1 ring-orange-300";
     }
     if (inRange === "start" || inRange === "end") {
       return "bg-sky-600 text-white ring-2 ring-sky-800";
@@ -408,10 +403,6 @@ export default function AvailabilityCalendar({
         <span className="inline-flex items-center gap-2">
           <span className="h-3 w-3 rounded-full bg-rose-400" />
           {legendBusy}
-        </span>
-        <span className="inline-flex items-center gap-2">
-          <span className="h-3 w-3 rounded-full bg-orange-400" />
-          {legendAccepted}
         </span>
         <span className="inline-flex items-center gap-2">
           <span className="h-3 w-3 rounded-full bg-sky-500" />
