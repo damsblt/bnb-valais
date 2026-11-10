@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import AdminAvailabilityWindows from "@/components/AdminAvailabilityWindows";
 import AdminLayout, { type AdminSection } from "@/components/AdminLayout";
 import AdminNightPricing from "@/components/AdminNightPricing";
+import AdminPriceCalendar from "@/components/AdminPriceCalendar";
 import AdminPromoCodes from "@/components/AdminPromoCodes";
 import AdminReservationsDashboard from "@/components/AdminReservationsDashboard";
 import type { SiteContent } from "@/lib/content";
@@ -111,7 +112,10 @@ export default function AdminShell({ content, section }: AdminShellProps) {
       {section === "promo" ? (
         <AdminPromoCodes content={content} />
       ) : section === "pricing" ? (
-        <AdminNightPricing content={content} />
+        <div className="space-y-8">
+          <AdminPriceCalendar content={content} />
+          <AdminNightPricing content={content} />
+        </div>
       ) : section === "availability" ? (
         <AdminAvailabilityWindows content={content} />
       ) : (

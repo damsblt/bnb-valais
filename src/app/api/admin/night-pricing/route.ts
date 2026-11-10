@@ -2,7 +2,7 @@ import { isAdminAuthenticated } from "@/lib/admin-session";
 import { sanitizeNightPricingRuleList } from "@/lib/night-pricing-admin";
 import {
   isNightPricingStorageConfigured,
-  readNightPricingStore,
+  readBaseNightPricingStore,
   writeNightPricingStore,
 } from "@/lib/night-pricing-store";
 
@@ -14,7 +14,7 @@ export async function GET() {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const store = await readNightPricingStore();
+  const store = await readBaseNightPricingStore();
   return Response.json({
     currency: store.currency,
     rules: store.rules,
@@ -33,7 +33,7 @@ export async function PUT(request: Request) {
     return Response.json({ error: "Invalid pricing rules" }, { status: 400 });
   }
 
-  const store = await readNightPricingStore();
+  const store = await readBaseNightPricingStore();
   await writeNightPricingStore({ ...store, rules });
   return Response.json({ ok: true, currency: store.currency, rules });
 }

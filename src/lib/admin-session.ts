@@ -3,14 +3,20 @@ import { cookies } from "next/headers";
 
 export const ADMIN_COOKIE = "bnb_admin_session";
 
+function adminPassword(): string | null {
+  return (
+    process.env.ADMIN_PASSWORD?.trim() || "bnb-la-sittelle2011!"
+  );
+}
+
 function sessionToken(): string | null {
-  const secret = process.env.ADMIN_PASSWORD?.trim();
+  const secret = adminPassword();
   if (!secret) return null;
   return createHmac("sha256", secret).update("bnb-admin-v1").digest("hex");
 }
 
 export function isAdminPasswordConfigured(): boolean {
-  return Boolean(process.env.ADMIN_PASSWORD?.trim());
+  return Boolean(adminPassword());
 }
 
 export async function isAdminAuthenticated(): Promise<boolean> {
@@ -31,7 +37,7 @@ export function createAdminSessionValue(): string | null {
 }
 
 export function verifyAdminPassword(password: string): boolean {
-  const expected = process.env.ADMIN_PASSWORD?.trim();
+  const expected = adminPassword();
   if (!expected) return false;
   if (password.length !== expected.length) return false;
   try {

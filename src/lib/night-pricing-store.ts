@@ -16,6 +16,7 @@ import {
   readJsonStore,
   writeJsonStore,
 } from "@/lib/vercel-blob-json";
+import { readAdminPriceOverrides } from "@/lib/admin-price-overrides";
 
 const BLOB_PATH = "pricing/night-rules.json";
 const DEV_FILE = "night-pricing.json";
@@ -43,7 +44,7 @@ function withBundledRules(store: NightPricingStore): NightPricingStore | null {
   };
 }
 
-export async function readNightPricingStore(): Promise<NightPricingStore> {
+export async function readBaseNightPricingStore(): Promise<NightPricingStore> {
   const raw = await readJsonStore<NightPricingStore>(
     BLOB_PATH,
     DEV_FILE,
@@ -65,6 +66,13 @@ export async function readNightPricingStore(): Promise<NightPricingStore> {
     );
   }
   return synced;
+}
+
+export async function readNightPricingStore(): Promise<NightPricingStore> {
+  const base = await readBaseNightPricingStore();
+  const overrides = await readAdminPriceOverrides();
+  if (!overrides.length) return base;
+  return { ...base, rules: [...base.rules, ...overrides] };
 }
 
 export async function writeNightPricingStore(
