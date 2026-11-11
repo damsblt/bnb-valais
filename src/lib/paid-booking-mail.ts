@@ -19,9 +19,9 @@ async function sendEmail(payload: {
   subject: string;
   text: string;
   html: string;
-}): Promise<void> {
+}): Promise<{ ok: true } | { ok: false; error: string }> {
   const apiKey = process.env.RESEND_API_KEY?.trim();
-  if (!apiKey) return;
+  if (!apiKey) return { ok: false, error: "RESEND_API_KEY not configured" };
 
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
@@ -45,7 +45,9 @@ async function sendEmail(payload: {
       res.status,
       detail.slice(0, 300),
     );
+    return { ok: false, error: `Resend ${res.status}` };
   }
+  return { ok: true };
 }
 
 export async function sendPaidBookingEmails(input: {
@@ -148,5 +150,45 @@ Personnes : ${quote.guestCount}
 Total : ${formatChf(quote.total, "fr")}
 ${quote.promoCode ? `Promo : ${quote.promoCode}\n` : ""}`,
     html: `<p>Nouvelle réservation payée via Stripe.</p><p>Client : <strong>${guestName}</strong> &lt;${guestEmail}&gt;<br/>Arrivée : ${quote.checkIn}<br/>Départ : ${quote.checkOut}<br/>Personnes : ${quote.guestCount}<br/>Total : <strong>${formatChf(quote.total, "fr")}</strong>${quote.promoCode ? `<br/>Promo : ${quote.promoCode}` : ""}</p>`,
+  });
+}
+
+/** Même message que le client, sans la copie envoyée à l’hôte. */
+export async function sendGuestConfirmationPreview(input: {
+  to: string;
+  subjectPrefix: string;
+  invoiceUrl?: string | null;
+}): Promise<{ ok: true } | { ok: false; error: string }> {
+  const guestName = "Client test";
+  const quote: CheckoutQuote = {
+    checkIn: "2026-11-13",
+    checkOut: "2026-11-16",
+    guestCount: 2,
+    nights: ["2026-11-13", "2026-11-14", "2026-11-15"],
+    subtotal: 390,
+    discount: 40,
+    total: 350,
+    percentOff: 10,
+    promoCode: null,
+  };
+  const total = formatChf(quote.total, "fr");
+  const invoiceUrl = input.invoiceUrl ?? null;
+  const invoiceLine = invoiceUrl ? `\nFacture : ${invoiceUrl}\n` : "";
+  return sendEmail({
+    to: input.to,
+    subject: `${input.subjectPrefix} Réservation confirmée — ${SITE_BRAND}`,
+    text: `Bonjour ${guestName},
+
+Votre séjour au Nid de la Sittelle est confirmé et payé.
+
+Arrivée : ${quote.checkIn}
+Départ : ${quote.checkOut}
+Voyageurs : ${quote.guestCount} personnes
+Montant payé : ${total}
+${invoiceLine}
+À bientôt,
+${SITE_BRAND}
+${siteBaseUrl()}`,
+    html: `<p>Bonjour ${guestName},</p><p>Votre séjour au <strong>Nid de la Sittelle</strong> est confirmé et payé.</p><p>Arrivée : ${quote.checkIn}<br/>Départ : ${quote.checkOut}<br/>Voyageurs : ${quote.guestCount} personnes<br/>Montant payé : <strong>${total}</strong></p>${invoiceUrl ? `<p><a href="${invoiceUrl}">Télécharger la facture</a></p>` : ""}<p>${SITE_BRAND}<br/><a href="${siteBaseUrl()}">${siteBaseUrl()}</a></p>`,
   });
 }
