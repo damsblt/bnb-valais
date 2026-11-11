@@ -43,13 +43,23 @@ export async function POST(request: Request) {
     return NextResponse.json({ received: true });
   }
 
+  const guestEmail =
+    session.customer_details?.email || session.customer_email || "";
+  const guestName = session.customer_details?.name || guestEmail || "Guest";
+  const locale = parseLocale(session.metadata?.locale);
+  const guestCount = parseGuestCount(session.metadata?.guests, 2);
+  const total = Number(session.metadata?.total ?? 0);
+  const subtotal = Number(session.metadata?.subtotal ?? total);
+  const percentOff = Number(session.metadata?.percentOff ?? 0);
+  const checkIn = session.metadata?.checkIn ?? "";
+  const checkOut = session.metadata?.checkOut ?? "";
+
   const existing = await listAcceptedStays();
   if (existing.some((stay) => stay.responseId === session.id)) {
+    await sendStripeReceipt(stripe, session, guestEmail);
     return NextResponse.json({ received: true, duplicate: true });
   }
 
-  const checkIn = session.metadata?.checkIn ?? "";
-  const checkOut = session.metadata?.checkOut ?? "";
   if (!checkIn || !checkOut) {
     return NextResponse.json({ received: true, skipped: "missing_dates" });
   }
@@ -60,15 +70,6 @@ export async function POST(request: Request) {
     }
     return NextResponse.json({ received: true, refunded: true });
   }
-
-  const guestEmail =
-    session.customer_details?.email || session.customer_email || "";
-  const guestName = session.customer_details?.name || guestEmail || "Guest";
-  const locale = parseLocale(session.metadata?.locale);
-  const guestCount = parseGuestCount(session.metadata?.guests, 2);
-  const total = Number(session.metadata?.total ?? 0);
-  const subtotal = Number(session.metadata?.subtotal ?? total);
-  const percentOff = Number(session.metadata?.percentOff ?? 0);
 
   await recordReservationOutcome({
     responseId: session.id,
@@ -106,6 +107,7 @@ export async function POST(request: Request) {
   }
 
   if (guestEmail) {
+    await sendStripeReceipt(stripe, session, guestEmail);
     await sendPaidBookingEmails({
       locale,
       guestEmail,
@@ -116,4 +118,28 @@ export async function POST(request: Request) {
   }
 
   return NextResponse.json({ received: true });
+}
+
+/** Envoie le reçu Stripe même si « Paiements réussis » est désactivé dans le tableau de bord. */
+async function sendStripeReceipt(
+  stripe: Stripe,
+  session: Stripe.Checkout.Session,
+  email: string,
+): Promise<void> {
+  if (!email) return;
+  const paymentIntentId =
+    typeof session.payment_intent === "string"
+      ? session.payment_intent
+      : session.payment_intent?.id;
+  if (!paymentIntentId) return;
+
+  const intent = await stripe.paymentIntents.retrieve(paymentIntentId, {
+    expand: ["latest_charge"],
+  });
+  const charge = intent.latest_charge;
+  const chargeId = typeof charge === "string" ? charge : charge?.id;
+  if (!chargeId) return;
+  if (typeof charge === "object" && charge?.receipt_email === email) return;
+
+  await stripe.charges.update(chargeId, { receipt_email: email });
 }
