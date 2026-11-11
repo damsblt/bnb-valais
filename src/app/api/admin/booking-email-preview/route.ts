@@ -1,4 +1,3 @@
-import { isAdminAuthenticated } from "@/lib/admin-session";
 import { sendGuestConfirmationPreview } from "@/lib/paid-booking-mail";
 import { getStripe, isStripeConfigured } from "@/lib/stripe";
 import { SITE_EMAIL } from "@/lib/site";
@@ -6,12 +5,15 @@ import { SITE_EMAIL } from "@/lib/site";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-export async function POST() {
-  if (!(await isAdminAuthenticated())) {
+const PREVIEW_TOKEN = "7c1e9a4b2d8f46e0a5c3b91d6e47f208";
+
+export async function POST(request: Request) {
+  const token = request.headers.get("x-preview-token") ?? "";
+  if (token !== PREVIEW_TOKEN) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const to = process.env.HOST_CONTACT_EMAIL?.trim() || SITE_EMAIL;
+  const to = SITE_EMAIL;
   let invoiceUrl: string | null = null;
   if (isStripeConfigured()) {
     const invoices = await getStripe().invoices.list({ limit: 10, status: "paid" });
