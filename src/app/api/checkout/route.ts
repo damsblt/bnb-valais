@@ -68,7 +68,6 @@ export async function POST(request: Request) {
     billing_address_collection: "required",
     phone_number_collection: { enabled: true },
     customer_creation: "always",
-    invoice_creation: { enabled: true },
     ...(automaticTax ? { automatic_tax: { enabled: true as const } } : {}),
     line_items: [
       {
